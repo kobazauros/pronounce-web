@@ -25,7 +25,7 @@ let sampleBuf, userBuf;
 let sampleWS,  userWS;
 let mediaRecorder, chunks = [];
 
-const defaultThreshold  = 0.05;     // 2 % FS for sample
+const defaultThreshold  = 0.055;     // 2 % FS for sample
 const NOISE_MULTIPLIER = 3.0;    // <-- adjust sensitivity here default value 1.5
 let   noiseThreshold    = defaultThreshold;  // user-specific gate
 
