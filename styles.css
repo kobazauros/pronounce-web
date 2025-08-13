@@ -1,37 +1,126 @@
+/* Thesis Edition styles (full file) */
+:root{
+  --border:#ccc;
+  --muted:#555;
+  --error:#b71c1c;
+  --bg:#fff;
+  --panel:#fafafa;
+  --blue:#1666c1;
+  --green:#1c8a3b;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#f6f7f9;
+}
+
 .container {
-    font-family: sans-serif;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
 }
+
 section {
-    width: 100%;
-    max-width: 600px;
-    border: 1px solid #ccc;
-    padding: 20px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
+  width: 100%;
+  max-width: 900px;
+  border: 1px solid var(--border);
+  padding: 20px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  background: var(--bg);
+  box-shadow: 0 1px 2px rgba(0,0,0,.03);
 }
+
+h2 { margin: 0 0 10px 0; font-weight:700; font-size:1.25rem; }
+
+.caption {
+  margin: 0 0 10px 0;
+  color: var(--muted);
+}
+.caption.small { font-size: 0.9rem; }
+
+.legend.blue { color: var(--blue); font-weight: 600; }
+.legend.green { color: var(--green); font-weight: 600; }
+
+.student-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 12px;
+}
+label { display: flex; flex-direction: column; gap: 6px; }
+
+input {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  background:#fff;
+}
+
 button {
-    padding: 10px 20px;
-    cursor: pointer;
+  padding: 10px 16px;
+  cursor: pointer;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #f3f3f3;
 }
+button:hover{ filter:brightness(0.98); }
+button:active{ transform: translateY(1px); }
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+
 #message-box {
-    margin-top: 10px;
-    color: red;
+  margin-top: 10px;
+  color: var(--error);
 }
+
 #sample-waveform-container,
 #user-waveform-container,
 #difference-waveform-container {
-    width: 100%;
-    height: 200px;
-    margin-top: 10px;
-    border: 1px solid #ddd;
+  width: 100%;
+  height: 200px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: var(--panel);
 }
+
+/* Word list grid: 4 columns, 5 rows */
+.word-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: 8px 16px;
+  width: 100%;
+}
+
+.word-link {
+  display: block;         /* ensure each link occupies a grid cell */
+  padding: 6px 8px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  text-align: left;
+}
+
+.word-link.word-pending { color: var(--blue); }   /* blue */
+.word-link.word-submitted { color: var(--green); } /* green */
+.word-link:hover { text-decoration: underline; }
+
 .inline-message {
-    margin-top: 6px;
-    color: #d33;     /* same red as the global message-box */
-    font-size: 0.9rem;
+  margin-top: 6px;
+  color: var(--error);
+  font-size: 0.95rem;
+}
+
+.record-controls { display: flex; gap: 10px; flex-wrap:wrap; }
+.submit-row { display: flex; gap: 12px; align-items: center; margin-top: 12px; }
+.sample-word { color: #333; }
+
+@media (max-width: 640px) {
+  .word-grid { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+  section{ padding:16px; }
 }

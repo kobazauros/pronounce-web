@@ -3,52 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pronunciation Checker</title>
+  <title>Pronunciation Checker (Thesis Edition)</title>
 
-  <!-- WaveSurfer pinned to v 7.5.0 -->
+  <!-- WaveSurfer pinned to v7.5.0 -->
   <script src="https://unpkg.com/wavesurfer.js@7.5.0/dist/wavesurfer.min.js"></script>
+  
+  <!-- MP3 encoder for client-side export -->
+  <script src="https://unpkg.com/lamejs@1.2.0/lame.min.js"></script>
 
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="container">
 
-    <!-- 0  Measure background noise -->
-    <section id="noise-section">
-      <button id="measure-noise">Measure Background Noise</button>
-      <span id="noise-result" class="inline-message"></span>
+    <!-- 0  Student info -->
+    <section id="student-section">
+      <h2>Participant Information</h2>
+      <div class="student-grid">
+        <label>
+          Student Name
+          <input id="student-name" placeholder="Full name" />
+        </label>
+        <label>
+          Student ID
+          <input id="student-id" placeholder="e.g., 6701202001" />
+        </label>
+      </div>
+      <div id="student-msg" class="inline-message"></div>
     </section>
 
-    <!-- 1  Enter word -->
+    <!-- 1  Word list -->
     <section id="input-section">
       <h2>Check Your Pronunciation</h2>
-      <p>Type a word to practise:</p>
-      <input id="word-input" placeholder="Enter word" />
+      <p class="caption">Select a word from the list (20 total). Words turn <span class="legend blue">blue</span> → <span class="legend green">green</span> after you submit.</p>
+      <div id="word-list" class="word-grid"></div>
     </section>
 
     <!-- 2  Sample Pronunciation -->
     <section id="sample-section">
-      <h2>Sample Pronunciation</h2>
+      <h2>Sample Pronunciation: <span id="sample-word-placeholder" class="sample-word">(none)</span></h2>
       <button id="play-sample">Play Sample</button>
       <div id="sample-message" class="inline-message"></div>
       <div id="sample-waveform-container"></div>
-      
     </section>
 
     <!-- 3  Your Pronunciation -->
     <section id="record-section">
       <h2>Your Pronunciation</h2>
-      <button id="record-start">Begin Recording</button>
-      <button id="record-stop" disabled>Stop Recording</button>
-      <button id="play-user"    disabled>Play Recording</button>
+      <div class="record-controls">
+        <button id="record-start">Begin Recording</button>
+        <button id="record-stop" disabled>Stop Recording</button>
+        <button id="play-user" disabled>Play Recording</button>
+      </div>
       <div id="message-box"></div>
       <div id="user-waveform-container"></div>
     </section>
 
-    <!-- 4  Overlap view -->
+    <!-- 4  Overlap + submit -->
     <section id="difference-section">
       <h2>Sample vs Your Waveform</h2>
       <div id="difference-waveform-container"></div>
+      <div class="submit-row">
+        <button id="submit-recording" disabled>Submit Last Recording</button>
+        <span id="submit-msg" class="inline-message"></span>
+      </div>
+      <p class="caption small">
+        Note: This demo saves your last recording as a <strong>.mp3</strong> file locally (download prompt) named
+        <code>[StudentID] - [word].mp3</code>. To save server-side into a <code>submissions/</code> folder, you’ll need a backend upload endpoint.
+      </p>
+    </section>
+
+    <!-- 5  Measure background noise -->
+    <section id="noise-section">
+      <button id="measure-noise">Measure Background Noise</button>
+      <span id="noise-result" class="inline-message"></span>
     </section>
 
   </div><!-- /.container -->
