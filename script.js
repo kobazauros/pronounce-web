@@ -22,7 +22,10 @@ async function loadManifest() {
     const arr = Array.isArray(data) ? data : Array.isArray(data.words) ? data.words : [];
     if (!Array.isArray(arr) || arr.length === 0) throw new Error('Empty manifest');
     // sanitize to base names without extensions
-    WORDS = arr.map(w => String(w).replace(/\.[^/.]+$/, '')).slice(0, 20);
+    WORDS = arr.map(item => {
+      const w = (item && typeof item === 'object' && item.word) ? item.word : item;
+      return String(w).replace(/\.[^/.]+$/, '');
+    }).slice(0, 20);
   } catch (e) {
     console.warn('Manifest load failed.', e);
     if (studentMsg) studentMsg.textContent = '⚠️ Error: Could not load audio/index.json. Ensure you are running a local server.';

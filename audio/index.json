@@ -1,24 +1,190 @@
 {
-  "words": [
-    "agree",
-    "arriving",
-    "basic",
-    "duty",
-    "ego",
-    "father",
-    "hearings",
-    "hollow",
-    "hotel",
-    "invite",
-    "outing",
-    "packing",
-    "putting",
-    "recorded",
-    "returning",
-    "tournament",
-    "traveller",
-    "under",
-    "voicing",
-    "wearily"
-  ]
+    "words": [
+        {
+            "word": "agree",
+            "ipa": "/əˈɡriː/",
+            "vowels": [
+                "ə",
+                "iː"
+            ],
+            "stressed_vowel": "iː"
+        },
+        {
+            "word": "arriving",
+            "ipa": "/əˈraɪvɪŋ/",
+            "vowels": [
+                "ə",
+                "aɪ",
+                "ɪ"
+            ],
+            "stressed_vowel": "aɪ"
+        },
+        {
+            "word": "basic",
+            "ipa": "/ˈbeɪsɪk/",
+            "vowels": [
+                "eɪ",
+                "ɪ"
+            ],
+            "stressed_vowel": "eɪ"
+        },
+        {
+            "word": "duty",
+            "ipa": "/ˈdjuːti/",
+            "vowels": [
+                "uː",
+                "i"
+            ],
+            "stressed_vowel": "uː"
+        },
+        {
+            "word": "ego",
+            "ipa": "/ˈiːɡəʊ/",
+            "vowels": [
+                "iː",
+                "əʊ"
+            ],
+            "stressed_vowel": "iː"
+        },
+        {
+            "word": "father",
+            "ipa": "/ˈfɑːðə(r)/",
+            "vowels": [
+                "ɑː",
+                "ə"
+            ],
+            "stressed_vowel": "ɑː"
+        },
+        {
+            "word": "hearings",
+            "ipa": "/ˈhɪərɪŋz/",
+            "vowels": [
+                "ɪə",
+                "ɪ"
+            ],
+            "stressed_vowel": "ɪə"
+        },
+        {
+            "word": "hollow",
+            "ipa": "/ˈhɒləʊ/",
+            "vowels": [
+                "ɒ",
+                "əʊ"
+            ],
+            "stressed_vowel": "ɒ"
+        },
+        {
+            "word": "hotel",
+            "ipa": "/həʊˈtɛl/",
+            "vowels": [
+                "əʊ",
+                "e"
+            ],
+            "stressed_vowel": "e"
+        },
+        {
+            "word": "invite",
+            "ipa": "/ɪnˈvaɪt/",
+            "vowels": [
+                "ɪ",
+                "aɪ"
+            ],
+            "stressed_vowel": "aɪ"
+        },
+        {
+            "word": "outing",
+            "ipa": "/ˈaʊtɪŋ/",
+            "vowels": [
+                "aʊ",
+                "ɪ"
+            ],
+            "stressed_vowel": "aʊ"
+        },
+        {
+            "word": "packing",
+            "ipa": "/ˈpækɪŋ/",
+            "vowels": [
+                "æ",
+                "ɪ"
+            ],
+            "stressed_vowel": "æ"
+        },
+        {
+            "word": "putting",
+            "ipa": "/ˈpʊtɪŋ/",
+            "vowels": [
+                "ʊ",
+                "ɪ"
+            ],
+            "stressed_vowel": "ʊ"
+        },
+        {
+            "word": "recorded",
+            "ipa": "/rɪˈkɔːdɪd/",
+            "vowels": [
+                "ɪ",
+                "ɔː",
+                "ɪ"
+            ],
+            "stressed_vowel": "ɔː"
+        },
+        {
+            "word": "returning",
+            "ipa": "/rɪˈtɜːnɪŋ/",
+            "vowels": [
+                "ɪ",
+                "ɜː",
+                "ɪ"
+            ],
+            "stressed_vowel": "ɜː"
+        },
+        {
+            "word": "tournament",
+            "ipa": "/ˈtʊənəmənt/",
+            "vowels": [
+                "ʊə",
+                "ə",
+                "ə"
+            ],
+            "stressed_vowel": "ʊə"
+        },
+        {
+            "word": "traveller",
+            "ipa": "/ˈtrævələ(r)/",
+            "vowels": [
+                "æ",
+                "ə",
+                "ə"
+            ],
+            "stressed_vowel": "æ"
+        },
+        {
+            "word": "under",
+            "ipa": "/ˈʌndə(r)/",
+            "vowels": [
+                "ʌ",
+                "ə"
+            ],
+            "stressed_vowel": "ʌ"
+        },
+        {
+            "word": "voicing",
+            "ipa": "/ˈvɔɪsɪŋ/",
+            "vowels": [
+                "ɔɪ",
+                "ɪ"
+            ],
+            "stressed_vowel": "ɔɪ"
+        },
+        {
+            "word": "wearily",
+            "ipa": "/ˈwɪərəli/",
+            "vowels": [
+                "ɪə",
+                "ə",
+                "i"
+            ],
+            "stressed_vowel": "ɪə"
+        }
+    ]
 }
