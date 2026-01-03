@@ -1,7 +1,0 @@
-praat-parselmouth>=0.4.4
-librosa==0.10.1
-numpy>=1.23
-pandas>=2.0
-matplotlib>=3.8
-soundfile>=0.12
-audioread>=3.0.0

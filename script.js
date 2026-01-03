@@ -24,41 +24,36 @@ async function loadManifest() {
     // sanitize to base names without extensions
     WORDS = arr.map(w => String(w).replace(/\.[^/.]+$/, '')).slice(0, 20);
   } catch (e) {
-    console.warn('Manifest load failed, using fallback list.', e);
-    // Fallback list — replace with your 20 words if needed
-    WORDS = [
-      'about','ability','across','action','address',
-      'after','again','against','almost','always',
-      'animal','answer','appear','area','around',
-      'because','become','before','between','business'
-    ].slice(0, 20);
+    console.warn('Manifest load failed.', e);
+    if (studentMsg) studentMsg.textContent = '⚠️ Error: Could not load audio/index.json. Ensure you are running a local server.';
+    WORDS = [];
   }
 }
 
 // ------- DOM -------
-const nameInput  = document.getElementById('student-name');
-const idInput    = document.getElementById('student-id');
+const nameInput = document.getElementById('student-name');
+const idInput = document.getElementById('student-id');
 const studentMsg = document.getElementById('student-msg');
 
-const wordList   = document.getElementById('word-list');
-const sampleTitle= document.getElementById('sample-word-placeholder');
+const wordList = document.getElementById('word-list');
+const sampleTitle = document.getElementById('sample-word-placeholder');
 
-const playBtn     = document.getElementById('play-sample');
+const playBtn = document.getElementById('play-sample');
 const recStartBtn = document.getElementById('record-start');
-const recStopBtn  = document.getElementById('record-stop');
+const recStopBtn = document.getElementById('record-stop');
 const playUserBtn = document.getElementById('play-user');
-const submitBtn   = document.getElementById('submit-recording');
+const submitBtn = document.getElementById('submit-recording');
 
 const sampleWF = document.getElementById('sample-waveform-container');
-const userWF   = document.getElementById('user-waveform-container');
-const overlapWF= document.getElementById('difference-waveform-container');
+const userWF = document.getElementById('user-waveform-container');
+const overlapWF = document.getElementById('difference-waveform-container');
 
-const msgBox     = document.getElementById('message-box');      // recording messages
-const sampleMsg  = document.getElementById('sample-message');    // sample messages
-const submitMsg  = document.getElementById('submit-msg');
+const msgBox = document.getElementById('message-box');      // recording messages
+const sampleMsg = document.getElementById('sample-message');    // sample messages
+const submitMsg = document.getElementById('submit-msg');
 
 // noise UI
-const noiseBtn   = document.getElementById('measure-noise');
+const noiseBtn = document.getElementById('measure-noise');
 const noiseLabel = document.getElementById('noise-result');
 
 // ------- Audio globals -------
@@ -66,28 +61,28 @@ let ac;
 const ensureAC = () => (ac ||= new AudioContext());
 
 let sampleBuf, userBuf;
-let sampleWS,  userWS;
+let sampleWS, userWS;
 let mediaRecorder, chunks = [];
 let lastRecordingBlob = null;   // store last recording as raw blob
 let selectedWord = null;
 
 // thresholds
-const defaultThreshold  = 0.055;   // 2 % FS for sample (approx)
+const defaultThreshold = 0.055;   // 2 % FS for sample (approx)
 const NOISE_MULTIPLIER = 3.0;
-let   noiseThreshold    = defaultThreshold;
+let noiseThreshold = defaultThreshold;
 
 // Auto-stop settings
-const SILENCE_HOLD_MS  = 1200;
+const SILENCE_HOLD_MS = 1200;
 const ANALYSE_INTERVAL = 100;
 
 // ======= Helpers =======
-const say        = txt => (msgBox.textContent    = txt ?? '');
-const sampleSay  = txt => (sampleMsg.textContent = txt ?? '');
-const submitSay  = txt => (submitMsg.textContent = txt ?? '');
+const say = txt => (msgBox.textContent = txt ?? '');
+const sampleSay = txt => (sampleMsg.textContent = txt ?? '');
+const submitSay = txt => (submitMsg.textContent = txt ?? '');
 
 function guardStudentInfo() {
   const name = nameInput.value.trim();
-  const sid  = idInput.value.trim();
+  const sid = idInput.value.trim();
   if (!name || !sid) {
     studentMsg.textContent = 'Enter Student Name and ID to continue.';
     return false;
@@ -110,7 +105,7 @@ function saveProgress(sid, data) {
 // build word list grid (4 columns)
 function buildWordList() {
   wordList.innerHTML = '';
-  const words = [...WORDS].sort((a,b)=>a.localeCompare(b));
+  const words = [...WORDS].sort((a, b) => a.localeCompare(b));
   for (const w of words) {
     const a = document.createElement('a');
     a.href = '#';
@@ -136,7 +131,7 @@ function refreshSubmittedColors() {
   for (const el of wordList.querySelectorAll('.word-link')) {
     const w = el.dataset.word;
     el.classList.toggle('word-submitted', !!prog[w]);
-    el.classList.toggle('word-pending',  !prog[w]);
+    el.classList.toggle('word-pending', !prog[w]);
   }
 }
 
@@ -145,8 +140,8 @@ noiseBtn.addEventListener('click', async () => {
   try {
     noiseLabel.textContent = 'Measuring…';
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const ac     = ensureAC();
-    const src    = ac.createMediaStreamSource(stream);
+    const ac = ensureAC();
+    const src = ac.createMediaStreamSource(stream);
     const analyser = ac.createAnalyser();
     analyser.fftSize = 2048;
     src.connect(analyser);
@@ -164,7 +159,7 @@ noiseBtn.addEventListener('click', async () => {
 
     const ambient = rmsSum / frames;
     noiseThreshold = Math.max(ambient * NOISE_MULTIPLIER, defaultThreshold);
-    noiseLabel.textContent = `Threshold set ${(noiseThreshold*100).toFixed(1)} % FS`;
+    noiseLabel.textContent = `Threshold set ${(noiseThreshold * 100).toFixed(1)} % FS`;
   } catch (err) {
     console.error(err);
     noiseLabel.textContent = 'Noise measure failed';
@@ -179,7 +174,7 @@ async function fetchBuffer(url) {
 }
 
 function trimSilence(buf, threshold) {
-  const d  = buf.getChannelData(0);
+  const d = buf.getChannelData(0);
   const sr = buf.sampleRate;
   let s = 0, e = d.length - 1;
   while (s < e && Math.abs(d[s]) < threshold) s++;
@@ -211,19 +206,19 @@ function renderWS(buf, container, prev, colour) {
 
 // Encode AudioBuffer -> WAV blob/url
 function bufferToWavBlob(buffer) {
-  const n  = buffer.length;
+  const n = buffer.length;
   const sr = buffer.sampleRate;
-  const pcm= buffer.getChannelData(0);
+  const pcm = buffer.getChannelData(0);
   const ab = new ArrayBuffer(44 + n * 2);
-  const v  = new DataView(ab);
-  const w  = (o, s) => [...s].forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));
-  w(0,'RIFF'); v.setUint32(4,36+n*2,true);
-  w(8,'WAVE'); w(12,'fmt '); v.setUint32(16,16,true);
-  v.setUint16(20,1,true); v.setUint16(22,1,true);
-  v.setUint32(24,sr,true); v.setUint32(28,sr*2,true);
-  v.setUint16(32,2,true); v.setUint16(34,16,true);
-  w(36,'data'); v.setUint32(40,n*2,true);
-  for(let i=0;i<n;i++) v.setInt16(44+i*2, Math.max(-1,Math.min(1,pcm[i]))*0x7FFF, true);
+  const v = new DataView(ab);
+  const w = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true);
+  w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true);
+  v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true);
+  v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  w(36, 'data'); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, pcm[i])) * 0x7FFF, true);
   return new Blob([ab], { type: 'audio/wav' });
 }
 function bufferToUrl(buffer) {
@@ -234,14 +229,14 @@ function renderOverlap() {
   overlapWF.innerHTML = '';
   const sDiv = document.createElement('div');
   const uDiv = document.createElement('div');
-  Object.assign(sDiv.style,{position:'absolute',inset:0});
-  Object.assign(uDiv.style,{position:'absolute',inset:0});
-  overlapWF.style.position='relative';
-  overlapWF.append(sDiv,uDiv);
-  const sWS = makeWS(sDiv,'rgba(70,130,180,.6)');    // steelblue
-  const uWS = makeWS(uDiv,'rgba(34,139,34,.6)');     // forestgreen
-  (sWS.setBuffer ?? sWS.loadDecodedBuffer ?? (b=>sWS.load(bufferToUrl(b))))(sampleBuf);
-  (uWS.setBuffer ?? uWS.loadDecodedBuffer ?? (b=>uWS.load(bufferToUrl(b))))(userBuf);
+  Object.assign(sDiv.style, { position: 'absolute', inset: 0 });
+  Object.assign(uDiv.style, { position: 'absolute', inset: 0 });
+  overlapWF.style.position = 'relative';
+  overlapWF.append(sDiv, uDiv);
+  const sWS = makeWS(sDiv, 'rgba(70,130,180,.6)');    // steelblue
+  const uWS = makeWS(uDiv, 'rgba(34,139,34,.6)');     // forestgreen
+  (sWS.setBuffer ?? sWS.loadDecodedBuffer ?? (b => sWS.load(bufferToUrl(b))))(sampleBuf);
+  (uWS.setBuffer ?? uWS.loadDecodedBuffer ?? (b => uWS.load(bufferToUrl(b))))(userBuf);
 }
 
 // ======= Sample playback =======
@@ -271,7 +266,7 @@ playBtn.addEventListener('click', async () => {
 // ======= Recording =======
 function toggle(rec) {
   recStartBtn.disabled = rec;
-  recStopBtn.disabled  = !rec;
+  recStopBtn.disabled = !rec;
 }
 
 let autoCheck = null;
@@ -283,7 +278,7 @@ recStartBtn.addEventListener('click', async () => {
     return;
   }
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     mediaRecorder = new MediaRecorder(stream);
     chunks = [];
     lastRecordingBlob = null;
@@ -293,33 +288,33 @@ recStartBtn.addEventListener('click', async () => {
       lastRecordingBlob = new Blob(chunks, { type: chunks[0]?.type || 'audio/webm' });
       userBuf = await ensureAC().decodeAudioData(await lastRecordingBlob.arrayBuffer());
       userBuf = trimSilence(userBuf, noiseThreshold);
-      userWS  = renderWS(userBuf, userWF, userWS, 'forestgreen');
+      userWS = renderWS(userBuf, userWF, userWS, 'forestgreen');
       if (sampleBuf) renderOverlap();
       playUserBtn.disabled = false;
       submitBtn.disabled = false;
-      stream.getTracks().forEach(t=>t.stop());
+      stream.getTracks().forEach(t => t.stop());
       toggle(false);
       say('Done.');
     };
     mediaRecorder.start();
     playUserBtn.disabled = true;
-    submitBtn.disabled   = true;
+    submitBtn.disabled = true;
 
-    const micSrc   = ensureAC().createMediaStreamSource(stream);
+    const micSrc = ensureAC().createMediaStreamSource(stream);
     const analyser = ensureAC().createAnalyser();
     analyser.fftSize = 2048;
     micSrc.connect(analyser);
 
     let silenceStart = null;
-    autoCheck  = setInterval(() => {
+    autoCheck = setInterval(() => {
       const buf = new Float32Array(analyser.fftSize);
       analyser.getFloatTimeDomainData(buf);
-      const rms = Math.sqrt(buf.reduce((s,x)=>s+x*x,0)/buf.length);
+      const rms = Math.sqrt(buf.reduce((s, x) => s + x * x, 0) / buf.length);
 
       if (rms < noiseThreshold) {
         silenceStart ??= Date.now();
         if (Date.now() - silenceStart > SILENCE_HOLD_MS &&
-            mediaRecorder.state === 'recording') {
+          mediaRecorder.state === 'recording') {
           say('Auto-stop: silence detected');
           mediaRecorder.stop();
         }
@@ -337,7 +332,7 @@ recStartBtn.addEventListener('click', async () => {
 });
 
 recStopBtn.addEventListener('click', () => {
-  if (mediaRecorder?.state==='recording') mediaRecorder.stop();
+  if (mediaRecorder?.state === 'recording') mediaRecorder.stop();
 });
 
 window.addEventListener('load', async () => {
@@ -364,12 +359,12 @@ playUserBtn.addEventListener('click', () => {
 submitBtn.addEventListener('click', async () => {
   if (!guardStudentInfo()) return;
   if (!selectedWord) { submitSay('Select a word first.'); return; }
-  if (!userBuf)      { submitSay('Record your pronunciation first.'); return; }
+  if (!userBuf) { submitSay('Record your pronunciation first.'); return; }
 
   try {
     submitSay('Encoding MP3…');
     // PCM float -> Int16
-    const sr  = userBuf.sampleRate;
+    const sr = userBuf.sampleRate;
     const pcm = userBuf.getChannelData(0);
     const pcm16 = new Int16Array(pcm.length);
     for (let i = 0; i < pcm.length; i++) {
@@ -415,4 +410,4 @@ submitBtn.addEventListener('click', async () => {
 
 // When Student ID changes, re-apply submitted colors for that student
 idInput.addEventListener('input', refreshSubmittedColors);
-nameInput.addEventListener('input', () => {/* no-op, just UX */});
+nameInput.addEventListener('input', () => {/* no-op, just UX */ });
