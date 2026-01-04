@@ -60,7 +60,7 @@ def find_syllable_nucleus(sound: parselmouth.Sound, pitch_floor=75, pitch_ceilin
     # 1. Find all voiced islands
     n_frames = pitch.get_number_of_frames()
     voiced_intervals = []
-    current_start = None
+    current_start: Optional[float] = None
     
     for i in range(1, n_frames + 1):
         if pitch.get_value_in_frame(i) > 0: # is voiced

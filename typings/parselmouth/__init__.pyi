@@ -6,8 +6,8 @@ from typing import ClassVar, Iterator, TypeVar, Generic, Any
 from numpy.typing import NDArray
 
 _T = TypeVar("_T")
-class Positive(Generic[_T]): ...
-class NonNegative(Generic[_T]): ...
+Positive = typing.Union[_T]
+NonNegative = typing.Union[_T]
 
 PRAAT_VERSION: str
 PRAAT_VERSION_DATE: str
