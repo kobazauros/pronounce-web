@@ -1,190 +1,164 @@
 {
     "words": [
         {
-            "word": "agree",
-            "ipa": "/əˈɡriː/",
+            "word": "bike",
+            "ipa": "/baɪk/",
             "vowels": [
-                "ə",
-                "iː"
-            ],
-            "stressed_vowel": "iː"
-        },
-        {
-            "word": "arriving",
-            "ipa": "/əˈraɪvɪŋ/",
-            "vowels": [
-                "ə",
-                "aɪ",
-                "ɪ"
-            ],
-            "stressed_vowel": "aɪ"
-        },
-        {
-            "word": "basic",
-            "ipa": "/ˈbeɪsɪk/",
-            "vowels": [
-                "eɪ",
-                "ɪ"
-            ],
-            "stressed_vowel": "eɪ"
-        },
-        {
-            "word": "duty",
-            "ipa": "/ˈdjuːti/",
-            "vowels": [
-                "uː",
-                "i"
-            ],
-            "stressed_vowel": "uː"
-        },
-        {
-            "word": "ego",
-            "ipa": "/ˈiːɡəʊ/",
-            "vowels": [
-                "iː",
-                "əʊ"
-            ],
-            "stressed_vowel": "iː"
-        },
-        {
-            "word": "father",
-            "ipa": "/ˈfɑːðə(r)/",
-            "vowels": [
-                "ɑː",
-                "ə"
-            ],
-            "stressed_vowel": "ɑː"
-        },
-        {
-            "word": "hearings",
-            "ipa": "/ˈhɪərɪŋz/",
-            "vowels": [
-                "ɪə",
-                "ɪ"
-            ],
-            "stressed_vowel": "ɪə"
-        },
-        {
-            "word": "hollow",
-            "ipa": "/ˈhɒləʊ/",
-            "vowels": [
-                "ɒ",
-                "əʊ"
-            ],
-            "stressed_vowel": "ɒ"
-        },
-        {
-            "word": "hotel",
-            "ipa": "/həʊˈtɛl/",
-            "vowels": [
-                "əʊ",
-                "e"
-            ],
-            "stressed_vowel": "e"
-        },
-        {
-            "word": "invite",
-            "ipa": "/ɪnˈvaɪt/",
-            "vowels": [
-                "ɪ",
                 "aɪ"
             ],
             "stressed_vowel": "aɪ"
         },
         {
-            "word": "outing",
-            "ipa": "/ˈaʊtɪŋ/",
+            "word": "bird",
+            "ipa": "/bɜːd/",
             "vowels": [
-                "aʊ",
-                "ɪ"
-            ],
-            "stressed_vowel": "aʊ"
-        },
-        {
-            "word": "packing",
-            "ipa": "/ˈpækɪŋ/",
-            "vowels": [
-                "æ",
-                "ɪ"
-            ],
-            "stressed_vowel": "æ"
-        },
-        {
-            "word": "putting",
-            "ipa": "/ˈpʊtɪŋ/",
-            "vowels": [
-                "ʊ",
-                "ɪ"
-            ],
-            "stressed_vowel": "ʊ"
-        },
-        {
-            "word": "recorded",
-            "ipa": "/rɪˈkɔːdɪd/",
-            "vowels": [
-                "ɪ",
-                "ɔː",
-                "ɪ"
-            ],
-            "stressed_vowel": "ɔː"
-        },
-        {
-            "word": "returning",
-            "ipa": "/rɪˈtɜːnɪŋ/",
-            "vowels": [
-                "ɪ",
-                "ɜː",
-                "ɪ"
+                "ɜː"
             ],
             "stressed_vowel": "ɜː"
         },
         {
-            "word": "tournament",
-            "ipa": "/ˈtʊənəmənt/",
+            "word": "boat",
+            "ipa": "/bəʊt/",
             "vowels": [
-                "ʊə",
-                "ə",
-                "ə"
+                "əʊ"
             ],
-            "stressed_vowel": "ʊə"
+            "stressed_vowel": "əʊ"
         },
         {
-            "word": "traveller",
-            "ipa": "/ˈtrævələ(r)/",
+            "word": "book",
+            "ipa": "/bʊk/",
             "vowels": [
-                "æ",
-                "ə",
-                "ə"
+                "ʊ"
             ],
-            "stressed_vowel": "æ"
+            "stressed_vowel": "ʊ"
         },
         {
-            "word": "under",
-            "ipa": "/ˈʌndə(r)/",
+            "word": "boy",
+            "ipa": "/bɔɪ/",
             "vowels": [
-                "ʌ",
-                "ə"
-            ],
-            "stressed_vowel": "ʌ"
-        },
-        {
-            "word": "voicing",
-            "ipa": "/ˈvɔɪsɪŋ/",
-            "vowels": [
-                "ɔɪ",
-                "ɪ"
+                "ɔɪ"
             ],
             "stressed_vowel": "ɔɪ"
         },
         {
-            "word": "wearily",
-            "ipa": "/ˈwɪərəli/",
+            "word": "cake",
+            "ipa": "/keɪk/",
             "vowels": [
-                "ɪə",
-                "ə",
-                "i"
+                "eɪ"
+            ],
+            "stressed_vowel": "eɪ"
+        },
+        {
+            "word": "call",
+            "ipa": "/kɔːl/",
+            "vowels": [
+                "ɔː"
+            ],
+            "stressed_vowel": "ɔː"
+        },
+        {
+            "word": "cat",
+            "ipa": "/kæt/",
+            "vowels": [
+                "æ"
+            ],
+            "stressed_vowel": "æ"
+        },
+        {
+            "word": "chair",
+            "ipa": "/tʃeə(r)/",
+            "vowels": [
+                "eə"
+            ],
+            "stressed_vowel": "eə"
+        },
+        {
+            "word": "cow",
+            "ipa": "/kaʊ/",
+            "vowels": [
+                "aʊ"
+            ],
+            "stressed_vowel": "aʊ"
+        },
+        {
+            "word": "cup",
+            "ipa": "/kʌp/",
+            "vowels": [
+                "ʌ"
+            ],
+            "stressed_vowel": "ʌ"
+        },
+        {
+            "word": "dark",
+            "ipa": "/dɑːk/",
+            "vowels": [
+                "ɑː"
+            ],
+            "stressed_vowel": "ɑː"
+        },
+        {
+            "word": "ear",
+            "ipa": "/ɪə(r)/",
+            "vowels": [
+                "ɪə"
             ],
             "stressed_vowel": "ɪə"
+        },
+        {
+            "word": "green",
+            "ipa": "/ɡriːn/",
+            "vowels": [
+                "iː"
+            ],
+            "stressed_vowel": "iː"
+        },
+        {
+            "word": "hot",
+            "ipa": "/hɒt/",
+            "vowels": [
+                "ɒ"
+            ],
+            "stressed_vowel": "ɒ"
+        },
+        {
+            "word": "moon",
+            "ipa": "/muːn/",
+            "vowels": [
+                "uː"
+            ],
+            "stressed_vowel": "uː"
+        },
+        {
+            "word": "red",
+            "ipa": "/red/",
+            "vowels": [
+                "e"
+            ],
+            "stressed_vowel": "e"
+        },
+        {
+            "word": "sit",
+            "ipa": "/sɪt/",
+            "vowels": [
+                "ɪ"
+            ],
+            "stressed_vowel": "ɪ"
+        },
+        {
+            "word": "tour",
+            "ipa": "/tʊə(r)/",
+            "vowels": [
+                "ʊə"
+            ],
+            "stressed_vowel": "ʊə"
+        },
+        {
+            "word": "wait",
+            "ipa": "/weɪt/",
+            "vowels": [
+                "eɪ"
+            ],
+            "stressed_vowel": "eɪ"
         }
     ]
 }
