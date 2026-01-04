@@ -4,7 +4,11 @@ from flask import Flask, request, jsonify, send_from_directory
 app = Flask(__name__)
 
 # --- CONFIGURATION ---
-UPLOAD_FOLDER = 'submissions'
+# 1. Find the absolute path to the folder containing this file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 2. Join it with 'submissions' so it always ends up in /home/username/mysite/submissions
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'submissions')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/')
@@ -34,14 +38,16 @@ def upload_file():
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
 
-    # 3. Save the file (Logic unindented to ensure a return value)
+    # 3. Save the file
     safe_name = "".join([c for c in student_name if c.isalnum() or c in (' ', '_')]).replace(" ", "_")
     filename = f"{student_id}_{safe_name}_{word}.mp3"
+    
+    # Save directly to the anchored path
     save_path = os.path.join(UPLOAD_FOLDER, filename)
     
     try:
         file.save(save_path)
-        print(f"Saved: {filename}")
+        print(f"Saved: {filename} to {save_path}")
         return jsonify({"message": f"Saved {filename}"}), 200
     except Exception as e:
         print(f"Error saving file: {e}")

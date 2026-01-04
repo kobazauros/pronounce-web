@@ -3,15 +3,15 @@ import static_ffmpeg
 static_ffmpeg.add_paths()
 import requests
 import json
-from pydub import AudioSegment
+from pydub import AudioSegment, silence
 
 # --- CONFIGURATION ---
 TARGET_RATE = 16000   # 16kHz standard for ML/Pronunciation
 TARGET_CHANNELS = 1   # Mono
 TARGET_DB = -1.0      # Peak loudness
 
-# The Golden 20 List
-WORDS = [
+# The Golden 20 List (Fallback)
+DEFAULT_WORDS = [
     "bike", "bird", "boat", "book", "boy", 
     "cake", "call", "cat", "chair", "cow", 
     "cup", "dark", "ear", "green", "hot", 
@@ -20,46 +20,73 @@ WORDS = [
 
 OUTPUT_DIR = "audio"
 
+def trim_audio(audio, silence_thresh=-50, chunk_size=10):
+    """
+    Trims silence from the beginning and end of the audio.
+    """
+    # Find start of audio
+    start_trim = silence.detect_leading_silence(audio, silence_threshold=silence_thresh, chunk_size=chunk_size)
+    
+    # Find end of audio (by reversing it)
+    end_trim = silence.detect_leading_silence(audio.reverse(), silence_threshold=silence_thresh, chunk_size=chunk_size)
+    
+    duration = len(audio)
+    
+    # Safety check: Don't trim if it removes everything
+    if start_trim + end_trim >= duration:
+        return audio 
+
+    return audio[start_trim:duration-end_trim]
+
 def standardize_audio(file_path):
     """
-    Standardizes audio to 16kHz, Mono, -1.0dB Peak.
-    Overwrites the original file.
+    Standardizes audio:
+    1. High-pass filter (remove DC offset/rumble)
+    2. Trim Silence (remove clicks/dead air)
+    3. Resample/Mono
+    4. Normalize Loudness
     """
     try:
         # 1. Load Audio
         audio = AudioSegment.from_file(file_path)
         
-        # 2. Resample (Fix Sample Rate)
+        # 2. High Pass Filter (80Hz)
+        # Removes low freq rumble and DC offset that messes up normalization
+        audio = audio.high_pass_filter(80)
+
+        # 3. Trim Silence (Crucial for Dictionary API files)
+        audio = trim_audio(audio)
+        
+        # 4. Resample (Fix Sample Rate)
         if audio.frame_rate != TARGET_RATE:
             audio = audio.set_frame_rate(TARGET_RATE)
         
-        # 3. Downmix (Stereo -> Mono)
+        # 5. Downmix (Stereo -> Mono)
         if audio.channels != TARGET_CHANNELS:
             audio = audio.set_channels(TARGET_CHANNELS)
         
-        # 4. Normalize Loudness (Peak Normalization)
-        # Calculates gain needed to hit TARGET_DB
-        change_in_dB = TARGET_DB - audio.max_dBFS
-        audio = audio.apply_gain(change_in_dB)
+        # 6. Normalize Loudness (Peak Normalization)
+        if audio.max_dBFS != -float('inf'):
+            change_in_dB = TARGET_DB - audio.max_dBFS
+            audio = audio.apply_gain(change_in_dB)
         
-        # 5. Overwrite File (Export as MP3 to match filename)
-        # Using specific bitrate to ensure quality
+        # 7. Overwrite File
         audio.export(file_path, format="mp3", bitrate="128k")
-        print(f"   -> Standardized: 16kHz | Mono | -1.0dB")
+        print(f"   -> Standardized: 16kHz | Mono | Trimmed | -1.0dB")
         return True
         
     except Exception as e:
         print(f"   -> ⚠️ Standardization Failed: {e}")
         return False
 
-def populate_words():
-    # Only useful if you have an index.json, otherwise not used in main execution
+def load_words_from_json():
+    json_path = os.path.join(OUTPUT_DIR, "index.json")
     try:
-        with open(os.path.join(OUTPUT_DIR, "index.json"), "r") as f:
+        with open(json_path, "r", encoding='utf-8') as f:
             data = json.load(f)
-            return data["words"]
-    except (FileNotFoundError, json.JSONDecodeError, UnicodeDecodeError):
-        return []
+            return data.get("words", [])
+    except (FileNotFoundError, json.JSONDecodeError):
+        return None
 
 def remove_old_audio():
     if os.path.exists(OUTPUT_DIR):
@@ -68,24 +95,35 @@ def remove_old_audio():
             if file.endswith(".mp3"):
                 os.remove(os.path.join(OUTPUT_DIR, file))
 
-def download_audio(word):
+def download_audio(word_input):
+    # Handle Dict vs String input
+    if isinstance(word_input, dict):
+        word = word_input.get("word")
+    else:
+        word = word_input
+
+    if not word: return False
+
     url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
+    
     try:
         response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+        if response.status_code != 200:
+            print(f"❌ API Error for {word}: {response.status_code}")
+            return False
+
         data = response.json()
         
         if isinstance(data, list) and len(data) > 0:
             phonetics = data[0].get("phonetics", [])
             audio_url = None
             
-            # 1. Try to find a British/UK version first (matches your IPA)
+            # Priority: UK -> US -> Any
             for p in phonetics:
-                if "audio" in p and p["audio"]:
-                    if "-uk" in p["audio"] or "-gb" in p["audio"]:
-                        audio_url = p["audio"]
-                        break
+                if "audio" in p and p["audio"] and ("-uk" in p["audio"] or "-gb" in p["audio"]):
+                    audio_url = p["audio"]
+                    break
             
-            # 2. If no UK, take any available audio
             if not audio_url:
                 for p in phonetics:
                     if "audio" in p and p["audio"]:
@@ -93,21 +131,16 @@ def download_audio(word):
                         break
             
             if audio_url:
-                # Fix Protocol if missing (API sometimes returns //ssl...)
-                if audio_url.startswith("//"):
-                    audio_url = "https:" + audio_url
+                if audio_url.startswith("//"): audio_url = "https:" + audio_url
                 
-                # Download
-                print(f"Downloading {word} from {audio_url}...")
+                print(f"Downloading {word}...", end=" ")
                 doc = requests.get(audio_url)
-                file_path = f"{OUTPUT_DIR}/{word}.mp3"
+                file_path = os.path.join(OUTPUT_DIR, f"{word}.mp3")
                 
                 with open(file_path, 'wb') as f:
                     f.write(doc.content)
                 
-                # --- APPLY STANDARDIZATION ---
                 standardize_audio(file_path)
-                
                 return True
             else:
                 print(f"❌ No audio found for {word}")
@@ -127,11 +160,19 @@ if __name__ == "__main__":
 
     remove_old_audio()
 
-    populate_words()
-        
-    print(f"--- Starting Download & Processing for {len(WORDS)} words ---")
-    count = 0
-    for w in WORDS:
+    words_to_process = load_words_from_json()
+    
+    if words_to_process:
+        print(f"--- Loaded {len(words_to_process)} words from index.json ---")
+    else:
+        words_to_process = DEFAULT_WORDS
+        print(f"--- Using default Golden 20 list ---")
+
+    print(f"--- Starting Download & Processing ---")
+    
+    success_count = 0
+    for w in words_to_process:
         if download_audio(w):
-            count += 1
-    print(f"--- Finished. Processed {count}/{len(WORDS)} files. ---")
+            success_count += 1
+            
+    print(f"--- Finished. Processed {success_count}/{len(words_to_process)} files. ---")

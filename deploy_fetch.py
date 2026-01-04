@@ -1,18 +1,17 @@
 import requests
 import os
-import hashlib
 
 # ================= CONFIGURATION =================
 # 1. Your PythonAnywhere Username
 USERNAME = 'kobazauros'
 
-# 2. Your API Token
+# 2. Your API Token here.
 API_TOKEN = '10226b92b1a2f5dff23f5661ea3043dc5cc949d8'
 
 # 3. Your Domain
 DOMAIN_NAME = f'{USERNAME}.pythonanywhere.com'
 
-# 4. Remote Paths
+# 4. Remote Paths (These MATCH your fixed flask_app.py)
 REMOTE_BASE_PATH = f'/home/{USERNAME}/mysite'
 REMOTE_AUDIO_PATH = f'{REMOTE_BASE_PATH}/audio'
 REMOTE_SUBMISSIONS_PATH = f'{REMOTE_BASE_PATH}/submissions'
@@ -27,11 +26,13 @@ DEPLOY_AUDIO = False        # Upload all files from local 'audio/' to server
 RETRIEVE_SUBMISSIONS = True # Download student recordings from server
 
 # 7. Specific Code Files to Sync
+# Added 'lame.min.js' because your new script.js depends on it!
 FILES_TO_SYNC = [
     'script.js',
     'index.html',
     'styles.css',
-    'flask_app.py'
+    'flask_app.py',
+    'lame.min.js' 
 ]
 # =================================================
 
@@ -113,7 +114,7 @@ def retrieve_submissions_down():
     files_list = list_remote_files(REMOTE_SUBMISSIONS_PATH)
     
     if not files_list:
-        print("⚠️ No files found on server or could not list directory.")
+        print(f"⚠️ No files found in {REMOTE_SUBMISSIONS_PATH}")
         return
 
     count = 0
