@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify, send_from_directory
 app = Flask(__name__)
 
 # --- CONFIGURATION ---
-UPLOAD_FOLDER = 'student_recordings'
+UPLOAD_FOLDER = 'submissions'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/')
