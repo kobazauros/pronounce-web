@@ -45,13 +45,19 @@ def upload_file():
     # Save directly to the anchored path
     save_path = os.path.join(UPLOAD_FOLDER, filename)
     
+    response = None
+    status_code = 200
+
     try:
         file.save(save_path)
         print(f"Saved: {filename} to {save_path}")
-        return jsonify({"message": f"Saved {filename}"}), 200
+        response = jsonify({"message": f"Saved {filename}"})
     except Exception as e:
         print(f"Error saving file: {e}")
-        return jsonify({"error": "Failed to save file"}), 500
+        response = jsonify({"error": "Failed to save file"})
+        status_code = 500
+        
+    return response, status_code
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

@@ -6,3 +6,4 @@ praat-parselmouth==0.4.7
 pydub==0.25.1
 requests==2.32.3
 static-ffmpeg==2.7
+scipy==1.11.4

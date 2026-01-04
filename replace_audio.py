@@ -49,28 +49,24 @@ def standardize_audio(file_path):
     try:
         # 1. Load Audio
         audio = AudioSegment.from_file(file_path)
-        
-        # 2. High Pass Filter (80Hz)
-        # Removes low freq rumble and DC offset that messes up normalization
-        audio = audio.high_pass_filter(80)
-
-        # 3. Trim Silence (Crucial for Dictionary API files)
+       
+        # 2. Trim Silence (Crucial for Dictionary API files)
         audio = trim_audio(audio)
         
-        # 4. Resample (Fix Sample Rate)
+        # 3. Resample (Fix Sample Rate)
         if audio.frame_rate != TARGET_RATE:
             audio = audio.set_frame_rate(TARGET_RATE)
         
-        # 5. Downmix (Stereo -> Mono)
+        # 4. Downmix (Stereo -> Mono)
         if audio.channels != TARGET_CHANNELS:
             audio = audio.set_channels(TARGET_CHANNELS)
         
-        # 6. Normalize Loudness (Peak Normalization)
+        # 5. Normalize Loudness (Peak Normalization)
         if audio.max_dBFS != -float('inf'):
             change_in_dB = TARGET_DB - audio.max_dBFS
             audio = audio.apply_gain(change_in_dB)
         
-        # 7. Overwrite File
+        # 6. Overwrite File
         audio.export(file_path, format="mp3", bitrate="128k")
         print(f"   -> Standardized: 16kHz | Mono | Trimmed | -1.0dB")
         return True
