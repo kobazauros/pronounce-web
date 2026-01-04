@@ -343,3 +343,86 @@ window.addEventListener('load', async () => {
 });
 
 playUserBtn.addEventListener('click', () => {
+  if (!userBuf) {
+    say('Record something first.');
+    return;
+  }
+  const src = ensureAC().createBufferSource();
+  src.buffer = userBuf;
+  src.connect(ensureAC().destination);
+  src.start();
+});
+
+// ======= Submit last recording =======
+submitBtn.addEventListener('click', async () => {
+  if (!guardStudentInfo()) return;
+  if (!selectedWord) { submitSay('Select a word first.'); return; }
+  if (!userBuf) { submitSay('Record your pronunciation first.'); return; }
+
+  try {
+    submitSay('Encoding MP3…');
+    // <--- NOTE: userBuf is now guaranteed to be 16kHz because of ensureAC() --->
+    const sr = userBuf.sampleRate;
+    const pcm = userBuf.getChannelData(0);
+    const pcm16 = new Int16Array(pcm.length);
+    for (let i = 0; i < pcm.length; i++) {
+      const s = Math.max(-1, Math.min(1, pcm[i]));
+      pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+    }
+
+    // MP3 encode with lamejs (mono)
+    const mp3enc = new lamejs.Mp3Encoder(1, sr, 128); // 128 kbps
+    const CHUNK = 1152;
+    const out = [];
+    for (let i = 0; i < pcm16.length; i += CHUNK) {
+      const slice = pcm16.subarray(i, i + CHUNK);
+      const buff = mp3enc.encodeBuffer(slice);
+      if (buff.length) out.push(new Uint8Array(buff));
+    }
+    const end = mp3enc.flush();
+    if (end.length) out.push(new Uint8Array(end));
+
+    // 1. Create the Blob
+    const mp3Blob = new Blob(out, { type: 'audio/mpeg' });
+
+    // 2. Prepare Data for Server
+    const sid = idInput.value.trim();
+    if (!sid) {
+      submitSay('⚠️ Enter Student ID first!');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', mp3Blob, `${sid}-${selectedWord}.mp3`);
+    formData.append('studentId', sid);
+    formData.append('word', selectedWord);
+
+    submitSay('Uploading...');
+    submitBtn.disabled = true;
+
+    const response = await fetch('/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (response.ok) {
+      submitSay(`✅ Saved: ${selectedWord}`);
+      const prog = loadProgress(sid);
+      prog[selectedWord] = true;
+      saveProgress(sid, prog);
+      refreshSubmittedColors();
+    } else {
+      submitSay('⚠️ Server Error. Try again.');
+      console.error('Server responded with error');
+    }
+
+  } catch (err) {
+    console.error(err);
+    submitSay('⚠️ Network Error.');
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+
+idInput.addEventListener('input', refreshSubmittedColors);
+nameInput.addEventListener('input', () => { });
