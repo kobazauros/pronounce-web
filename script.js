@@ -5,7 +5,8 @@
 // ======= Configuration =======
 let WORDS = [];
 const AUDIO_EXT = 'mp3';
-const TARGET_RATE = 16000; // <--- NEW: Force standard rate
+const TARGET_RATE = 16000; // Force standard rate
+const ensureAC = () => (ac ||= new AudioContext({ sampleRate: TARGET_RATE }));
 
 // Manifest loader
 async function loadManifest() {
@@ -48,9 +49,6 @@ const noiseLabel = document.getElementById('noise-result');
 
 // ------- Audio globals -------
 let ac;
-// <--- UPDATED: Force AudioContext to 16kHz --->
-const ensureAC = () => (ac ||= new AudioContext({ sampleRate: TARGET_RATE }));
-
 let sampleBuf, userBuf;
 let sampleWS, userWS;
 let mediaRecorder, chunks = [];
@@ -61,8 +59,6 @@ let selectedWord = null;
 const defaultThreshold = 0.055;
 const NOISE_MULTIPLIER = 3.0;
 let noiseThreshold = defaultThreshold;
-
-// Auto-stop settings
 const SILENCE_HOLD_MS = 1200;
 const ANALYSE_INTERVAL = 100;
 
@@ -120,11 +116,29 @@ function refreshSubmittedColors() {
   }
 }
 
+// --- HELPER: Normalize Audio to -1.0 dB ---
+function normalizeBuffer(buffer) {
+  const data = buffer.getChannelData(0);
+  let maxPeak = 0;
+  for (let i = 0; i < data.length; i++) {
+    const abs = Math.abs(data[i]);
+    if (abs > maxPeak) maxPeak = abs;
+  }
+  if (maxPeak === 0) return buffer;
+  const target = 0.89125; // -1.0 dB
+  const gain = target / maxPeak;
+  const newBuf = ac.createBuffer(1, buffer.length, buffer.sampleRate);
+  const newData = newBuf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) {
+    newData[i] = data[i] * gain;
+  }
+  return newBuf;
+}
+
 // ------- Noise measurement -------
 noiseBtn.addEventListener('click', async () => {
   try {
     noiseLabel.textContent = 'Measuring…';
-    // <--- UPDATED: Request specific constraints --->
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: { channelCount: 1, sampleRate: TARGET_RATE }
     });
@@ -265,7 +279,6 @@ recStartBtn.addEventListener('click', async () => {
     return;
   }
   try {
-    // <--- UPDATED: Explicit Constraints for "Gate 1" --->
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: {
         channelCount: 1,
@@ -284,7 +297,6 @@ recStartBtn.addEventListener('click', async () => {
       clearInterval(autoCheck);
       lastRecordingBlob = new Blob(chunks, { type: chunks[0]?.type || 'audio/webm' });
 
-      // Because 'ensureAC()' forces 16kHz, this decode will automatically resample!
       userBuf = await ensureAC().decodeAudioData(await lastRecordingBlob.arrayBuffer());
       userBuf = trimSilence(userBuf, noiseThreshold);
       userWS = renderWS(userBuf, userWF, userWS, 'forestgreen');
@@ -360,18 +372,23 @@ submitBtn.addEventListener('click', async () => {
   if (!userBuf) { submitSay('Record your pronunciation first.'); return; }
 
   try {
-    submitSay('Encoding MP3…');
-    // <--- NOTE: userBuf is now guaranteed to be 16kHz because of ensureAC() --->
-    const sr = userBuf.sampleRate;
-    const pcm = userBuf.getChannelData(0);
+    submitSay('Normalizing & Encoding...');
+
+    // 1. NORMALIZE (Boost volume to -1.0dB)
+    const normBuf = normalizeBuffer(userBuf);
+
+    // 2. Prepare for MP3 Encoding
+    const sr = normBuf.sampleRate;
+    const pcm = normBuf.getChannelData(0);
     const pcm16 = new Int16Array(pcm.length);
+
     for (let i = 0; i < pcm.length; i++) {
       const s = Math.max(-1, Math.min(1, pcm[i]));
       pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
     }
 
-    // MP3 encode with lamejs (mono)
-    const mp3enc = new lamejs.Mp3Encoder(1, sr, 128); // 128 kbps
+    // 3. Encode MP3
+    const mp3enc = new lamejs.Mp3Encoder(1, sr, 128);
     const CHUNK = 1152;
     const out = [];
     for (let i = 0; i < pcm16.length; i += CHUNK) {
@@ -382,24 +399,24 @@ submitBtn.addEventListener('click', async () => {
     const end = mp3enc.flush();
     if (end.length) out.push(new Uint8Array(end));
 
-    // 1. Create the Blob
+    // 4. Create Blob
     const mp3Blob = new Blob(out, { type: 'audio/mpeg' });
 
-    // 2. Prepare Data for Server
+    // 5. Prepare Upload Data (WITH NAME)
     const sid = idInput.value.trim();
-    if (!sid) {
-      submitSay('⚠️ Enter Student ID first!');
-      return;
-    }
+    const sname = nameInput.value.trim(); // <--- Capture Name
 
     const formData = new FormData();
+    // Filename format: "STUDENTID-WORD.mp3" (standard convention)
     formData.append('file', mp3Blob, `${sid}-${selectedWord}.mp3`);
     formData.append('studentId', sid);
+    formData.append('studentName', sname); // <--- Send Name
     formData.append('word', selectedWord);
 
     submitSay('Uploading...');
     submitBtn.disabled = true;
 
+    // 6. Send to PythonAnywhere
     const response = await fetch('/upload', {
       method: 'POST',
       body: formData
@@ -407,10 +424,13 @@ submitBtn.addEventListener('click', async () => {
 
     if (response.ok) {
       submitSay(`✅ Saved: ${selectedWord}`);
+
+      // Update Local Progress
       const prog = loadProgress(sid);
       prog[selectedWord] = true;
       saveProgress(sid, prog);
       refreshSubmittedColors();
+
     } else {
       submitSay('⚠️ Server Error. Try again.');
       console.error('Server responded with error');
@@ -418,7 +438,7 @@ submitBtn.addEventListener('click', async () => {
 
   } catch (err) {
     console.error(err);
-    submitSay('⚠️ Network Error.');
+    submitSay('⚠️ Processing Error.');
   } finally {
     submitBtn.disabled = false;
   }
