@@ -31,6 +31,13 @@
           <input id="student-id" placeholder="e.g., 6701202001" />
         </label>
       </div>
+
+      <div id="noise-status-container" style="margin-top: 10px; font-size: 0.9em; color: #666; display: none;">
+        <span id="noise-indicator-icon">🎤</span>
+        <span id="noise-indicator-text">Initializing microphone...</span>
+        <span id="noise-level-display" style="font-weight: bold; margin-left: 10px;">-- dB</span>
+      </div>
+
       <div id="student-msg" class="inline-message"></div>
     </section>
 
@@ -54,11 +61,6 @@
     <!-- 3  Your Pronunciation -->
     <section id="record-section">
       <h2>Your Pronunciation</h2>
-
-      <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
-        <button id="measure-noise">Measure Background Noise</button>
-        <span id="noise-result" class="inline-message" style="margin-left: 10px;"></span>
-      </div>
 
       <div class="record-controls">
         <button id="record-start">Begin Recording</button>

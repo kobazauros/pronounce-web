@@ -5,7 +5,7 @@
 // ======= Configuration =======
 let WORDS = [];
 const AUDIO_EXT = 'mp3';
-const TARGET_RATE = 16000; // Force standard rate
+const TARGET_RATE = 16000;
 const ensureAC = () => (ac ||= new AudioContext({ sampleRate: TARGET_RATE }));
 
 // Manifest loader
@@ -44,8 +44,11 @@ const overlapWF = document.getElementById('difference-waveform-container');
 const msgBox = document.getElementById('message-box');
 const sampleMsg = document.getElementById('sample-message');
 const submitMsg = document.getElementById('submit-msg');
-const noiseBtn = document.getElementById('measure-noise');
-const noiseLabel = document.getElementById('noise-result');
+
+// Noise UI
+const noiseStatusContainer = document.getElementById('noise-status-container');
+const noiseText = document.getElementById('noise-indicator-text');
+const noiseLevelDisplay = document.getElementById('noise-level-display');
 
 // ------- Audio globals -------
 let ac;
@@ -55,13 +58,18 @@ let mediaRecorder, chunks = [];
 let lastRecordingBlob = null;
 let selectedWord = null;
 
-// thresholds
-const defaultThreshold = 0.01; // Was 0.055. Lowered to 1% to catch soft consonants.
-const NOISE_MULTIPLIER = 2.0;  // Was 3.0. Reduced to be less sensitive to AC/fans.
+// Thresholds & Variables
+const defaultThreshold = 0.01;
 let noiseThreshold = defaultThreshold;
-const SILENCE_HOLD_MS = 1500;  // Increased from 1200ms to give you a bit more pause time.
-const START_GRACE_MS = 2000;   // NEW: Ignore silence for the first 2 seconds.
+const SILENCE_HOLD_MS = 1500;
+const START_GRACE_MS = 2000;
 const ANALYSE_INTERVAL = 100;
+
+// === STATE MACHINE VARIABLES ===
+let isAppBusy = false;     // TRUE if Recording or Playing
+let sessionActive = false; // TRUE if User has started typing name
+let isMonitoring = false;  // TRUE if currently listening to room noise
+
 // ======= Helpers =======
 const say = txt => (msgBox.textContent = txt ?? '');
 const sampleSay = txt => (sampleMsg.textContent = txt ?? '');
@@ -116,7 +124,6 @@ function refreshSubmittedColors() {
   }
 }
 
-// --- HELPER: Normalize Audio to -1.0 dB ---
 function normalizeBuffer(buffer) {
   const data = buffer.getChannelData(0);
   let maxPeak = 0;
@@ -125,7 +132,7 @@ function normalizeBuffer(buffer) {
     if (abs > maxPeak) maxPeak = abs;
   }
   if (maxPeak === 0) return buffer;
-  const target = 0.89125; // -1.0 dB
+  const target = 0.89125;
   const gain = target / maxPeak;
   const newBuf = ac.createBuffer(1, buffer.length, buffer.sampleRate);
   const newData = newBuf.getChannelData(0);
@@ -135,38 +142,122 @@ function normalizeBuffer(buffer) {
   return newBuf;
 }
 
-// ------- Noise measurement -------
-noiseBtn.addEventListener('click', async () => {
+// ============================================
+//  CORE STATE MACHINE LOGIC
+// ============================================
+let monitorStream = null;
+let monitorCtx = null;
+let currentNoisePeak = 0;
+
+// 1. RESUME: Try to start monitoring (Subject to Rules)
+async function resumeMonitoring() {
+  // RULE 1: If App is Busy (Recording/Playing), stay OFF.
+  if (isAppBusy) return;
+  // RULE 2: If Privacy Mode (Tab hidden), stay OFF.
+  if (document.hidden) return;
+  // RULE 3: If Session hasn't started (No name), stay OFF.
+  if (!sessionActive) return;
+  // RULE 4: If already running, do nothing.
+  if (isMonitoring) return;
+
   try {
-    noiseLabel.textContent = 'Measuring…';
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: { channelCount: 1, sampleRate: TARGET_RATE }
-    });
-    const ac = ensureAC();
-    const src = ac.createMediaStreamSource(stream);
-    const analyser = ac.createAnalyser();
-    analyser.fftSize = 2048;
-    src.connect(analyser);
-
-    let rmsSum = 0, frames = 0;
-    const end = Date.now() + 1500;
-    while (Date.now() < end) {
-      const buf = new Float32Array(analyser.fftSize);
-      analyser.getFloatTimeDomainData(buf);
-      const rms = Math.sqrt(buf.reduce((s, x) => s + x * x, 0) / buf.length);
-      rmsSum += rms; frames++;
-      await new Promise(r => setTimeout(r, 50));
+    if (noiseStatusContainer) noiseStatusContainer.style.display = 'block';
+    if (noiseText) {
+      noiseText.textContent = "Monitoring noise...";
+      noiseText.style.color = "#666";
     }
-    stream.getTracks().forEach(t => t.stop());
 
-    const ambient = rmsSum / frames;
-    noiseThreshold = Math.max(ambient * NOISE_MULTIPLIER, defaultThreshold);
-    noiseLabel.textContent = `Threshold set ${(noiseThreshold * 100).toFixed(1)} % FS`;
+    monitorStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    monitorCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = monitorCtx.createMediaStreamSource(monitorStream);
+    const analyser = monitorCtx.createAnalyser();
+
+    analyser.fftSize = 2048;
+    source.connect(analyser);
+
+    const buffer = new Float32Array(analyser.fftSize);
+    isMonitoring = true;
+
+    // Start Analysis Loop
+    function loop() {
+      if (!isMonitoring) return;
+      requestAnimationFrame(loop);
+
+      analyser.getFloatTimeDomainData(buffer);
+      let framePeak = 0;
+      for (let i = 0; i < buffer.length; i++) {
+        const abs = Math.abs(buffer[i]);
+        if (abs > framePeak) framePeak = abs;
+      }
+      currentNoisePeak = (currentNoisePeak * 0.9) + (framePeak * 0.1);
+
+      if (noiseLevelDisplay) {
+        const percent = (currentNoisePeak * 1000).toFixed(0);
+        noiseLevelDisplay.textContent = `Level: ${percent}`;
+
+        if (currentNoisePeak < 0.02) noiseLevelDisplay.style.color = "green";
+        else if (currentNoisePeak < 0.05) noiseLevelDisplay.style.color = "orange";
+        else noiseLevelDisplay.style.color = "red";
+      }
+    }
+    loop();
+
   } catch (err) {
-    console.error(err);
-    noiseLabel.textContent = 'Noise measure failed';
+    console.error("Monitor Error:", err);
+    if (noiseText) noiseText.textContent = "Mic Busy or Blocked";
   }
+}
+
+// 2. PAUSE: Kill the monitor (For Privacy or to Free Hardware)
+function pauseMonitoring() {
+  if (!isMonitoring) return;
+
+  isMonitoring = false;
+
+  // Kill Hardware
+  if (monitorStream) {
+    monitorStream.getTracks().forEach(t => t.stop());
+    monitorStream = null;
+  }
+  if (monitorCtx) {
+    monitorCtx.close();
+    monitorCtx = null;
+  }
+
+  // --- SAVE & CLAMP THRESHOLD ---
+  // If a plane flew over (0.8), cap it at 0.15 (15%)
+  let measured = currentNoisePeak * 1.5;
+  if (measured > 0.15) measured = 0.15;
+  noiseThreshold = Math.max(defaultThreshold, measured);
+
+  // Update UI based on context
+  if (isAppBusy) {
+    if (noiseText) noiseText.textContent = "Paused (Action in progress)";
+    if (noiseStatusContainer) noiseStatusContainer.style.color = "orange";
+  } else {
+    if (noiseText) noiseText.textContent = "Paused (Privacy Mode)";
+    if (noiseStatusContainer) noiseStatusContainer.style.color = "gray";
+  }
+}
+
+// === TRIGGERS ===
+
+// A. Start Session (User touches Name field)
+nameInput.addEventListener('focus', () => {
+  sessionActive = true;
+  resumeMonitoring();
 });
+
+// B. Privacy Protection (Tab Hidden / Blurred / Closed)
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) pauseMonitoring();
+  else resumeMonitoring();
+});
+window.addEventListener('blur', pauseMonitoring);
+window.addEventListener('focus', resumeMonitoring);
+window.addEventListener('beforeunload', pauseMonitoring);
+
 
 // ------- Audio utils -------
 async function fetchBuffer(url) {
@@ -175,55 +266,70 @@ async function fetchBuffer(url) {
   return ensureAC().decodeAudioData(await res.arrayBuffer());
 }
 
-function trimSilence(buf, threshold) {
+function trimSilence(buf) {
   const d = buf.getChannelData(0);
   const sr = buf.sampleRate;
+
+  // 1. Find the Peak Volume of the recording
+  let peak = 0;
+  for (let i = 0; i < d.length; i++) {
+    const abs = Math.abs(d[i]);
+    if (abs > peak) peak = abs;
+  }
+
+  // 2. Define Dynamic Threshold (The "Gate")
+  // We set the cutoff at 5% (0.05) of your max volume.
+  // - Lip smacks/Breaths are usually < 5% of peak voice.
+  // - Vowels are 100% of peak.
+  // We also ensure we don't go below the ambient noise floor (noiseThreshold).
+  const effectiveThreshold = Math.max(peak * 0.05, noiseThreshold);
+
+  console.log(`Smart Trim: Peak=${peak.toFixed(4)} Threshold=${effectiveThreshold.toFixed(4)}`);
+
   let s = 0, e = d.length - 1;
 
-  // --- IMPROVED START TRIM ---
-  // We require "sustained" sound to confirm start, not just one spike.
+  // 3. Scan Forward (Start)
   while (s < e) {
-    if (Math.abs(d[s]) >= threshold) {
-      // We found a spike. Is it a click? 
-      // Check the next ~5ms (approx 220 samples at 44.1kHz) for energy.
+    if (Math.abs(d[s]) >= effectiveThreshold) {
+      // Anti-Click Check: Look ahead 100ms to ensure it's sustained sound
       let isRealSound = false;
-      // We scan a small window ahead to see if the sound continues
-      const scanWindow = 250;
+      const scanWindow = sr * 0.1; // 100ms window
       for (let i = 1; i < scanWindow && (s + i) < e; i++) {
-        if (Math.abs(d[s + i]) > threshold) {
+        if (Math.abs(d[s + i]) > effectiveThreshold) {
           isRealSound = true;
           break;
         }
       }
-
-      if (isRealSound) {
-        break; // Confirmed: this is the real start
-      } else {
-        // It was a lone click/pop. Skip it and keep searching.
-        s += scanWindow;
-        continue;
-      }
+      if (isRealSound) break;
+      // If not real sound (just a click), we skip it and keep scanning
+      s += scanWindow;
+      continue;
     }
     s++;
   }
 
-  // End trim (usually fine as is, but good to be symmetric)
-  while (e > s && Math.abs(d[e]) < threshold) e--;
+  // 4. Scan Backward (End)
+  // We use a slightly higher threshold for the end to cut breath trails aggressively
+  const endThreshold = effectiveThreshold * 0.8;
+  while (e > s && Math.abs(d[e]) < endThreshold) e--;
 
-  if (e - s < sr * 0.05) return buf; // Return original if result is too short
+  // Safety: If we trimmed everything away, return original
+  if (e - s < sr * 0.1) return buf;
 
-  const out = ac.createBuffer(1, e - s + 1, sr);
-  out.copyToChannel(d.subarray(s, e + 1), 0);
+  // 5. Add a tiny bit of "Room Tone" padding (fade in/out feel)
+  // This prevents the word from sounding too "chopped"
+  const padding = Math.floor(sr * 0.02); // 20ms padding
+  const startPad = Math.max(0, s - padding);
+  const endPad = Math.min(d.length, e + padding);
+
+  const out = ac.createBuffer(1, endPad - startPad, sr);
+  out.copyToChannel(d.subarray(startPad, endPad), 0);
   return out;
 }
 
 function makeWS(container, colour) {
   return WaveSurfer.create({
-    container,
-    height: 200,
-    waveColor: colour,
-    cursorColor: '#666',
-    responsive: true
+    container, height: 200, waveColor: colour, cursorColor: '#666', responsive: true
   });
 }
 
@@ -252,9 +358,7 @@ function bufferToWavBlob(buffer) {
   for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, pcm[i])) * 0x7FFF, true);
   return new Blob([ab], { type: 'audio/wav' });
 }
-function bufferToUrl(buffer) {
-  return URL.createObjectURL(bufferToWavBlob(buffer));
-}
+function bufferToUrl(buffer) { return URL.createObjectURL(bufferToWavBlob(buffer)); }
 
 function renderOverlap() {
   overlapWF.innerHTML = '';
@@ -270,14 +374,16 @@ function renderOverlap() {
   (uWS.setBuffer ?? uWS.loadDecodedBuffer ?? (b => uWS.load(bufferToUrl(b))))(userBuf);
 }
 
-// ======= Sample playback =======
+// ======= Sample playback (Pauses Monitor) =======
 playBtn.addEventListener('click', async () => {
   if (!guardStudentInfo()) return;
   const word = selectedWord;
-  if (!word) {
-    sampleSay('Select a word first.');
-    return;
-  }
+  if (!word) { sampleSay('Select a word first.'); return; }
+
+  // 1. SET BUSY & STOP MONITOR
+  isAppBusy = true;
+  pauseMonitoring();
+
   sampleSay('Loading sample…');
   try {
     sampleBuf = await fetchBuffer(`audio/${word}.${AUDIO_EXT}`);
@@ -285,16 +391,26 @@ playBtn.addEventListener('click', async () => {
     const src = ensureAC().createBufferSource();
     src.buffer = sampleBuf;
     src.connect(ensureAC().destination);
+
+    // 2. RESUME MONITOR ON END
+    src.onended = () => {
+      isAppBusy = false;
+      resumeMonitoring(); // <--- Auto Resume
+    };
+
     src.start();
     sampleWS = renderWS(sampleBuf, sampleWF, sampleWS, 'steelblue');
     sampleSay('Sample ready.');
   } catch (e) {
     console.error(e);
     sampleSay('Sample not found.');
+    // Safety reset
+    isAppBusy = false;
+    resumeMonitoring();
   }
 });
 
-// ======= Recording =======
+// ======= Recording (Pauses Monitor) =======
 function toggle(rec) {
   recStartBtn.disabled = rec;
   recStopBtn.disabled = !rec;
@@ -304,19 +420,16 @@ let autoCheck = null;
 
 recStartBtn.addEventListener('click', async () => {
   if (!guardStudentInfo()) return;
-  if (!selectedWord) {
-    say('Select a word first.');
-    return;
-  }
+  if (!selectedWord) { say('Select a word first.'); return; }
+
+  // 1. SET BUSY & STOP MONITOR
+  isAppBusy = true;
+  pauseMonitoring();
+
+  let stream;
   try {
-    // 1. Get Microphone Stream
-    // We REMOVED 'sampleRate: TARGET_RATE' to prevent "OverconstrainedError" / "Mic Error"
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        channelCount: 1,
-        echoCancellation: true,
-        noiseSuppression: true
-      }
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true }
     });
 
     mediaRecorder = new MediaRecorder(stream);
@@ -327,29 +440,36 @@ recStartBtn.addEventListener('click', async () => {
     mediaRecorder.onstop = async () => {
       clearInterval(autoCheck);
       lastRecordingBlob = new Blob(chunks, { type: chunks[0]?.type || 'audio/webm' });
-
-      // Decode and Resample to 16kHz automatically here
       userBuf = await ensureAC().decodeAudioData(await lastRecordingBlob.arrayBuffer());
-
-      // Trim Silence (using gentler threshold)
       const trimLevel = Math.min(noiseThreshold * 0.5, 0.01);
       userBuf = trimSilence(userBuf, trimLevel);
-
       userWS = renderWS(userBuf, userWF, userWS, 'forestgreen');
-
       if (sampleBuf) renderOverlap();
       playUserBtn.disabled = false;
       submitBtn.disabled = false;
       stream.getTracks().forEach(t => t.stop());
       toggle(false);
       say('Done.');
+
+      // 2. RESUME MONITOR (Post-Recording)
+      isAppBusy = false;
+      resumeMonitoring(); // <--- Auto Resume
     };
 
     mediaRecorder.start();
     playUserBtn.disabled = true;
     submitBtn.disabled = true;
 
-    // 2. Setup Silence Detection
+    // --- Hard Time Limit (5 Seconds) ---
+    const MAX_RECORDING_TIME = 5000;
+    const safetyTimer = setTimeout(() => {
+      if (mediaRecorder.state === 'recording') {
+        say('Time limit reached.');
+        mediaRecorder.stop();
+      }
+    }, MAX_RECORDING_TIME);
+
+    // Setup Silence Detection
     const micSrc = ensureAC().createMediaStreamSource(stream);
     const analyser = ensureAC().createAnalyser();
     analyser.fftSize = 2048;
@@ -362,8 +482,6 @@ recStartBtn.addEventListener('click', async () => {
       const buf = new Float32Array(analyser.fftSize);
       analyser.getFloatTimeDomainData(buf);
       const rms = Math.sqrt(buf.reduce((s, x) => s + x * x, 0) / buf.length);
-
-      // Grace Period Logic
       const isGracePeriod = (Date.now() - recordingStartTime) < START_GRACE_MS;
 
       if (rms < noiseThreshold) {
@@ -371,6 +489,7 @@ recStartBtn.addEventListener('click', async () => {
           silenceStart ??= Date.now();
           if (Date.now() - silenceStart > SILENCE_HOLD_MS && mediaRecorder.state === 'recording') {
             say('Auto-stop: silence detected');
+            clearTimeout(safetyTimer); // Cancel safety timer
             mediaRecorder.stop();
           }
         }
@@ -385,6 +504,7 @@ recStartBtn.addEventListener('click', async () => {
   } catch (e) {
     console.error(e);
     say('Mic error: ' + (e.name || e.message || e));
+    if (stream) stream.getTracks().forEach(t => t.stop());
   }
 });
 
@@ -400,10 +520,7 @@ window.addEventListener('load', async () => {
 });
 
 playUserBtn.addEventListener('click', () => {
-  if (!userBuf) {
-    say('Record something first.');
-    return;
-  }
+  if (!userBuf) { say('Record something first.'); return; }
   const src = ensureAC().createBufferSource();
   src.buffer = userBuf;
   src.connect(ensureAC().destination);
@@ -418,11 +535,7 @@ submitBtn.addEventListener('click', async () => {
 
   try {
     submitSay('Normalizing & Encoding...');
-
-    // 1. NORMALIZE (Boost volume to -1.0dB)
     const normBuf = normalizeBuffer(userBuf);
-
-    // 2. Prepare for MP3 Encoding
     const sr = normBuf.sampleRate;
     const pcm = normBuf.getChannelData(0);
     const pcm16 = new Int16Array(pcm.length);
@@ -432,7 +545,6 @@ submitBtn.addEventListener('click', async () => {
       pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
     }
 
-    // 3. Encode MP3
     const mp3enc = new lamejs.Mp3Encoder(1, sr, 128);
     const CHUNK = 1152;
     const out = [];
@@ -444,24 +556,19 @@ submitBtn.addEventListener('click', async () => {
     const end = mp3enc.flush();
     if (end.length) out.push(new Uint8Array(end));
 
-    // 4. Create Blob
     const mp3Blob = new Blob(out, { type: 'audio/mpeg' });
-
-    // 5. Prepare Upload Data (WITH NAME)
     const sid = idInput.value.trim();
-    const sname = nameInput.value.trim(); // <--- Capture Name
+    const sname = nameInput.value.trim();
 
     const formData = new FormData();
-    // Filename format: "STUDENTID-WORD.mp3" (standard convention)
     formData.append('file', mp3Blob, `${sid}-${selectedWord}.mp3`);
     formData.append('studentId', sid);
-    formData.append('studentName', sname); // <--- Send Name
+    formData.append('studentName', sname);
     formData.append('word', selectedWord);
 
     submitSay('Uploading...');
     submitBtn.disabled = true;
 
-    // 6. Send to PythonAnywhere
     const response = await fetch('/upload', {
       method: 'POST',
       body: formData
@@ -469,16 +576,12 @@ submitBtn.addEventListener('click', async () => {
 
     if (response.ok) {
       submitSay(`✅ Saved: ${selectedWord}`);
-
-      // Update Local Progress
       const prog = loadProgress(sid);
       prog[selectedWord] = true;
       saveProgress(sid, prog);
       refreshSubmittedColors();
-
     } else {
       submitSay('⚠️ Server Error. Try again.');
-      console.error('Server responded with error');
     }
 
   } catch (err) {
