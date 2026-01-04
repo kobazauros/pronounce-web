@@ -1,19 +1,13 @@
 // -------------------------------------------------------------
 // script.js – Pronunciation Checker (Thesis Edition)
-// Base: WaveSurfer v7.5 and MediaRecorder
-// Adds: student info, clickable word list (4 columns), submit last recording,
-//       local persistence by Student ID, and sample title placeholder.
 // -------------------------------------------------------------
 
 // ======= Configuration =======
-// IMPORTANT: List the EXACT 20 filenames (without extension) that exist in /audio.
-// The list is rendered alphabetically in 4 columns (5 items each).
-// WORDS will be loaded from audio/index.json (manifest). Fallback is a small default list if manifest is missing.
 let WORDS = [];
+const AUDIO_EXT = 'mp3';
+const TARGET_RATE = 16000; // <--- NEW: Force standard rate
 
-const AUDIO_EXT = 'mp3'; // sample files expected: audio/<word>.mp3
-
-// Manifest loader: fetch list of words from audio/index.json
+// Manifest loader
 async function loadManifest() {
   try {
     const res = await fetch('audio/index.json', { cache: 'no-store' });
@@ -21,14 +15,13 @@ async function loadManifest() {
     const data = await res.json();
     const arr = Array.isArray(data) ? data : Array.isArray(data.words) ? data.words : [];
     if (!Array.isArray(arr) || arr.length === 0) throw new Error('Empty manifest');
-    // sanitize to base names without extensions
     WORDS = arr.map(item => {
       const w = (item && typeof item === 'object' && item.word) ? item.word : item;
       return String(w).replace(/\.[^/.]+$/, '');
     }).slice(0, 20);
   } catch (e) {
     console.warn('Manifest load failed.', e);
-    if (studentMsg) studentMsg.textContent = '⚠️ Error: Could not load audio/index.json. Ensure you are running a local server.';
+    if (studentMsg) studentMsg.textContent = '⚠️ Error: Could not load audio/index.json.';
     WORDS = [];
   }
 }
@@ -37,40 +30,35 @@ async function loadManifest() {
 const nameInput = document.getElementById('student-name');
 const idInput = document.getElementById('student-id');
 const studentMsg = document.getElementById('student-msg');
-
 const wordList = document.getElementById('word-list');
 const sampleTitle = document.getElementById('sample-word-placeholder');
-
 const playBtn = document.getElementById('play-sample');
 const recStartBtn = document.getElementById('record-start');
 const recStopBtn = document.getElementById('record-stop');
 const playUserBtn = document.getElementById('play-user');
 const submitBtn = document.getElementById('submit-recording');
-
 const sampleWF = document.getElementById('sample-waveform-container');
 const userWF = document.getElementById('user-waveform-container');
 const overlapWF = document.getElementById('difference-waveform-container');
-
-const msgBox = document.getElementById('message-box');      // recording messages
-const sampleMsg = document.getElementById('sample-message');    // sample messages
+const msgBox = document.getElementById('message-box');
+const sampleMsg = document.getElementById('sample-message');
 const submitMsg = document.getElementById('submit-msg');
-
-// noise UI
 const noiseBtn = document.getElementById('measure-noise');
 const noiseLabel = document.getElementById('noise-result');
 
 // ------- Audio globals -------
 let ac;
-const ensureAC = () => (ac ||= new AudioContext());
+// <--- UPDATED: Force AudioContext to 16kHz --->
+const ensureAC = () => (ac ||= new AudioContext({ sampleRate: TARGET_RATE }));
 
 let sampleBuf, userBuf;
 let sampleWS, userWS;
 let mediaRecorder, chunks = [];
-let lastRecordingBlob = null;   // store last recording as raw blob
+let lastRecordingBlob = null;
 let selectedWord = null;
 
 // thresholds
-const defaultThreshold = 0.055;   // 2 % FS for sample (approx)
+const defaultThreshold = 0.055;
 const NOISE_MULTIPLIER = 3.0;
 let noiseThreshold = defaultThreshold;
 
@@ -94,18 +82,14 @@ function guardStudentInfo() {
   return true;
 }
 
-// localStorage keys: per student ID, store set of submitted words
 function getProgressKey(sid) { return `thesis_progress_${sid}`; }
 function loadProgress(sid) {
-  try {
-    return JSON.parse(localStorage.getItem(getProgressKey(sid)) || '{}');
-  } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(getProgressKey(sid)) || '{}'); } catch { return {}; }
 }
 function saveProgress(sid, data) {
   localStorage.setItem(getProgressKey(sid), JSON.stringify(data));
 }
 
-// build word list grid (4 columns)
 function buildWordList() {
   wordList.innerHTML = '';
   const words = [...WORDS].sort((a, b) => a.localeCompare(b));
@@ -113,7 +97,7 @@ function buildWordList() {
     const a = document.createElement('a');
     a.href = '#';
     a.textContent = w;
-    a.className = 'word-link word-pending'; // blue by default
+    a.className = 'word-link word-pending';
     a.dataset.word = w;
     a.addEventListener('click', (e) => {
       e.preventDefault();
@@ -124,10 +108,8 @@ function buildWordList() {
     });
     wordList.appendChild(a);
   }
-  // fill to multiple of 4? Not necessary for CSS grid.
 }
 
-// Mark submitted words green for current student
 function refreshSubmittedColors() {
   const sid = idInput.value.trim();
   const prog = sid ? loadProgress(sid) : {};
@@ -142,7 +124,10 @@ function refreshSubmittedColors() {
 noiseBtn.addEventListener('click', async () => {
   try {
     noiseLabel.textContent = 'Measuring…';
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // <--- UPDATED: Request specific constraints --->
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: { channelCount: 1, sampleRate: TARGET_RATE }
+    });
     const ac = ensureAC();
     const src = ac.createMediaStreamSource(stream);
     const analyser = ac.createAnalyser();
@@ -150,7 +135,7 @@ noiseBtn.addEventListener('click', async () => {
     src.connect(analyser);
 
     let rmsSum = 0, frames = 0;
-    const end = Date.now() + 1500; // 1.5 s window
+    const end = Date.now() + 1500;
     while (Date.now() < end) {
       const buf = new Float32Array(analyser.fftSize);
       analyser.getFloatTimeDomainData(buf);
@@ -182,7 +167,7 @@ function trimSilence(buf, threshold) {
   let s = 0, e = d.length - 1;
   while (s < e && Math.abs(d[s]) < threshold) s++;
   while (e > s && Math.abs(d[e]) < threshold) e--;
-  if (e - s < sr * 0.05) return buf; // too short: keep original
+  if (e - s < sr * 0.05) return buf;
   const out = ac.createBuffer(1, e - s + 1, sr);
   out.copyToChannel(d.subarray(s, e + 1), 0);
   return out;
@@ -207,7 +192,6 @@ function renderWS(buf, container, prev, colour) {
   return ws;
 }
 
-// Encode AudioBuffer -> WAV blob/url
 function bufferToWavBlob(buffer) {
   const n = buffer.length;
   const sr = buffer.sampleRate;
@@ -236,8 +220,8 @@ function renderOverlap() {
   Object.assign(uDiv.style, { position: 'absolute', inset: 0 });
   overlapWF.style.position = 'relative';
   overlapWF.append(sDiv, uDiv);
-  const sWS = makeWS(sDiv, 'rgba(70,130,180,.6)');    // steelblue
-  const uWS = makeWS(uDiv, 'rgba(34,139,34,.6)');     // forestgreen
+  const sWS = makeWS(sDiv, 'rgba(70,130,180,.6)');
+  const uWS = makeWS(uDiv, 'rgba(34,139,34,.6)');
   (sWS.setBuffer ?? sWS.loadDecodedBuffer ?? (b => sWS.load(bufferToUrl(b))))(sampleBuf);
   (uWS.setBuffer ?? uWS.loadDecodedBuffer ?? (b => uWS.load(bufferToUrl(b))))(userBuf);
 }
@@ -281,17 +265,30 @@ recStartBtn.addEventListener('click', async () => {
     return;
   }
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // <--- UPDATED: Explicit Constraints for "Gate 1" --->
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        channelCount: 1,
+        sampleRate: TARGET_RATE,
+        echoCancellation: true,
+        noiseSuppression: true
+      }
+    });
+
     mediaRecorder = new MediaRecorder(stream);
     chunks = [];
     lastRecordingBlob = null;
     mediaRecorder.ondataavailable = e => chunks.push(e.data);
+
     mediaRecorder.onstop = async () => {
       clearInterval(autoCheck);
       lastRecordingBlob = new Blob(chunks, { type: chunks[0]?.type || 'audio/webm' });
+
+      // Because 'ensureAC()' forces 16kHz, this decode will automatically resample!
       userBuf = await ensureAC().decodeAudioData(await lastRecordingBlob.arrayBuffer());
       userBuf = trimSilence(userBuf, noiseThreshold);
       userWS = renderWS(userBuf, userWF, userWS, 'forestgreen');
+
       if (sampleBuf) renderOverlap();
       playUserBtn.disabled = false;
       submitBtn.disabled = false;
@@ -346,94 +343,3 @@ window.addEventListener('load', async () => {
 });
 
 playUserBtn.addEventListener('click', () => {
-  if (!userBuf) {
-    say('Record something first.');
-    return;
-  }
-  const src = ensureAC().createBufferSource();
-  src.buffer = userBuf;
-  src.connect(ensureAC().destination);
-  src.start();
-});
-
-// ======= Submit last recording =======
-// Uploads the MP3 to the PythonAnywhere server.
-submitBtn.addEventListener('click', async () => {
-  if (!guardStudentInfo()) return;
-  if (!selectedWord) { submitSay('Select a word first.'); return; }
-  if (!userBuf) { submitSay('Record your pronunciation first.'); return; }
-
-  try {
-    submitSay('Encoding MP3…');
-    // PCM float -> Int16
-    const sr = userBuf.sampleRate;
-    const pcm = userBuf.getChannelData(0);
-    const pcm16 = new Int16Array(pcm.length);
-    for (let i = 0; i < pcm.length; i++) {
-      const s = Math.max(-1, Math.min(1, pcm[i]));
-      pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
-    }
-
-    // MP3 encode with lamejs (mono)
-    const mp3enc = new lamejs.Mp3Encoder(1, sr, 128); // 128 kbps
-    const CHUNK = 1152;
-    const out = [];
-    for (let i = 0; i < pcm16.length; i += CHUNK) {
-      const slice = pcm16.subarray(i, i + CHUNK);
-      const buff = mp3enc.encodeBuffer(slice);
-      if (buff.length) out.push(new Uint8Array(buff));
-    }
-    const end = mp3enc.flush();
-    if (end.length) out.push(new Uint8Array(end));
-
-    // 1. Create the Blob
-    const mp3Blob = new Blob(out, { type: 'audio/mpeg' });
-
-    // 2. Prepare Data for Server
-    const sid = idInput.value.trim();
-    if (!sid) {
-      submitSay('⚠️ Enter Student ID first!');
-      return;
-    }
-
-    const formData = new FormData();
-    // 'file' matches the request.files['file'] in your Python Flask app
-    formData.append('file', mp3Blob, `${sid}-${selectedWord}.mp3`);
-    formData.append('studentId', sid);
-    formData.append('word', selectedWord);
-
-    // 3. UI Feedback
-    submitSay('Uploading...');
-    submitBtn.disabled = true;
-
-    // 4. Send to PythonAnywhere
-    const response = await fetch('/upload', {
-      method: 'POST',
-      body: formData
-    });
-
-    if (response.ok) {
-      submitSay(`✅ Saved: ${selectedWord}`);
-
-      // Mark as done in local storage (turn green)
-      const prog = loadProgress(sid);
-      prog[selectedWord] = true;
-      saveProgress(sid, prog);
-      refreshSubmittedColors();
-
-    } else {
-      submitSay('⚠️ Server Error. Try again.');
-      console.error('Server responded with error');
-    }
-
-  } catch (err) {
-    console.error(err);
-    submitSay('⚠️ Network Error.');
-  } finally {
-    submitBtn.disabled = false;
-  }
-});
-
-// When Student ID changes, re-apply submitted colors for that student
-idInput.addEventListener('input', refreshSubmittedColors);
-nameInput.addEventListener('input', () => {/* no-op, just UX */ });
