@@ -1,89 +1,81 @@
 #!/usr/bin/env python3
 """
-Thesis Vowel Analyzer (Monosyllable Edition)
-
-Usage:
-  python analyze_vowels.py --submissions ./submissions --audio ./audio --map ./audio/index.json
+Thesis Vowel Analyzer 
 """
 
 import argparse
 import math
-import re
 import json
+import datetime
 from pathlib import Path
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple, List, Dict
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-
 import librosa
 import parselmouth
-from parselmouth.praat import call
 
-# Regex to handle: "67012 - bike - 20240101_120000.mp3" OR "67012 - bike.mp3"
-# It grabs the FIRST part as ID and the SECOND part as Word. Ignores the rest.
-FILENAME_RE = re.compile(r"^(?P<sid>.+?)\s*-\s*(?P<word>[^-.]+)(?:.*)?\.mp3$", re.IGNORECASE)
+# --- CONFIGURATION ---
+# Known Diphthongs in your dataset (IPA)
+DIPHTHONGS = {"aɪ", "əʊ", "ɔɪ", "eɪ", "eə", "aʊ", "ɪə", "ʊə"}
 
-# Standard Monophthong Targets for reference (Hillenbrand male averages)
-STANDARD_VOWELS = {
-    "iː": {"F1": 270, "F2": 2290}, "ɪ":  {"F1": 390, "F2": 1990},
-    "e":  {"F1": 530, "F2": 1840}, "æ":  {"F1": 660, "F2": 1720},
-    "ɑː": {"F1": 730, "F2": 1090}, "ɔː": {"F1": 570, "F2": 840},
-    "ʊ":  {"F1": 440, "F2": 1020}, "uː": {"F1": 300, "F2": 870},
-    "ʌ":  {"F1": 640, "F2": 1190}, "ɜː": {"F1": 490, "F2": 1350},
-    "ɒ":  {"F1": 600, "F2": 1000} 
-}
-
-def bark(f_hz: float) -> float:
-    f = max(f_hz, 1e-6)
+def hz_to_bark(f: float) -> float:
+    """Converts Hz to Bark scale."""
+    if f is None or np.isnan(f) or f <= 0: return np.nan
     return 26.81 * f / (1960 + f) - 0.53
 
+def get_vowel_type(vowel_symbol: str) -> str:
+    """Decides if vowel is Monophthong or Diphthong based on symbol."""
+    clean = vowel_symbol.replace("ː", "").replace("(", "").replace(")", "")
+    if vowel_symbol in DIPHTHONGS or len(clean) > 1:
+        return "diphthong"
+    return "monophthong"
+
 def load_audio_mono(path: Path, target_sr=16000) -> Tuple[np.ndarray, int]:
-    y, sr = librosa.load(path.as_posix(), sr=None, mono=True)
+    """Loads audio, resamples to 16k, and normalizes volume."""
+    try:
+        y, sr = librosa.load(path.as_posix(), sr=None, mono=True)
+    except Exception as e:
+        print(f"Error loading {path}: {e}")
+        return np.array([]), target_sr
+
     if sr != target_sr:
         y = librosa.resample(y, orig_sr=sr, target_sr=target_sr)
         sr = target_sr
-    # Normalize volume
+    
     if y.size > 0:
-        y = 0.95 * y / np.max(np.abs(y))
+        max_val = np.max(np.abs(y))
+        if max_val > 0:
+            y = 0.95 * y / max_val
     return y.astype(np.float32), int(sr)
 
 def find_syllable_nucleus(sound: parselmouth.Sound, pitch_floor=75, pitch_ceiling=600):
-    """
-    Finds the 'Nucleus' (loudest voiced part) of the word.
-    Returns (t_start, t_end) of that specific segment.
-    """
+    """Finds the loudest voiced segment (the vowel)."""
     pitch = sound.to_pitch(pitch_floor=pitch_floor, pitch_ceiling=pitch_ceiling)
     intensity = sound.to_intensity()
     
-    # 1. Find all voiced islands
     n_frames = pitch.get_number_of_frames()
     voiced_intervals = []
     current_start: Optional[float] = None
     
     for i in range(1, n_frames + 1):
-        if pitch.get_value_in_frame(i) > 0: # is voiced
+        if pitch.get_value_in_frame(i) > 0: 
             if current_start is None: 
                 current_start = pitch.get_time_from_frame_number(i)
-        else:
+        else: 
             if current_start is not None:
                 voiced_intervals.append((current_start, pitch.get_time_from_frame_number(i)))
                 current_start = None
     if current_start: 
         voiced_intervals.append((current_start, pitch.get_time_from_frame_number(n_frames)))
 
-    if not voiced_intervals:
-        return None
+    if not voiced_intervals: return None
 
-    # 2. Pick the Loudest Island (The Vowel Nucleus)
     best_segment = None
     max_peak = -100.0
     
     for (t0, t1) in voiced_intervals:
-        # Check duration (ignore tiny noise < 30ms)
-        if (t1 - t0) < 0.03: continue
-        
+        if (t1 - t0) < 0.03: continue 
         try:
             peak = intensity.get_maximum(t0, t1, "Parabolic")
             if peak > max_peak:
@@ -93,11 +85,8 @@ def find_syllable_nucleus(sound: parselmouth.Sound, pitch_floor=75, pitch_ceilin
             
     return best_segment
 
-def measure_formants(sound, segment, points=(0.5,)):
-    """
-    Measures F1/F2 at specific relative points (e.g. 0.5 for center).
-    Returns list of tuples: [(F1, F2), (F1, F2)...]
-    """
+def measure_formants(sound, segment, points=(0.5,)) -> List[Tuple[float, float]]:
+    """Measures F1/F2 at relative time points."""
     if segment is None:
         return [(np.nan, np.nan)] * len(points)
         
@@ -111,59 +100,100 @@ def measure_formants(sound, segment, points=(0.5,)):
         f1 = formant.get_value_at_time(1, t)
         f2 = formant.get_value_at_time(2, t)
         
-        # Filter bad readings
-        if np.isnan(f1) or f1 < 150 or f1 > 1200: f1 = np.nan
+        if np.isnan(f1) or f1 < 50 or f1 > 1200: f1 = np.nan
         if np.isnan(f2) or f2 < 500 or f2 > 4000: f2 = np.nan
         
         results.append((f1, f2))
     return results
 
-def load_map_json(path: Path) -> dict:
-    if not path.exists(): return {}
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    # Map word -> info dict
-    mapping = {}
-    for entry in data.get("words", []):
-        w = entry.get("word", "").lower().strip()
-        if w: mapping[w] = entry
-    return mapping
+def analyze_single_file(filepath: Path, ref_dir: Path, word_map: Dict):
+    # 1. Parse Filename: "ID_Name_Word.mp3"
+    stem = filepath.stem 
+    parts = stem.split('_')
+    
+    if len(parts) < 3:
+        return None
 
-def analyze_file_pair(student_file, ref_file, word_info):
-    # 1. Student Analysis
-    y_s, sr = load_audio_mono(student_file)
+    sid = parts[0]
+    word = parts[-1].lower()
+    name = " ".join(parts[1:-1])
+    
+    # 2. Determine Test Type (Folder Based)
+    # Checks if 'pre' or 'post' exists in the parent folder names
+    # e.g. "submissions/pre/file.mp3" -> "Pre-test"
+    parent_folder = filepath.parent.name.lower()
+    
+    if "pre" in parent_folder:
+        test_type = "Pre-test"
+    elif "post" in parent_folder:
+        test_type = "Post-test"
+    else:
+        # Fallback: Default to Pre-test if folder structure is ambiguous
+        test_type = "Pre-test"
+    
+    # 3. Get Word Info
+    info = word_map.get(word)
+    if not info:
+        print(f"Skipping unknown word: {word}")
+        return None
+        
+    target_vowel = info.get("stressed_vowel", "?")
+    v_type = get_vowel_type(target_vowel)
+    
+    # 4. Analyze Student Audio
+    y_s, sr = load_audio_mono(filepath)
+    if len(y_s) == 0: return None
+    
     snd_s = parselmouth.Sound(y_s, sampling_frequency=sr)
     seg_s = find_syllable_nucleus(snd_s)
     
-    # 2. Reference Analysis (if exists)
-    snd_r, seg_r = None, None
-    if ref_file and ref_file.exists():
-        y_r, _ = load_audio_mono(ref_file, target_sr=sr)
-        snd_r = parselmouth.Sound(y_r, sampling_frequency=sr)
-        seg_r = find_syllable_nucleus(snd_r)
-        
-    # 3. Strategy: Monophthong vs Diphthong
-    vowel_type = word_info.get("type", "monophthong")
-    points = (0.2, 0.8) if vowel_type == "diphthong" else (0.5,)
-    
+    points = (0.2, 0.8) if v_type == "diphthong" else (0.5,)
     meas_s = measure_formants(snd_s, seg_s, points)
-    meas_r = measure_formants(snd_r, seg_r, points) if snd_r else [(np.nan, np.nan)]*len(points)
     
-    # 4. Calculate Distance
-    # Average the distance of all points measured
-    distances = []
+    # 5. Analyze Reference Audio
+    ref_path = ref_dir / f"{word}.mp3"
+    meas_r = [(np.nan, np.nan)] * len(points)
+    
+    if ref_path.exists():
+        y_r, _ = load_audio_mono(ref_path, target_sr=sr)
+        if len(y_r) > 0:
+            snd_r = parselmouth.Sound(y_r, sampling_frequency=sr)
+            seg_r = find_syllable_nucleus(snd_r)
+            meas_r = measure_formants(snd_r, seg_r, points)
+
+    # 6. Calculate Distances
+    hz_dists = []
+    bark_dists = []
+    
+    f1_s_primary, f2_s_primary = meas_s[0]
+    f1_r_primary, f2_r_primary = meas_r[0]
+
     for (f1s, f2s), (f1r, f2r) in zip(meas_s, meas_r):
-        dist = math.hypot(f1s - f1r, f2s - f2r)
-        distances.append(dist)
+        d_hz = math.hypot(f1s - f1r, f2s - f2r)
+        hz_dists.append(d_hz)
         
-    final_dist = np.mean(distances) if not np.isnan(distances).all() else np.nan
-    
-    # Return dominant formant (first point) for plotting
+        b1s, b2s = hz_to_bark(f1s), hz_to_bark(f2s)
+        b1r, b2r = hz_to_bark(f1r), hz_to_bark(f2r)
+        d_bark = math.hypot(b1s - b1r, b2s - b2r)
+        bark_dists.append(d_bark)
+        
+    final_dist_hz = np.nanmean(hz_dists) if hz_dists else np.nan
+    final_dist_bark = np.nanmean(bark_dists) if bark_dists else np.nan
+
     return {
-        "F1": meas_s[0][0],
-        "F2": meas_s[0][1],
-        "distance": final_dist,
-        "type": vowel_type
+        "student_ID": sid,
+        "student_name": name,
+        "word": word,
+        "vowel": target_vowel,
+        "vowel_type": v_type,
+        "F1_student": f1_s_primary,
+        "F2_student": f2_s_primary,
+        "F1_ref": f1_r_primary,
+        "F2_ref": f2_r_primary,
+        "dist_hz": final_dist_hz,
+        "dist_bark": final_dist_bark,
+        "test_type": test_type,
+        "ref_file_name": ref_path.name
     }
 
 def main():
@@ -176,39 +206,44 @@ def main():
     
     sub_dir, audio_dir, out_dir = Path(args.submissions), Path(args.audio), Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
-    word_map = load_map_json(Path(args.map))
     
-    results = []
-    
-    print(f"Scanning {sub_dir}...")
-    for f in sorted(sub_dir.glob("*.mp3")):
-        # Parse: "ID - Word - Timestamp.mp3"
-        m = FILENAME_RE.match(f.name)
-        if not m: continue
-        
-        sid = m.group("sid").strip()
-        word = m.group("word").strip().lower()
-        
-        info = word_map.get(word, {})
-        ref_path = audio_dir / f"{word}.mp3"
-        
-        res = analyze_file_pair(f, ref_path, info)
-        
-        results.append({
-            "student_id": sid,
-            "word": word,
-            "vowel": info.get("target", "?"),
-            "type": res["type"],
-            "F1": res["F1"],
-            "F2": res["F2"],
-            "score_distance": res["distance"]
-        })
-        print(f" Analyzed {f.name} -> Dist: {res['distance']:.1f}")
+    word_map = {}
+    if Path(args.map).exists():
+        with open(args.map, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            for entry in data.get("words", []):
+                w = entry.get("word", "").lower()
+                word_map[w] = entry
 
-    # Save
+    results = []
+    print(f"Scanning {sub_dir} recursively...")
+    
+    # Use rglob to find files inside /pre and /post subfolders
+    for f in sorted(sub_dir.rglob("*.mp3")):
+        row = analyze_single_file(f, audio_dir, word_map)
+        if row:
+            results.append(row)
+            print(f" Analyzed {f.name} ({row['test_type']}) -> Dist: {row['dist_hz']:.1f} Hz")
+        else:
+            print(f" Skipped {f.name} (Format error or unknown word)")
+
     df = pd.DataFrame(results)
-    df.to_csv(out_dir / "final_thesis_data.csv", index=False)
-    print(f"\nDone! Saved {len(df)} rows to {out_dir / 'final_thesis_data.csv'}")
+    
+    # Columns without timestamp
+    cols = [
+        "student_ID", "student_name", "word", "vowel", "vowel_type",
+        "F1_student", "F2_student", "F1_ref", "F2_ref",
+        "dist_hz", "dist_bark", "test_type", "ref_file_name"
+    ]
+    
+    for c in cols:
+        if c not in df.columns: df[c] = np.nan
+            
+    df = df[cols]
+    
+    out_csv = out_dir / "final_thesis_data.csv"
+    df.to_csv(out_csv, index=False)
+    print(f"\nDone! Saved {len(df)} rows to {out_csv}")
 
 if __name__ == "__main__":
     main()

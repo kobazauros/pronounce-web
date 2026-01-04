@@ -30,6 +30,7 @@ async function loadManifest() {
 // ------- DOM -------
 const nameInput = document.getElementById('student-name');
 const idInput = document.getElementById('student-id');
+const testTypeInput = document.getElementById('test-type'); // NEW Reference
 const studentMsg = document.getElementById('student-msg');
 const wordList = document.getElementById('word-list');
 const sampleTitle = document.getElementById('sample-word-placeholder');
@@ -86,12 +87,23 @@ function guardStudentInfo() {
   return true;
 }
 
-function getProgressKey(sid) { return `thesis_progress_${sid}`; }
-function loadProgress(sid) {
-  try { return JSON.parse(localStorage.getItem(getProgressKey(sid)) || '{}'); } catch { return {}; }
+// --- NEW PROGRESS LOGIC (ID + Name + Type) ---
+function getProgressKey() {
+  const sid = idInput.value.trim() || 'unknown';
+  const name = nameInput.value.trim() || 'unknown';
+  const type = testTypeInput.value || 'pre';
+  // This unique key ensures the list resets if ANY of these change
+  return `thesis_progress_${sid}_${name}_${type}`;
 }
-function saveProgress(sid, data) {
-  localStorage.setItem(getProgressKey(sid), JSON.stringify(data));
+
+function loadProgress() {
+  const key = getProgressKey();
+  try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; }
+}
+
+function saveProgress(data) {
+  const key = getProgressKey();
+  localStorage.setItem(key, JSON.stringify(data));
 }
 
 function buildWordList() {
@@ -115,8 +127,8 @@ function buildWordList() {
 }
 
 function refreshSubmittedColors() {
-  const sid = idInput.value.trim();
-  const prog = sid ? loadProgress(sid) : {};
+  // Now loads based on current Inputs (Name + ID + Type)
+  const prog = loadProgress();
   for (const el of wordList.querySelectorAll('.word-link')) {
     const w = el.dataset.word;
     el.classList.toggle('word-submitted', !!prog[w]);
@@ -151,13 +163,9 @@ let currentNoisePeak = 0;
 
 // 1. RESUME: Try to start monitoring (Subject to Rules)
 async function resumeMonitoring() {
-  // RULE 1: If App is Busy (Recording/Playing), stay OFF.
   if (isAppBusy) return;
-  // RULE 2: If Privacy Mode (Tab hidden), stay OFF.
   if (document.hidden) return;
-  // RULE 3: If Session hasn't started (No name), stay OFF.
   if (!sessionActive) return;
-  // RULE 4: If already running, do nothing.
   if (isMonitoring) return;
 
   try {
@@ -179,7 +187,6 @@ async function resumeMonitoring() {
     const buffer = new Float32Array(analyser.fftSize);
     isMonitoring = true;
 
-    // Start Analysis Loop
     function loop() {
       if (!isMonitoring) return;
       requestAnimationFrame(loop);
@@ -215,7 +222,6 @@ function pauseMonitoring() {
 
   isMonitoring = false;
 
-  // Kill Hardware
   if (monitorStream) {
     monitorStream.getTracks().forEach(t => t.stop());
     monitorStream = null;
@@ -225,13 +231,10 @@ function pauseMonitoring() {
     monitorCtx = null;
   }
 
-  // --- SAVE & CLAMP THRESHOLD ---
-  // If a plane flew over (0.8), cap it at 0.15 (15%)
   let measured = currentNoisePeak * 1.5;
   if (measured > 0.15) measured = 0.15;
   noiseThreshold = Math.max(defaultThreshold, measured);
 
-  // Update UI based on context
   if (isAppBusy) {
     if (noiseText) noiseText.textContent = "Paused (Action in progress)";
     if (noiseStatusContainer) noiseStatusContainer.style.color = "orange";
@@ -249,7 +252,7 @@ nameInput.addEventListener('focus', () => {
   resumeMonitoring();
 });
 
-// B. Privacy Protection (Tab Hidden / Blurred / Closed)
+// B. Privacy Protection
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) pauseMonitoring();
   else resumeMonitoring();
@@ -257,6 +260,11 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('blur', pauseMonitoring);
 window.addEventListener('focus', resumeMonitoring);
 window.addEventListener('beforeunload', pauseMonitoring);
+
+// C. UI Updates (Colors Refresh) - NEW LISTENERS
+nameInput.addEventListener('input', refreshSubmittedColors);
+idInput.addEventListener('input', refreshSubmittedColors);
+testTypeInput.addEventListener('change', refreshSubmittedColors);
 
 
 // ------- Audio utils -------
@@ -266,34 +274,31 @@ async function fetchBuffer(url) {
   return ensureAC().decodeAudioData(await res.arrayBuffer());
 }
 
-function trimSilence(buf) {
+function trimSilence(buf, minFloor = null) {
   const d = buf.getChannelData(0);
   const sr = buf.sampleRate;
 
-  // 1. Find the Peak Volume of the recording
   let peak = 0;
   for (let i = 0; i < d.length; i++) {
     const abs = Math.abs(d[i]);
     if (abs > peak) peak = abs;
   }
 
-  // 2. Define Dynamic Threshold (The "Gate")
-  // We set the cutoff at 5% (0.05) of your max volume.
-  // - Lip smacks/Breaths are usually < 5% of peak voice.
-  // - Vowels are 100% of peak.
-  // We also ensure we don't go below the ambient noise floor (noiseThreshold).
-  const effectiveThreshold = Math.max(peak * 0.05, noiseThreshold);
+  // LOGIC FIX: Use specific floor if given, else fall back to global room noise
+  const floor = (minFloor !== null) ? minFloor : noiseThreshold;
 
-  console.log(`Smart Trim: Peak=${peak.toFixed(4)} Threshold=${effectiveThreshold.toFixed(4)}`);
+  // We still use the "5% of peak" rule, but clamped to the floor
+  const effectiveThreshold = Math.max(peak * 0.05, floor);
+
+  console.log(`Trim: Peak=${peak.toFixed(4)} Floor=${floor.toFixed(4)} Threshold=${effectiveThreshold.toFixed(4)}`);
 
   let s = 0, e = d.length - 1;
 
-  // 3. Scan Forward (Start)
+  // Scan Forward
   while (s < e) {
     if (Math.abs(d[s]) >= effectiveThreshold) {
-      // Anti-Click Check: Look ahead 100ms to ensure it's sustained sound
       let isRealSound = false;
-      const scanWindow = sr * 0.1; // 100ms window
+      const scanWindow = sr * 0.1;
       for (let i = 1; i < scanWindow && (s + i) < e; i++) {
         if (Math.abs(d[s + i]) > effectiveThreshold) {
           isRealSound = true;
@@ -301,24 +306,19 @@ function trimSilence(buf) {
         }
       }
       if (isRealSound) break;
-      // If not real sound (just a click), we skip it and keep scanning
       s += scanWindow;
       continue;
     }
     s++;
   }
 
-  // 4. Scan Backward (End)
-  // We use a slightly higher threshold for the end to cut breath trails aggressively
+  // Scan Backward
   const endThreshold = effectiveThreshold * 0.8;
   while (e > s && Math.abs(d[e]) < endThreshold) e--;
 
-  // Safety: If we trimmed everything away, return original
   if (e - s < sr * 0.1) return buf;
 
-  // 5. Add a tiny bit of "Room Tone" padding (fade in/out feel)
-  // This prevents the word from sounding too "chopped"
-  const padding = Math.floor(sr * 0.02); // 20ms padding
+  const padding = Math.floor(sr * 0.02);
   const startPad = Math.max(0, s - padding);
   const endPad = Math.min(d.length, e + padding);
 
@@ -380,22 +380,21 @@ playBtn.addEventListener('click', async () => {
   const word = selectedWord;
   if (!word) { sampleSay('Select a word first.'); return; }
 
-  // 1. SET BUSY & STOP MONITOR
   isAppBusy = true;
   pauseMonitoring();
 
   sampleSay('Loading sample…');
   try {
     sampleBuf = await fetchBuffer(`audio/${word}.${AUDIO_EXT}`);
-    sampleBuf = trimSilence(sampleBuf, defaultThreshold);
+    // USE FIXED 0.001 FLOOR (Ignore room noise)
+    sampleBuf = trimSilence(sampleBuf, 0.001);
     const src = ensureAC().createBufferSource();
     src.buffer = sampleBuf;
     src.connect(ensureAC().destination);
 
-    // 2. RESUME MONITOR ON END
     src.onended = () => {
       isAppBusy = false;
-      resumeMonitoring(); // <--- Auto Resume
+      resumeMonitoring();
     };
 
     src.start();
@@ -404,7 +403,6 @@ playBtn.addEventListener('click', async () => {
   } catch (e) {
     console.error(e);
     sampleSay('Sample not found.');
-    // Safety reset
     isAppBusy = false;
     resumeMonitoring();
   }
@@ -422,7 +420,6 @@ recStartBtn.addEventListener('click', async () => {
   if (!guardStudentInfo()) return;
   if (!selectedWord) { say('Select a word first.'); return; }
 
-  // 1. SET BUSY & STOP MONITOR
   isAppBusy = true;
   pauseMonitoring();
 
@@ -441,8 +438,8 @@ recStartBtn.addEventListener('click', async () => {
       clearInterval(autoCheck);
       lastRecordingBlob = new Blob(chunks, { type: chunks[0]?.type || 'audio/webm' });
       userBuf = await ensureAC().decodeAudioData(await lastRecordingBlob.arrayBuffer());
-      const trimLevel = Math.min(noiseThreshold * 0.5, 0.01);
-      userBuf = trimSilence(userBuf, trimLevel);
+      // USE DYNAMIC ROOM NOISE
+      userBuf = trimSilence(userBuf, noiseThreshold);
       userWS = renderWS(userBuf, userWF, userWS, 'forestgreen');
       if (sampleBuf) renderOverlap();
       playUserBtn.disabled = false;
@@ -451,16 +448,14 @@ recStartBtn.addEventListener('click', async () => {
       toggle(false);
       say('Done.');
 
-      // 2. RESUME MONITOR (Post-Recording)
       isAppBusy = false;
-      resumeMonitoring(); // <--- Auto Resume
+      resumeMonitoring();
     };
 
     mediaRecorder.start();
     playUserBtn.disabled = true;
     submitBtn.disabled = true;
 
-    // --- Hard Time Limit (5 Seconds) ---
     const MAX_RECORDING_TIME = 5000;
     const safetyTimer = setTimeout(() => {
       if (mediaRecorder.state === 'recording') {
@@ -469,7 +464,6 @@ recStartBtn.addEventListener('click', async () => {
       }
     }, MAX_RECORDING_TIME);
 
-    // Setup Silence Detection
     const micSrc = ensureAC().createMediaStreamSource(stream);
     const analyser = ensureAC().createAnalyser();
     analyser.fftSize = 2048;
@@ -489,7 +483,7 @@ recStartBtn.addEventListener('click', async () => {
           silenceStart ??= Date.now();
           if (Date.now() - silenceStart > SILENCE_HOLD_MS && mediaRecorder.state === 'recording') {
             say('Auto-stop: silence detected');
-            clearTimeout(safetyTimer); // Cancel safety timer
+            clearTimeout(safetyTimer);
             mediaRecorder.stop();
           }
         }
@@ -559,12 +553,14 @@ submitBtn.addEventListener('click', async () => {
     const mp3Blob = new Blob(out, { type: 'audio/mpeg' });
     const sid = idInput.value.trim();
     const sname = nameInput.value.trim();
+    const testType = testTypeInput.value;
 
     const formData = new FormData();
     formData.append('file', mp3Blob, `${sid}-${selectedWord}.mp3`);
     formData.append('studentId', sid);
     formData.append('studentName', sname);
     formData.append('word', selectedWord);
+    formData.append('testType', testType);
 
     submitSay('Uploading...');
     submitBtn.disabled = true;
@@ -576,9 +572,12 @@ submitBtn.addEventListener('click', async () => {
 
     if (response.ok) {
       submitSay(`✅ Saved: ${selectedWord}`);
-      const prog = loadProgress(sid);
+
+      // Update local storage (automatically uses the new Key: ID+Name+Type)
+      const prog = loadProgress();
       prog[selectedWord] = true;
-      saveProgress(sid, prog);
+      saveProgress(prog);
+
       refreshSubmittedColors();
     } else {
       submitSay('⚠️ Server Error. Try again.');

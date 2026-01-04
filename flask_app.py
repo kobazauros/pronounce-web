@@ -25,26 +25,36 @@ def serve_audio(filename):
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    # 1. Check if the post request has the file part
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
-    
+
     file = request.files['file']
     student_id = request.form.get('studentId', 'unknown')
     student_name = request.form.get('studentName', 'unknown')
     word = request.form.get('word', 'unknown')
-    
-    # 2. Check if user selected a file
+
+    # NEW: Get the test type (Default to 'pre' if missing)
+    test_type = request.form.get('testType', 'pre')
+
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
 
-    # 3. Save the file
     safe_name = "".join([c for c in student_name if c.isalnum() or c in (' ', '_')]).replace(" ", "_")
     filename = f"{student_id}_{safe_name}_{word}.mp3"
-    
-    # Save directly to the anchored path
-    save_path = os.path.join(UPLOAD_FOLDER, filename)
-    
+
+    # NEW: Determine folder based on selection
+    if test_type == 'post':
+        sub_folder = 'post'
+    else:
+        sub_folder = 'pre'
+
+    # Create the specific subfolder (e.g., submissions/pre)
+    target_dir = os.path.join(UPLOAD_FOLDER, sub_folder)
+    os.makedirs(target_dir, exist_ok=True)
+
+    # Save to that new folder
+    save_path = os.path.join(target_dir, filename)
+
     response = None
     status_code = 200
 
@@ -56,7 +66,7 @@ def upload_file():
         print(f"Error saving file: {e}")
         response = jsonify({"error": "Failed to save file"})
         status_code = 500
-        
+
     return response, status_code
 
 if __name__ == '__main__':
