@@ -279,12 +279,16 @@ recStartBtn.addEventListener('click', async () => {
     return;
   }
   try {
+    // --- FIX IS HERE ---
+    // We removed 'sampleRate: TARGET_RATE' from constraints.
+    // We let the browser pick the hardware native rate (usually 44.1k or 48k)
+    // to prevent "OverconstrainedError".
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: {
-        channelCount: 1,
-        sampleRate: TARGET_RATE,
+        channelCount: 1, // Mono is usually fine, but if this fails, remove it too.
         echoCancellation: true,
         noiseSuppression: true
+        // sampleRate: TARGET_RATE <--- REMOVED THIS
       }
     });
 
@@ -299,8 +303,7 @@ recStartBtn.addEventListener('click', async () => {
 
       userBuf = await ensureAC().decodeAudioData(await lastRecordingBlob.arrayBuffer());
 
-      // FIX: Use a gentler threshold for trimming than for stopping.
-      // We use half the noise threshold or the default minimum (0.01), whichever is smaller.
+      // Trim Silence
       const trimLevel = Math.min(noiseThreshold * 0.5, 0.01);
       userBuf = trimSilence(userBuf, trimLevel);
 
@@ -323,20 +326,16 @@ recStartBtn.addEventListener('click', async () => {
     micSrc.connect(analyser);
 
     let silenceStart = null;
-    const recordingStartTime = Date.now(); // Track when we started
+    const recordingStartTime = Date.now();
 
     autoCheck = setInterval(() => {
-      // 1. Calculate RMS
       const buf = new Float32Array(analyser.fftSize);
       analyser.getFloatTimeDomainData(buf);
       const rms = Math.sqrt(buf.reduce((s, x) => s + x * x, 0) / buf.length);
 
-      // 2. Check for Silence
-      // We ADD a check: Don't stop if we are within the Grace Period (first 2 seconds)
       const isGracePeriod = (Date.now() - recordingStartTime) < START_GRACE_MS;
 
       if (rms < noiseThreshold) {
-        // If we are in the grace period, do NOT start the silence timer yet
         if (!isGracePeriod) {
           silenceStart ??= Date.now();
           if (Date.now() - silenceStart > SILENCE_HOLD_MS && mediaRecorder.state === 'recording') {
@@ -345,7 +344,6 @@ recStartBtn.addEventListener('click', async () => {
           }
         }
       } else {
-        // If we hear sound, reset the silence timer
         silenceStart = null;
       }
     }, ANALYSE_INTERVAL);
@@ -353,8 +351,8 @@ recStartBtn.addEventListener('click', async () => {
     toggle(true);
     say('Recording…');
   } catch (e) {
-    console.error(e);
-    say('Mic error.');
+    console.error(e); // Check your browser console (F12) to see the specific error name
+    say('Mic error: ' + (e.name || e));
   }
 });
 
