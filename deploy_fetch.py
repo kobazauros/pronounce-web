@@ -31,8 +31,7 @@ FILES_TO_SYNC = [
     'script.js',
     'index.html',
     'styles.css',
-    'flask_app.py',
-    'lame.min.js' 
+    'flask_app.py' 
 ]
 # =================================================
 

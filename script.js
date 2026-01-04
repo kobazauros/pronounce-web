@@ -179,9 +179,39 @@ function trimSilence(buf, threshold) {
   const d = buf.getChannelData(0);
   const sr = buf.sampleRate;
   let s = 0, e = d.length - 1;
-  while (s < e && Math.abs(d[s]) < threshold) s++;
+
+  // --- IMPROVED START TRIM ---
+  // We require "sustained" sound to confirm start, not just one spike.
+  while (s < e) {
+    if (Math.abs(d[s]) >= threshold) {
+      // We found a spike. Is it a click? 
+      // Check the next ~5ms (approx 220 samples at 44.1kHz) for energy.
+      let isRealSound = false;
+      // We scan a small window ahead to see if the sound continues
+      const scanWindow = 250;
+      for (let i = 1; i < scanWindow && (s + i) < e; i++) {
+        if (Math.abs(d[s + i]) > threshold) {
+          isRealSound = true;
+          break;
+        }
+      }
+
+      if (isRealSound) {
+        break; // Confirmed: this is the real start
+      } else {
+        // It was a lone click/pop. Skip it and keep searching.
+        s += scanWindow;
+        continue;
+      }
+    }
+    s++;
+  }
+
+  // End trim (usually fine as is, but good to be symmetric)
   while (e > s && Math.abs(d[e]) < threshold) e--;
-  if (e - s < sr * 0.05) return buf;
+
+  if (e - s < sr * 0.05) return buf; // Return original if result is too short
+
   const out = ac.createBuffer(1, e - s + 1, sr);
   out.copyToChannel(d.subarray(s, e + 1), 0);
   return out;
