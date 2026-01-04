@@ -61,7 +61,7 @@ const NOISE_MULTIPLIER = 2.0;  // Was 3.0. Reduced to be less sensitive to AC/fa
 let noiseThreshold = defaultThreshold;
 const SILENCE_HOLD_MS = 1500;  // Increased from 1200ms to give you a bit more pause time.
 const START_GRACE_MS = 2000;   // NEW: Ignore silence for the first 2 seconds.
-
+const ANALYSE_INTERVAL = 100;
 // ======= Helpers =======
 const say = txt => (msgBox.textContent = txt ?? '');
 const sampleSay = txt => (sampleMsg.textContent = txt ?? '');
@@ -279,16 +279,13 @@ recStartBtn.addEventListener('click', async () => {
     return;
   }
   try {
-    // --- FIX IS HERE ---
-    // We removed 'sampleRate: TARGET_RATE' from constraints.
-    // We let the browser pick the hardware native rate (usually 44.1k or 48k)
-    // to prevent "OverconstrainedError".
+    // 1. Get Microphone Stream
+    // We REMOVED 'sampleRate: TARGET_RATE' to prevent "OverconstrainedError" / "Mic Error"
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: {
-        channelCount: 1, // Mono is usually fine, but if this fails, remove it too.
+        channelCount: 1,
         echoCancellation: true,
         noiseSuppression: true
-        // sampleRate: TARGET_RATE <--- REMOVED THIS
       }
     });
 
@@ -301,9 +298,10 @@ recStartBtn.addEventListener('click', async () => {
       clearInterval(autoCheck);
       lastRecordingBlob = new Blob(chunks, { type: chunks[0]?.type || 'audio/webm' });
 
+      // Decode and Resample to 16kHz automatically here
       userBuf = await ensureAC().decodeAudioData(await lastRecordingBlob.arrayBuffer());
 
-      // Trim Silence
+      // Trim Silence (using gentler threshold)
       const trimLevel = Math.min(noiseThreshold * 0.5, 0.01);
       userBuf = trimSilence(userBuf, trimLevel);
 
@@ -316,10 +314,12 @@ recStartBtn.addEventListener('click', async () => {
       toggle(false);
       say('Done.');
     };
+
     mediaRecorder.start();
     playUserBtn.disabled = true;
     submitBtn.disabled = true;
 
+    // 2. Setup Silence Detection
     const micSrc = ensureAC().createMediaStreamSource(stream);
     const analyser = ensureAC().createAnalyser();
     analyser.fftSize = 2048;
@@ -333,6 +333,7 @@ recStartBtn.addEventListener('click', async () => {
       analyser.getFloatTimeDomainData(buf);
       const rms = Math.sqrt(buf.reduce((s, x) => s + x * x, 0) / buf.length);
 
+      // Grace Period Logic
       const isGracePeriod = (Date.now() - recordingStartTime) < START_GRACE_MS;
 
       if (rms < noiseThreshold) {
@@ -350,9 +351,10 @@ recStartBtn.addEventListener('click', async () => {
 
     toggle(true);
     say('Recording…');
+
   } catch (e) {
-    console.error(e); // Check your browser console (F12) to see the specific error name
-    say('Mic error: ' + (e.name || e));
+    console.error(e);
+    say('Mic error: ' + (e.name || e.message || e));
   }
 });
 
