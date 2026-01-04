@@ -1,1 +1,2 @@
-
+student_ID,student_name,word,vowel,vowel_type,F1_student,F2_student,F1_ref,F2_ref,dist_hz,dist_bark,test_type,ref_file_name
+670120182,Konstantin Bantov,bike,aɪ,diphthong,219.2347761572441,897.3343054632724,796.1678337949011,1555.7021187827627,745.5945963874116,4.20640120939803,Pre-test,bike.mp3

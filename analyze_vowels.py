@@ -6,9 +6,9 @@ Thesis Vowel Analyzer
 import argparse
 import math
 import json
-import datetime
 from pathlib import Path
 from typing import Optional, Tuple, List, Dict
+from parselmouth.praat import call
 
 import numpy as np
 import pandas as pd
@@ -68,6 +68,8 @@ def find_syllable_nucleus(sound: parselmouth.Sound, pitch_floor=75, pitch_ceilin
                 current_start = None
     if current_start: 
         voiced_intervals.append((current_start, pitch.get_time_from_frame_number(n_frames)))
+    
+
 
     if not voiced_intervals: return None
 
@@ -75,9 +77,9 @@ def find_syllable_nucleus(sound: parselmouth.Sound, pitch_floor=75, pitch_ceilin
     max_peak = -100.0
     
     for (t0, t1) in voiced_intervals:
-        if (t1 - t0) < 0.03: continue 
+        if (t1 - t0) < 0.03: continue
         try:
-            peak = intensity.get_maximum(t0, t1, "Parabolic")
+            peak = call(intensity, "Get maximum", float(t0), float(t1), "Parabolic")
             if peak > max_peak:
                 max_peak = peak
                 best_segment = (t0, t1)
@@ -100,6 +102,8 @@ def measure_formants(sound, segment, points=(0.5,)) -> List[Tuple[float, float]]
         f1 = formant.get_value_at_time(1, t)
         f2 = formant.get_value_at_time(2, t)
         
+
+
         if np.isnan(f1) or f1 < 50 or f1 > 1200: f1 = np.nan
         if np.isnan(f2) or f2 < 500 or f2 > 4000: f2 = np.nan
         
@@ -176,6 +180,8 @@ def analyze_single_file(filepath: Path, ref_dir: Path, word_map: Dict):
         b1r, b2r = hz_to_bark(f1r), hz_to_bark(f2r)
         d_bark = math.hypot(b1s - b1r, b2s - b2r)
         bark_dists.append(d_bark)
+    
+
         
     final_dist_hz = np.nanmean(hz_dists) if hz_dists else np.nan
     final_dist_bark = np.nanmean(bark_dists) if bark_dists else np.nan
