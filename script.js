@@ -56,11 +56,11 @@ let lastRecordingBlob = null;
 let selectedWord = null;
 
 // thresholds
-const defaultThreshold = 0.055;
-const NOISE_MULTIPLIER = 3.0;
+const defaultThreshold = 0.01; // Was 0.055. Lowered to 1% to catch soft consonants.
+const NOISE_MULTIPLIER = 2.0;  // Was 3.0. Reduced to be less sensitive to AC/fans.
 let noiseThreshold = defaultThreshold;
-const SILENCE_HOLD_MS = 1200;
-const ANALYSE_INTERVAL = 100;
+const SILENCE_HOLD_MS = 1500;  // Increased from 1200ms to give you a bit more pause time.
+const START_GRACE_MS = 2000;   // NEW: Ignore silence for the first 2 seconds.
 
 // ======= Helpers =======
 const say = txt => (msgBox.textContent = txt ?? '');
@@ -298,7 +298,12 @@ recStartBtn.addEventListener('click', async () => {
       lastRecordingBlob = new Blob(chunks, { type: chunks[0]?.type || 'audio/webm' });
 
       userBuf = await ensureAC().decodeAudioData(await lastRecordingBlob.arrayBuffer());
-      userBuf = trimSilence(userBuf, noiseThreshold);
+
+      // FIX: Use a gentler threshold for trimming than for stopping.
+      // We use half the noise threshold or the default minimum (0.01), whichever is smaller.
+      const trimLevel = Math.min(noiseThreshold * 0.5, 0.01);
+      userBuf = trimSilence(userBuf, trimLevel);
+
       userWS = renderWS(userBuf, userWF, userWS, 'forestgreen');
 
       if (sampleBuf) renderOverlap();
@@ -318,19 +323,29 @@ recStartBtn.addEventListener('click', async () => {
     micSrc.connect(analyser);
 
     let silenceStart = null;
+    const recordingStartTime = Date.now(); // Track when we started
+
     autoCheck = setInterval(() => {
+      // 1. Calculate RMS
       const buf = new Float32Array(analyser.fftSize);
       analyser.getFloatTimeDomainData(buf);
       const rms = Math.sqrt(buf.reduce((s, x) => s + x * x, 0) / buf.length);
 
+      // 2. Check for Silence
+      // We ADD a check: Don't stop if we are within the Grace Period (first 2 seconds)
+      const isGracePeriod = (Date.now() - recordingStartTime) < START_GRACE_MS;
+
       if (rms < noiseThreshold) {
-        silenceStart ??= Date.now();
-        if (Date.now() - silenceStart > SILENCE_HOLD_MS &&
-          mediaRecorder.state === 'recording') {
-          say('Auto-stop: silence detected');
-          mediaRecorder.stop();
+        // If we are in the grace period, do NOT start the silence timer yet
+        if (!isGracePeriod) {
+          silenceStart ??= Date.now();
+          if (Date.now() - silenceStart > SILENCE_HOLD_MS && mediaRecorder.state === 'recording') {
+            say('Auto-stop: silence detected');
+            mediaRecorder.stop();
+          }
         }
       } else {
+        // If we hear sound, reset the silence timer
         silenceStart = null;
       }
     }, ANALYSE_INTERVAL);

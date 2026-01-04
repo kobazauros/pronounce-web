@@ -22,7 +22,7 @@ LOCAL_SUBMISSIONS_DIR = 'submissions'
 
 # 6. TASKS TO RUN (Set to True/False)
 DEPLOY_CODE = True          # Update script.js, index.html, etc.
-DEPLOY_AUDIO = True        # Upload all files from local 'audio/' to server
+DEPLOY_AUDIO = False        # Upload all files from local 'audio/' to server
 RETRIEVE_SUBMISSIONS = True # Download student recordings from server
 
 # 7. Specific Code Files to Sync
