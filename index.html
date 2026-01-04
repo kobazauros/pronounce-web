@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,12 +8,13 @@
 
   <!-- WaveSurfer pinned to v7.5.0 -->
   <script src="https://unpkg.com/wavesurfer.js@7.5.0/dist/wavesurfer.min.js"></script>
-  
+
   <!-- MP3 encoder for client-side export -->
   <script src="https://unpkg.com/lamejs@1.2.0/lame.min.js"></script>
 
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <div class="container">
 
@@ -35,7 +37,9 @@
     <!-- 1  Word list -->
     <section id="input-section">
       <h2>Check Your Pronunciation</h2>
-      <p class="caption">Select a word from the list (20 total). Words turn <span class="legend blue">blue</span> → <span class="legend green">green</span> after you submit.</p>
+      <p class="caption">Select a word from the list (20 total). Words turn <span class="legend blue">blue</span> →
+        <span class="legend green">green</span> after you submit.
+      </p>
       <div id="word-list" class="word-grid"></div>
     </section>
 
@@ -50,11 +54,18 @@
     <!-- 3  Your Pronunciation -->
     <section id="record-section">
       <h2>Your Pronunciation</h2>
+
+      <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
+        <button id="measure-noise">Measure Background Noise</button>
+        <span id="noise-result" class="inline-message" style="margin-left: 10px;"></span>
+      </div>
+
       <div class="record-controls">
         <button id="record-start">Begin Recording</button>
         <button id="record-stop" disabled>Stop Recording</button>
         <button id="play-user" disabled>Play Recording</button>
       </div>
+
       <div id="message-box"></div>
       <div id="user-waveform-container"></div>
     </section>
@@ -68,19 +79,13 @@
         <span id="submit-msg" class="inline-message"></span>
       </div>
       <p class="caption small">
-        Note: This demo saves your last recording as a <strong>.mp3</strong> file locally (download prompt) named
-        <code>[StudentID] - [word].mp3</code>. To save server-side into a <code>submissions/</code> folder, you’ll need a backend upload endpoint.
+        Note: This demo saves your last recording as a <strong>.mp3</strong> file locally.
       </p>
-    </section>
-
-    <!-- 5  Measure background noise -->
-    <section id="noise-section">
-      <button id="measure-noise">Measure Background Noise</button>
-      <span id="noise-result" class="inline-message"></span>
     </section>
 
   </div><!-- /.container -->
 
   <script src="script.js"></script>
 </body>
+
 </html>
