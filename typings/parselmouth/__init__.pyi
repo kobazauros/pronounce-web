@@ -22,7 +22,8 @@ class AmplitudeScaling:
     SUM: ClassVar[AmplitudeScaling] = ...
     __entries: ClassVar[dict] = ...
     def __init__(self, *args, **kwargs) -> None:
-        """__init__(self: parselmouth.AmplitudeScaling, value: int) -> None \\\n        __init__(self: parselmouth.AmplitudeScaling, arg0: str) -> None
+        """__init__(self: parselmouth.AmplitudeScaling, value: int) -> None \\
+        __init__(self: parselmouth.AmplitudeScaling, arg0: str) -> None
         """
     def __eq__(self, other: object) -> bool:
         """__eq__(self: object, other: object) -> bool"""
@@ -44,54 +45,297 @@ class AmplitudeScaling:
     def value(self) -> int:
         """(arg0: parselmouth.AmplitudeScaling) -> int"""
 
-class CC(TimeFrameSampled):
-    class Frame:
-        c0: float
-        def __init__(self, *args, **kwargs) -> None:
-            """Initialize self.  See help(type(self)) for accurate signature."""
-        def to_array(self) -> NDArray[numpy.float64]:
-            """to_array(self: parselmouth.CC.Frame) -> NDArray[numpy.float64]"""
-        def __getitem__(self, i: int) -> float:
-            """__getitem__(self: parselmouth.CC.Frame, i: int) -> float"""
-        def __iter__(self) -> typing.Iterator[float]:
-            """def __iter__(self) -> typing.Iterator[float]"""
-        def __len__(self) -> int:
-            """__len__(self: parselmouth.CC.Frame) -> int"""
-        def __setitem__(self, i: int, value: float) -> None:
-            """__setitem__(self: parselmouth.CC.Frame, i: int, value: float) -> None"""
-        @property
-        def c(self) -> numpy.ndarray:
-            """(arg0: parselmouth.CC.Frame) -> numpy.ndarray"""
+class FormantUnit:
+    __members__: ClassVar[dict] = ...  # read-only
+    BARK: ClassVar[FormantUnit] = ...
+    HERTZ: ClassVar[FormantUnit] = ...
+    __entries: ClassVar[dict] = ...
+    def __init__(self, *args, **kwargs) -> None:
+        """__init__(self: parselmouth.FormantUnit, value: int) -> None \\
+        __init__(self: parselmouth.FormantUnit, arg0: str) -> None
+        """
+    def __eq__(self, other: object) -> bool:
+        """__eq__(self: object, other: object) -> bool"""
+    def __hash__(self) -> int:
+        """__hash__(self: object) -> int"""
+    def __index__(self) -> int:
+        """__index__(self: parselmouth.FormantUnit) -> int"""
+    def __int__(self) -> int:
+        """__int__(self: parselmouth.FormantUnit) -> int"""
+    def __ne__(self, other: object) -> bool:
+        """__ne__(self: object, other: object) -> bool"""
+    @property
+    def name(self) -> str:
+        """name(self: handle) -> str
+
+        name(self: handle) -> str
+        """
+    @property
+    def value(self) -> int:
+        """(arg0: parselmouth.FormantUnit) -> int"""
+
+class PitchUnit:
+    __members__: ClassVar[dict] = ...  # read-only
+    ERB: ClassVar[PitchUnit] = ...
+    HERTZ: ClassVar[PitchUnit] = ...
+    HERTZ_LOGARITHMIC: ClassVar[PitchUnit] = ...
+    LOG_HERTZ: ClassVar[PitchUnit] = ...
+    MEL: ClassVar[PitchUnit] = ...
+    SEMITONES_1: ClassVar[PitchUnit] = ...
+    SEMITONES_100: ClassVar[PitchUnit] = ...
+    SEMITONES_200: ClassVar[PitchUnit] = ...
+    SEMITONES_440: ClassVar[PitchUnit] = ...
+    __entries: ClassVar[dict] = ...
+    def __init__(self, *args, **kwargs) -> None:
+        """__init__(self: parselmouth.PitchUnit, value: int) -> None \\
+        __init__(self: parselmouth.PitchUnit, arg0: str) -> None
+        """
+    def __eq__(self, other: object) -> bool:
+        """__eq__(self: object, other: object) -> bool"""
+    def __hash__(self) -> int:
+        """__hash__(self: object) -> int"""
+    def __index__(self) -> int:
+        """__index__(self: parselmouth.PitchUnit) -> int"""
+    def __int__(self) -> int:
+        """__int__(self: parselmouth.PitchUnit) -> int"""
+    def __ne__(self, other: object) -> bool:
+        """__ne__(self: object, other: object) -> bool"""
+    @property
+    def name(self) -> str:
+        """name(self: handle) -> str
+
+        name(self: handle) -> str
+        """
+    @property
+    def value(self) -> int:
+        """(arg0: parselmouth.PitchUnit) -> int"""
+
+class SoundFileFormat:
+    __members__: ClassVar[dict] = ...  # read-only
+    AIFC: ClassVar[SoundFileFormat] = ...
+    AIFF: ClassVar[SoundFileFormat] = ...
+    FLAC: ClassVar[SoundFileFormat] = ...
+    KAY: ClassVar[SoundFileFormat] = ...
+    NEXT_SUN: ClassVar[SoundFileFormat] = ...
+    NIST: ClassVar[SoundFileFormat] = ...
+    RAW_16_BE: ClassVar[SoundFileFormat] = ...
+    RAW_16_LE: ClassVar[SoundFileFormat] = ...
+    RAW_24_BE: ClassVar[SoundFileFormat] = ...
+    RAW_24_LE: ClassVar[SoundFileFormat] = ...
+    RAW_32_BE: ClassVar[SoundFileFormat] = ...
+    RAW_32_LE: ClassVar[SoundFileFormat] = ...
+    RAW_8_SIGNED: ClassVar[SoundFileFormat] = ...
+    RAW_8_UNSIGNED: ClassVar[SoundFileFormat] = ...
+    SESAM: ClassVar[SoundFileFormat] = ...
+    WAV: ClassVar[SoundFileFormat] = ...
+    WAV_24: ClassVar[SoundFileFormat] = ...
+    WAV_32: ClassVar[SoundFileFormat] = ...
+    __entries: ClassVar[dict] = ...
+    def __init__(self, *args, **kwargs) -> None:
+        """__init__(self: parselmouth.SoundFileFormat, value: int) -> None \\
+        __init__(self: parselmouth.SoundFileFormat, arg0: str) -> None
+        """
+    def __eq__(self, other: object) -> bool:
+        """__eq__(self: object, other: object) -> bool"""
+    def __hash__(self) -> int:
+        """__hash__(self: object) -> int"""
+    def __index__(self) -> int:
+        """__index__(self: parselmouth.SoundFileFormat) -> int"""
+    def __int__(self) -> int:
+        """__int__(self: parselmouth.SoundFileFormat) -> int"""
+    def __ne__(self, other: object) -> bool:
+        """__ne__(self: object, other: object) -> bool"""
+    @property
+    def name(self) -> str:
+        """name(self: handle) -> str
+
+        name(self: handle) -> str
+        """
+    @property
+    def value(self) -> int:
+        """(arg0: parselmouth.SoundFileFormat) -> int"""
+
+class SignalOutsideTimeDomain:
+    __members__: ClassVar[dict] = ...  # read-only
+    SIMILAR: ClassVar[SignalOutsideTimeDomain] = ...
+    ZERO: ClassVar[SignalOutsideTimeDomain] = ...
+    __entries: ClassVar[dict] = ...
+    def __init__(self, *args, **kwargs) -> None:
+        """__init__(self: parselmouth.SignalOutsideTimeDomain, value: int) -> None \\
+        __init__(self: parselmouth.SignalOutsideTimeDomain, arg0: str) -> None
+        """
+    def __eq__(self, other: object) -> bool:
+        """__eq__(self: object, other: object) -> bool"""
+    def __hash__(self) -> int:
+        """__hash__(self: object) -> int"""
+    def __index__(self) -> int:
+        """__index__(self: parselmouth.SignalOutsideTimeDomain) -> int"""
+    def __int__(self) -> int:
+        """__int__(self: parselmouth.SignalOutsideTimeDomain) -> int"""
+    def __ne__(self, other: object) -> bool:
+        """__ne__(self: object, other: object) -> bool"""
+    @property
+    def name(self) -> str:
+        """name(self: handle) -> str
+
+        name(self: handle) -> str
+        """
+    @property
+    def value(self) -> int:
+        """(arg0: parselmouth.SignalOutsideTimeDomain) -> int"""
+
+class SpectralAnalysisWindowShape:
+    __members__: ClassVar[dict] = ...  # read-only
+    BARTLETT: ClassVar[SpectralAnalysisWindowShape] = ...
+    GAUSSIAN: ClassVar[SpectralAnalysisWindowShape] = ...
+    HAMMING: ClassVar[SpectralAnalysisWindowShape] = ...
+    HANNING: ClassVar[SpectralAnalysisWindowShape] = ...
+    SQUARE: ClassVar[SpectralAnalysisWindowShape] = ...
+    WELCH: ClassVar[SpectralAnalysisWindowShape] = ...
+    __entries: ClassVar[dict] = ...
+    def __init__(self, *args, **kwargs) -> None:
+        """__init__(self: parselmouth.SpectralAnalysisWindowShape, value: int) -> None \\
+        __init__(self: parselmouth.SpectralAnalysisWindowShape, arg0: str) -> None
+        """
+    def __eq__(self, other: object) -> bool:
+        """__eq__(self: object, other: object) -> bool"""
+    def __hash__(self) -> int:
+        """__hash__(self: object) -> int"""
+    def __index__(self) -> int:
+        """__index__(self: parselmouth.SpectralAnalysisWindowShape) -> int"""
+    def __int__(self) -> int:
+        """__int__(self: parselmouth.SpectralAnalysisWindowShape) -> int"""
+    def __ne__(self, other: object) -> bool:
+        """__ne__(self: object, other: object) -> bool"""
+    @property
+    def name(self) -> str:
+        """name(self: handle) -> str
+
+        name(self: handle) -> str
+        """
+    @property
+    def value(self) -> int:
+        """(arg0: parselmouth.SpectralAnalysisWindowShape) -> int"""
+
+class WindowShape:
+    __members__: ClassVar[dict] = ...  # read-only
+    GAUSSIAN1: ClassVar[WindowShape] = ...
+    GAUSSIAN2: ClassVar[WindowShape] = ...
+    GAUSSIAN3: ClassVar[WindowShape] = ...
+    GAUSSIAN4: ClassVar[WindowShape] = ...
+    GAUSSIAN5: ClassVar[WindowShape] = ...
+    HAMMING: ClassVar[WindowShape] = ...
+    HANNING: ClassVar[WindowShape] = ...
+    KAISER1: ClassVar[WindowShape] = ...
+    KAISER2: ClassVar[WindowShape] = ...
+    PARABOLIC: ClassVar[WindowShape] = ...
+    RECTANGULAR: ClassVar[WindowShape] = ...
+    TRIANGULAR: ClassVar[WindowShape] = ...
+    __entries: ClassVar[dict] = ...
+    def __init__(self, *args, **kwargs) -> None:
+        """__init__(self: parselmouth.WindowShape, value: int) -> None \\
+        __init__(self: parselmouth.WindowShape, arg0: str) -> None
+        """
+    def __eq__(self, other: object) -> bool:
+        """__eq__(self: object, other: object) -> bool"""
+    def __hash__(self) -> int:
+        """__hash__(self: object) -> int"""
+    def __index__(self) -> int:
+        """__index__(self: parselmouth.WindowShape) -> int"""
+    def __int__(self) -> int:
+        """__int__(self: parselmouth.WindowShape) -> int"""
+    def __ne__(self, other: object) -> bool:
+        """__ne__(self: object, other: object) -> bool"""
+    @property
+    def name(self) -> str:
+        """name(self: handle) -> str
+
+        name(self: handle) -> str
+        """
+    @property
+    def value(self) -> int:
+        """(arg0: parselmouth.WindowShape) -> int"""
+
+class ValueInterpolation:
+    __members__: ClassVar[dict] = ...  # read-only
+    CUBIC: ClassVar[ValueInterpolation] = ...
+    LINEAR: ClassVar[ValueInterpolation] = ...
+    NEAREST: ClassVar[ValueInterpolation] = ...
+    SINC70: ClassVar[ValueInterpolation] = ...
+    SINC700: ClassVar[ValueInterpolation] = ...
+    __entries: ClassVar[dict] = ...
+    def __init__(self, *args, **kwargs) -> None:
+        """__init__(self: parselmouth.ValueInterpolation, value: int) -> None \\
+        __init__(self: parselmouth.ValueInterpolation, arg0: str) -> None
+        """
+    def __eq__(self, other: object) -> bool:
+        """__eq__(self: object, other: object) -> bool"""
+    def __hash__(self) -> int:
+        """__hash__(self: object) -> int"""
+    def __index__(self) -> int:
+        """__index__(self: parselmouth.ValueInterpolation) -> int"""
+    def __int__(self) -> int:
+        """__int__(self: parselmouth.ValueInterpolation) -> int"""
+    def __ne__(self, other: object) -> bool:
+        """__ne__(self: object, other: object) -> bool"""
+    @property
+    def name(self) -> str:
+        """name(self: handle) -> str
+
+        name(self: handle) -> str
+        """
+    @property
+    def value(self) -> int:
+        """(arg0: parselmouth.ValueInterpolation) -> int"""
+
+class Interpolation:
+    __members__: ClassVar[dict] = ...  # read-only
+    CUBIC: ClassVar[ValueInterpolation] = ...
+    LINEAR: ClassVar[ValueInterpolation] = ...
+    NEAREST: ClassVar[ValueInterpolation] = ...
+    SINC70: ClassVar[ValueInterpolation] = ...
+    SINC700: ClassVar[ValueInterpolation] = ...
+    __entries: ClassVar[dict] = ...
+    def __init__(self, *args, **kwargs) -> None:
+        """__init__(self: parselmouth.ValueInterpolation, value: int) -> None \\
+        __init__(self: parselmouth.ValueInterpolation, arg0: str) -> None
+        """
+    def __eq__(self, other: object) -> bool:
+        """__eq__(self: object, other: object) -> bool"""
+    def __hash__(self) -> int:
+        """__hash__(self: object) -> int"""
+    def __index__(self) -> int:
+        """__index__(self: parselmouth.ValueInterpolation) -> int"""
+    def __int__(self) -> int:
+        """__int__(self: parselmouth.ValueInterpolation) -> int"""
+    def __ne__(self, other: object) -> bool:
+        """__ne__(self: object, other: object) -> bool"""
+    @property
+    def name(self) -> str:
+        """name(self: handle) -> str
+
+        name(self: handle) -> str
+        """
+    @property
+    def value(self) -> int:
+        """(arg0: parselmouth.ValueInterpolation) -> int"""
+
+class PraatError(RuntimeError): ...
+class PraatFatal(BaseException): ...
+class PraatWarning(UserWarning): ...
+
+class Thing:
+    name: str
     def __init__(self, *args, **kwargs) -> None:
         """Initialize self.  See help(type(self)) for accurate signature."""
-    def get_c0_value_in_frame(self, frame_number: Positive[int]) -> float:
-        """get_c0_value_in_frame(self: parselmouth.CC, frame_number: Positive[int]) -> float"""
-    def get_frame(self, frame_number: Positive[int]) -> CC.Frame:
-        """get_frame(self: parselmouth.CC, frame_number: Positive[int]) -> parselmouth.CC.Frame"""
-    def get_number_of_coefficients(self, frame_number: Positive[int]) -> int:
-        """get_number_of_coefficients(self: parselmouth.CC, frame_number: Positive[int]) -> int"""
-    def get_value_in_frame(self, frame_number: Positive[int], index: Positive[int]) -> float:
-        """get_value_in_frame(self: parselmouth.CC, frame_number: Positive[int], index: Positive[int]) -> float"""
-    def to_array(self) -> NDArray[numpy.float64]:
-        """to_array(self: parselmouth.CC) -> NDArray[numpy.float64]"""
-    def to_matrix(self) -> Matrix:
-        """to_matrix(self: parselmouth.CC) -> parselmouth.Matrix"""
-    def __getitem__(self, index):
-        """__getitem__(self: parselmouth.CC, i: int) -> parselmouth.CC.Frame \\\n        __getitem__(self: parselmouth.CC, ij: Tuple[int, int]) -> float
-        """
-    def __iter__(self) -> Iterator:
-        """__iter__(self: parselmouth.CC) -> Iterator"""
-    def __setitem__(self, ij: tuple[int, int], value: float) -> None:
-        """__setitem__(self: parselmouth.CC, ij: Tuple[int, int], value: float) -> None"""
+    def info(self) -> str:
+        """info(self: parselmouth.Thing) -> str"""
     @property
-    def fmax(self) -> float:
-        """(self: parselmouth.CC) -> float"""
+    def class_name(self) -> str:
+        """(arg0: parselmouth.Thing) -> str"""
     @property
-    def fmin(self) -> float:
-        """(self: parselmouth.CC) -> float"""
-    @property
-    def max_n_coefficients(self) -> int:
-        """(self: parselmouth.CC) -> int"""
+    def full_name(self) -> str:
+        """(arg0: parselmouth.Thing) -> str"""
 
 class Data(Thing):
     class FileFormat:
@@ -101,7 +345,8 @@ class Data(Thing):
         TEXT: ClassVar[Data.FileFormat] = ...
         __entries: ClassVar[dict] = ...
         def __init__(self, *args, **kwargs) -> None:
-            """__init__(self: parselmouth.Data.FileFormat, value: int) -> None \\\n            __init__(self: parselmouth.Data.FileFormat, arg0: str) -> None
+            """__init__(self: parselmouth.Data.FileFormat, value: int) -> None \\
+            __init__(self: parselmouth.Data.FileFormat, arg0: str) -> None
             """
         def __eq__(self, other: object) -> bool:
             """__eq__(self: object, other: object) -> bool"""
@@ -163,42 +408,6 @@ class Data(Thing):
     def __ne__(self, other: object) -> bool:
         """__ne__(self: parselmouth.Data, other: object) -> bool"""
 
-class Formant(TimeFrameSampled):
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize self.  See help(type(self)) for accurate signature."""
-    def get_bandwidth_at_time(self, formant_number: Positive[int], time: float, unit: FormantUnit = ...) -> float:
-        """get_bandwidth_at_time(self: parselmouth.Formant, formant_number: Positive[int], time: float, unit: parselmouth.FormantUnit = <FormantUnit.HERTZ: 0>) -> float"""
-    def get_value_at_time(self, formant_number: Positive[int], time: float, unit: FormantUnit = ...) -> float:
-        """get_value_at_time(self: parselmouth.Formant, formant_number: Positive[int], time: float, unit: parselmouth.FormantUnit = <FormantUnit.HERTZ: 0>) -> float"""
-
-class FormantUnit:
-    __members__: ClassVar[dict] = ...  # read-only
-    BARK: ClassVar[FormantUnit] = ...
-    HERTZ: ClassVar[FormantUnit] = ...
-    __entries: ClassVar[dict] = ...
-    def __init__(self, *args, **kwargs) -> None:
-        """__init__(self: parselmouth.FormantUnit, value: int) -> None \\\n        __init__(self: parselmouth.FormantUnit, arg0: str) -> None
-        """
-    def __eq__(self, other: object) -> bool:
-        """__eq__(self: object, other: object) -> bool"""
-    def __hash__(self) -> int:
-        """__hash__(self: object) -> int"""
-    def __index__(self) -> int:
-        """__index__(self: parselmouth.FormantUnit) -> int"""
-    def __int__(self) -> int:
-        """__int__(self: parselmouth.FormantUnit) -> int"""
-    def __ne__(self, other: object) -> bool:
-        """__ne__(self: object, other: object) -> bool"""
-    @property
-    def name(self) -> str:
-        """name(self: handle) -> str
-
-        name(self: handle) -> str
-        """
-    @property
-    def value(self) -> int:
-        """(arg0: parselmouth.FormantUnit) -> int"""
-
 class Function(Data):
     xmax: float
     xmin: float
@@ -214,93 +423,87 @@ class Function(Data):
     def shift_x_to(self, x: float, new_x: float) -> None:
         """shift_x_to(self: parselmouth.Function, x: float, new_x: float) -> None"""
 
-class Harmonicity(TimeFrameSampled, Vector):
+class TimeFunction(Function):
+    centre_time: float
+    end_time: float
+    start_time: float
+    time_range: tuple[float, float]
+    tmax: float
+    tmin: float
+    trange: tuple[float, float]
     def __init__(self, *args, **kwargs) -> None:
         """Initialize self.  See help(type(self)) for accurate signature."""
-    def get_value(self, time: float, interpolation: ValueInterpolation = ...) -> float:  # type: ignore[override]
-        """get_value(self: parselmouth.Harmonicity, time: float, interpolation: parselmouth.ValueInterpolation = <ValueInterpolation.CUBIC: 2>) -> float"""
-
-class Intensity(TimeFrameSampled, Vector):
-    class AveragingMethod:
-        __members__: ClassVar[dict] = ...  # read-only
-        DB: ClassVar[Intensity.AveragingMethod] = ...
-        ENERGY: ClassVar[Intensity.AveragingMethod] = ...
-        MEDIAN: ClassVar[Intensity.AveragingMethod] = ...
-        SONES: ClassVar[Intensity.AveragingMethod] = ...
-        __entries: ClassVar[dict] = ...
-        def __init__(self, *args, **kwargs) -> None:
-            """__init__(self: parselmouth.Intensity.AveragingMethod, value: int) -> None \\\n            __init__(self: parselmouth.Intensity.AveragingMethod, arg0: str) -> None
-            """
-        def __eq__(self, other: object) -> bool:
-            """__eq__(self: object, other: object) -> bool"""
-        def __hash__(self) -> int:
-            """__hash__(self: object) -> int"""
-        def __index__(self) -> int:
-            """__index__(self: parselmouth.Intensity.AveragingMethod) -> int"""
-        def __int__(self) -> int:
-            """__int__(self: parselmouth.Intensity.AveragingMethod) -> int"""
-        def __ne__(self, other: object) -> bool:
-            """__ne__(self: object, other: object) -> bool"""
-        @property
-        def name(self) -> str:
-            """name(self: handle) -> str
-
-            name(self: handle) -> str
-            """
-        @property
-        def value(self) -> int:
-            """(arg0: parselmouth.Intensity.AveragingMethod) -> int"""
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize self.  See help(type(self)) for accurate signature."""
-    def get_average(self, from_time: float | None = ..., to_time: float | None = ..., averaging_method: Intensity.AveragingMethod = ...) -> float:
-        """get_average(self: parselmouth.Intensity, from_time: Optional[float] = None, to_time: Optional[float] = None, averaging_method: parselmouth.Intensity.AveragingMethod = <AveragingMethod.ENERGY: 1>) -> float"""
-    def get_value(self, time: float, interpolation: ValueInterpolation = ...) -> float:  # type: ignore[override]
-        """get_value(self: parselmouth.Intensity, time: float, interpolation: parselmouth.ValueInterpolation = <ValueInterpolation.CUBIC: 2>) -> float"""
-
-class Interpolation:
-    __members__: ClassVar[dict] = ...  # read-only
-    CUBIC: ClassVar[ValueInterpolation] = ...
-    LINEAR: ClassVar[ValueInterpolation] = ...
-    NEAREST: ClassVar[ValueInterpolation] = ...
-    SINC70: ClassVar[ValueInterpolation] = ...
-    SINC700: ClassVar[ValueInterpolation] = ...
-    __entries: ClassVar[dict] = ...
-    def __init__(self, *args, **kwargs) -> None:
-        """__init__(self: parselmouth.ValueInterpolation, value: int) -> None \\\n        __init__(self: parselmouth.ValueInterpolation, arg0: str) -> None
-        """
-    def __eq__(self, other: object) -> bool:
-        """__eq__(self: object, other: object) -> bool"""
-    def __hash__(self) -> int:
-        """__hash__(self: object) -> int"""
-    def __index__(self) -> int:
-        """__index__(self: parselmouth.ValueInterpolation) -> int"""
-    def __int__(self) -> int:
-        """__int__(self: parselmouth.ValueInterpolation) -> int"""
-    def __ne__(self, other: object) -> bool:
-        """__ne__(self: object, other: object) -> bool"""
-    @property
-    def name(self) -> str:
-        """name(self: handle) -> str
-
-        name(self: handle) -> str
+    def get_end_time(self) -> float:
+        """get_end_time(self: parselmouth.Function) -> float"""
+    def get_start_time(self) -> float:
+        """get_start_time(self: parselmouth.Function) -> float"""
+    def get_total_duration(self) -> float:
+        """get_total_duration(self: parselmouth.Function) -> float"""
+    def scale_times_by(self, scale: Positive[float]) -> None:
+        """scale_times_by(self: parselmouth.Function, scale: Positive[float]) -> None"""
+    def scale_times_to(self, new_start_time: float, new_end_time: float) -> None:
+        """scale_times_to(self: parselmouth.Function, new_start_time: float, new_end_time: float) -> None"""
+    def shift_times_by(self, seconds: float) -> None:
+        """shift_times_by(self: parselmouth.Function, seconds: float) -> None"""
+    def shift_times_to(self, *args, **kwargs):
+        """shift_times_to(self: parselmouth.Function, time: float, new_time: float) -> None \\
+        shift_times_to(self: parselmouth.Function, time: str, new_time: float) -> None
         """
     @property
-    def value(self) -> int:
-        """(arg0: parselmouth.ValueInterpolation) -> int"""
+    def duration(self) -> float:
+        """(arg0: parselmouth.Function) -> float"""
+    @property
+    def total_duration(self) -> float:
+        """(arg0: parselmouth.Function) -> float"""
 
-class MFCC(CC):
+class Sampled(Function):
     def __init__(self, *args, **kwargs) -> None:
         """Initialize self.  See help(type(self)) for accurate signature."""
-    def convolve(self, other: MFCC, scaling: AmplitudeScaling = ..., signal_outside_time_domain: SignalOutsideTimeDomain = ...) -> Sound:
-        """convolve(self: parselmouth.MFCC, other: parselmouth.MFCC, scaling: parselmouth.AmplitudeScaling = <AmplitudeScaling.PEAK_0_99: 4>, signal_outside_time_domain: parselmouth.SignalOutsideTimeDomain = <SignalOutsideTimeDomain.ZERO: 1>) -> parselmouth.Sound"""
-    def cross_correlate(self, other: MFCC, scaling: AmplitudeScaling = ..., signal_outside_time_domain: SignalOutsideTimeDomain = ...) -> Sound:
-        """cross_correlate(self: parselmouth.MFCC, other: parselmouth.MFCC, scaling: parselmouth.AmplitudeScaling = <AmplitudeScaling.PEAK_0_99: 4>, signal_outside_time_domain: parselmouth.SignalOutsideTimeDomain = <SignalOutsideTimeDomain.ZERO: 1>) -> parselmouth.Sound"""
-    def extract_features(self, window_length: Positive[float] = ..., include_energy: bool = ...) -> Matrix:
-        """extract_features(self: parselmouth.MFCC, window_length: Positive[float] = 0.025, include_energy: bool = False) -> parselmouth.Matrix"""
-    def to_matrix_features(self, window_length: Positive[float] = ..., include_energy: bool = ...) -> Matrix:
-        """to_matrix_features(self: parselmouth.MFCC, window_length: Positive[float] = 0.025, include_energy: bool = False) -> parselmouth.Matrix"""
-    def to_sound(self) -> Sound:
-        """to_sound(self: parselmouth.MFCC) -> parselmouth.Sound"""
+    def x_bins(self) -> NDArray[numpy.float64]:
+        """x_bins(self: parselmouth.Sampled) -> NDArray[numpy.float64]"""
+    def x_grid(self) -> NDArray[numpy.float64]:
+        """x_grid(self: parselmouth.Sampled) -> NDArray[numpy.float64]"""
+    def xs(self) -> NDArray[numpy.float64]:
+        """xs(self: parselmouth.Sampled) -> NDArray[numpy.float64]"""
+    def __len__(self) -> int:
+        """__len__(self: parselmouth.Sampled) -> int"""
+    @property
+    def dx(self) -> float:
+        """(self: parselmouth.Sampled) -> float"""
+    @property
+    def nx(self) -> int:
+        """(self: parselmouth.Sampled) -> int"""
+    @property
+    def x1(self) -> float:
+        """(self: parselmouth.Sampled) -> float"""
+
+class SampledXY(Sampled):
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize self.  See help(type(self)) for accurate signature."""
+    def y_bins(self) -> NDArray[numpy.float64]:
+        """y_bins(self: parselmouth.SampledXY) -> NDArray[numpy.float64]"""
+    def y_grid(self) -> NDArray[numpy.float64]:
+        """y_grid(self: parselmouth.SampledXY) -> NDArray[numpy.float64]"""
+    def ys(self) -> NDArray[numpy.float64]:
+        """ys(self: parselmouth.SampledXY) -> NDArray[numpy.float64]"""
+    @property
+    def dy(self) -> float:
+        """(self: parselmouth.SampledXY) -> float"""
+    @property
+    def ny(self) -> int:
+        """(self: parselmouth.SampledXY) -> int"""
+    @property
+    def y1(self) -> float:
+        """(self: parselmouth.SampledXY) -> float"""
+    @property
+    def ymax(self) -> float:
+        """(self: parselmouth.SampledXY) -> float"""
+    @property
+    def ymin(self) -> float:
+        """(self: parselmouth.SampledXY) -> float"""
+    @property
+    def yrange(self) -> tuple[float, float]:
+        """(arg0: parselmouth.SampledXY) -> Tuple[float, float]"""
 
 class Matrix(SampledXY):
     values: NDArray[numpy.float64]
@@ -311,7 +514,8 @@ class Matrix(SampledXY):
     def at_xy(self, x: float, y: float) -> float:
         """at_xy(self: parselmouth.Matrix, x: float, y: float) -> float"""
     def formula(self, *args, **kwargs):
-        """formula(self: parselmouth.Matrix, formula: str, from_x: Optional[float] = None, to_x: Optional[float] = None, from_y: Optional[float] = None, to_y: Optional[float] = None) -> None \\\n        formula(self: parselmouth.Matrix, formula: str, x_range: Tuple[Optional[float], Optional[float]] = (None, None), y_range: Tuple[Optional[float], Optional[float]] = (None, None)) -> None
+        """formula(self: parselmouth.Matrix, formula: str, from_x: Optional[float] = None, to_x: Optional[float] = None, from_y: Optional[float] = None, to_y: Optional[float] = None) -> None \\
+        formula(self: parselmouth.Matrix, formula: str, x_range: Tuple[Optional[float], Optional[float]] = (None, None), y_range: Tuple[Optional[float], Optional[float]] = (None, None)) -> None
         """
     def get_column_distance(self) -> float:
         """get_column_distance(self: parselmouth.Matrix) -> float"""
@@ -360,6 +564,200 @@ class Matrix(SampledXY):
     def n_rows(self) -> int:
         """(self: parselmouth.Matrix) -> int"""
 
+class Vector(Matrix):
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize self.  See help(type(self)) for accurate signature."""
+    def add(self, number: float) -> None:
+        """add(self: parselmouth.Vector, number: float) -> None"""
+    def divide(self, factor: float) -> None:
+        """divide(self: parselmouth.Vector, factor: float) -> None"""
+    def get_value(self, x: float, channel: int | None = ..., interpolation: ValueInterpolation = ...) -> float:
+        """get_value(self: parselmouth.Vector, x: float, channel: Optional[int] = None, interpolation: parselmouth.ValueInterpolation = <ValueInterpolation.CUBIC: 2>) -> float"""
+    def multiply(self, factor: float) -> None:
+        """multiply(self: parselmouth.Vector, factor: float) -> None"""
+    def scale(self, scale: Positive[float]) -> None:
+        """scale(self: parselmouth.Vector, scale: Positive[float]) -> None"""
+    def scale_peak(self, new_peak: Positive[float] = ...) -> None:
+        """scale_peak(self: parselmouth.Vector, new_peak: Positive[float] = 0.99) -> None"""
+    def subtract(self, number: float) -> None:
+        """subtract(self: parselmouth.Vector, number: float) -> None"""
+    def subtract_mean(self) -> None:
+        """subtract_mean(self: parselmouth.Vector) -> None"""
+    def __add__(self, number: float) -> Vector:
+        """__add__(self: parselmouth.Vector, number: float) -> parselmouth.Vector"""
+    def __iadd__(self, number: float) -> Vector:
+        """__iadd__(self: parselmouth.Vector, number: float) -> parselmouth.Vector"""
+    def __imul__(self, factor: float) -> Vector:
+        """__imul__(self: parselmouth.Vector, factor: float) -> parselmouth.Vector"""
+    def __isub__(self, number: float) -> Vector:
+        """__isub__(self: parselmouth.Vector, number: float) -> parselmouth.Vector"""
+    def __itruediv__(self, factor: float) -> Vector:
+        """__itruediv__(self: parselmouth.Vector, factor: float) -> parselmouth.Vector"""
+    def __mul__(self, factor: float) -> Vector:
+        """__mul__(self: parselmouth.Vector, factor: float) -> parselmouth.Vector"""
+    def __radd__(self, number: float) -> Vector:
+        """__radd__(self: parselmouth.Vector, number: float) -> parselmouth.Vector"""
+    def __rmul__(self, factor: float) -> Vector:
+        """__rmul__(self: parselmouth.Vector, factor: float) -> parselmouth.Vector"""
+    def __sub__(self, number: float) -> Vector:
+        """__sub__(self: parselmouth.Vector, number: float) -> parselmouth.Vector"""
+    def __truediv__(self, factor: float) -> Vector:
+        """__truediv__(self: parselmouth.Vector, factor: float) -> parselmouth.Vector"""
+
+class TimeFrameSampled(TimeFunction, Sampled):
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize self.  See help(type(self)) for accurate signature."""
+    def frame_number_to_time(self, frame_number: Positive[int]) -> float:
+        """frame_number_to_time(self: parselmouth.Sampled, frame_number: Positive[int]) -> float"""
+    def get_frame_number_from_time(self, time: float) -> float:
+        """get_frame_number_from_time(self: parselmouth.Sampled, time: float) -> float"""
+    def get_number_of_frames(self) -> int:
+        """get_number_of_frames(self: parselmouth.Sampled) -> int"""
+    def get_time_from_frame_number(self, frame_number: Positive[int]) -> float:
+        """get_time_from_frame_number(self: parselmouth.Sampled, frame_number: Positive[int]) -> float"""
+    def get_time_step(self) -> float:
+        """get_time_step(self: parselmouth.Sampled) -> float"""
+    def t_bins(self) -> NDArray[numpy.float64]:
+        """t_bins(self: parselmouth.Sampled) -> NDArray[numpy.float64]"""
+    def t_grid(self) -> NDArray[numpy.float64]:
+        """t_grid(self: parselmouth.Sampled) -> NDArray[numpy.float64]"""
+    def time_to_frame_number(self, time: float) -> float:
+        """time_to_frame_number(self: parselmouth.Sampled, time: float) -> float"""
+    def ts(self) -> NDArray[numpy.float64]:
+        """ts(self: parselmouth.Sampled) -> NDArray[numpy.float64]"""
+    @property
+    def dt(self) -> float:
+        """(self: parselmouth.TimeFrameSampled) -> float"""
+    @property
+    def n_frames(self) -> int:
+        """(self: parselmouth.TimeFrameSampled) -> int"""
+    @property
+    def nt(self) -> int:
+        """(self: parselmouth.TimeFrameSampled) -> int"""
+    @property
+    def t1(self) -> float:
+        """(self: parselmouth.TimeFrameSampled) -> float"""
+    @property
+    def time_step(self) -> float:
+        """(self: parselmouth.TimeFrameSampled) -> float"""
+class CC(TimeFrameSampled):
+    class Frame:
+        c0: float
+        def __init__(self, *args, **kwargs) -> None:
+            """Initialize self.  See help(type(self)) for accurate signature."""
+        def to_array(self) -> NDArray[numpy.float64]:
+            """to_array(self: parselmouth.CC.Frame) -> NDArray[numpy.float64]"""
+        def __getitem__(self, i: int) -> float:
+            """__getitem__(self: parselmouth.CC.Frame, i: int) -> float"""
+        def __iter__(self) -> typing.Iterator[float]:
+            """def __iter__(self) -> typing.Iterator[float]"""
+        def __len__(self) -> int:
+            """__len__(self: parselmouth.CC.Frame) -> int"""
+        def __setitem__(self, i: int, value: float) -> None:
+            """__setitem__(self: parselmouth.CC.Frame, i: int, value: float) -> None"""
+        @property
+        def c(self) -> numpy.ndarray:
+            """(arg0: parselmouth.CC.Frame) -> numpy.ndarray"""
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize self.  See help(type(self)) for accurate signature."""
+    def get_c0_value_in_frame(self, frame_number: Positive[int]) -> float:
+        """get_c0_value_in_frame(self: parselmouth.CC, frame_number: Positive[int]) -> float"""
+    def get_frame(self, frame_number: Positive[int]) -> CC.Frame:
+        """get_frame(self: parselmouth.CC, frame_number: Positive[int]) -> parselmouth.CC.Frame"""
+    def get_number_of_coefficients(self, frame_number: Positive[int]) -> int:
+        """get_number_of_coefficients(self: parselmouth.CC, frame_number: Positive[int]) -> int"""
+    def get_value_in_frame(self, frame_number: Positive[int], index: Positive[int]) -> float:
+        """get_value_in_frame(self: parselmouth.CC, frame_number: Positive[int], index: Positive[int]) -> float"""
+    def to_array(self) -> NDArray[numpy.float64]:
+        """to_array(self: parselmouth.CC) -> NDArray[numpy.float64]"""
+    def to_matrix(self) -> Matrix:
+        """to_matrix(self: parselmouth.CC) -> parselmouth.Matrix"""
+    def __getitem__(self, index):
+        """__getitem__(self: parselmouth.CC, i: int) -> parselmouth.CC.Frame \\
+        __getitem__(self: parselmouth.CC, ij: Tuple[int, int]) -> float
+        """
+    def __iter__(self) -> Iterator:
+        """__iter__(self: parselmouth.CC) -> Iterator"""
+    def __setitem__(self, ij: tuple[int, int], value: float) -> None:
+        """__setitem__(self: parselmouth.CC, ij: Tuple[int, int], value: float) -> None"""
+    @property
+    def fmax(self) -> float:
+        """(self: parselmouth.CC) -> float"""
+    @property
+    def fmin(self) -> float:
+        """(self: parselmouth.CC) -> float"""
+    @property
+    def max_n_coefficients(self) -> int:
+        """(self: parselmouth.CC) -> int"""
+
+class MFCC(CC):
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize self.  See help(type(self)) for accurate signature."""
+    def convolve(self, other: MFCC, scaling: AmplitudeScaling = ..., signal_outside_time_domain: SignalOutsideTimeDomain = ...) -> Sound:
+        """convolve(self: parselmouth.MFCC, other: parselmouth.MFCC, scaling: parselmouth.AmplitudeScaling = <AmplitudeScaling.PEAK_0_99: 4>, signal_outside_time_domain: parselmouth.SignalOutsideTimeDomain = <SignalOutsideTimeDomain.ZERO: 1>) -> parselmouth.Sound"""
+    def cross_correlate(self, other: MFCC, scaling: AmplitudeScaling = ..., signal_outside_time_domain: SignalOutsideTimeDomain = ...) -> Sound:
+        """cross_correlate(self: parselmouth.MFCC, other: parselmouth.MFCC, scaling: parselmouth.AmplitudeScaling = <AmplitudeScaling.PEAK_0_99: 4>, signal_outside_time_domain: parselmouth.SignalOutsideTimeDomain = <SignalOutsideTimeDomain.ZERO: 1>) -> parselmouth.Sound"""
+    def extract_features(self, window_length: Positive[float] = ..., include_energy: bool = ...) -> Matrix:
+        """extract_features(self: parselmouth.MFCC, window_length: Positive[float] = 0.025, include_energy: bool = False) -> parselmouth.Matrix"""
+    def to_matrix_features(self, window_length: Positive[float] = ..., include_energy: bool = ...) -> Matrix:
+        """to_matrix_features(self: parselmouth.MFCC, window_length: Positive[float] = 0.025, include_energy: bool = False) -> parselmouth.Matrix"""
+    def to_sound(self) -> Sound:
+        """to_sound(self: parselmouth.MFCC) -> parselmouth.Sound"""
+
+class Formant(TimeFrameSampled):
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize self.  See help(type(self)) for accurate signature."""
+    def get_bandwidth_at_time(self, formant_number: Positive[int], time: float, unit: FormantUnit = ...) -> float:
+        """get_bandwidth_at_time(self: parselmouth.Formant, formant_number: Positive[int], time: float, unit: parselmouth.FormantUnit = <FormantUnit.HERTZ: 0>) -> float"""
+    def get_value_at_time(self, formant_number: Positive[int], time: float, unit: FormantUnit = ...) -> float:
+        """get_value_at_time(self: parselmouth.Formant, formant_number: Positive[int], time: float, unit: parselmouth.FormantUnit = <FormantUnit.HERTZ: 0>) -> float"""
+
+class Harmonicity(TimeFrameSampled, Vector):
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize self.  See help(type(self)) for accurate signature."""
+    def get_value(self, time: float, interpolation: ValueInterpolation = ...) -> float:  # type: ignore[override]
+        """get_value(self: parselmouth.Harmonicity, time: float, interpolation: parselmouth.ValueInterpolation = <ValueInterpolation.CUBIC: 2>) -> float"""
+
+class Intensity(TimeFrameSampled, Vector):
+    class AveragingMethod:
+        __members__: ClassVar[dict] = ...  # read-only
+        DB: ClassVar[Intensity.AveragingMethod] = ...
+        ENERGY: ClassVar[Intensity.AveragingMethod] = ...
+        MEDIAN: ClassVar[Intensity.AveragingMethod] = ...
+        SONES: ClassVar[Intensity.AveragingMethod] = ...
+        __entries: ClassVar[dict] = ...
+        def __init__(self, *args, **kwargs) -> None:
+            """__init__(self: parselmouth.Intensity.AveragingMethod, value: int) -> None \\
+            __init__(self: parselmouth.Intensity.AveragingMethod, arg0: str) -> None
+            """
+        def __eq__(self, other: object) -> bool:
+            """__eq__(self: object, other: object) -> bool"""
+        def __hash__(self) -> int:
+            """__hash__(self: object) -> int"""
+        def __index__(self) -> int:
+            """__index__(self: parselmouth.Intensity.AveragingMethod) -> int"""
+        def __int__(self) -> int:
+            """__int__(self: parselmouth.Intensity.AveragingMethod) -> int"""
+        def __ne__(self, other: object) -> bool:
+            """__ne__(self: object, other: object) -> bool"""
+        @property
+        def name(self) -> str:
+            """name(self: handle) -> str
+
+            name(self: handle) -> str
+            """
+        @property
+        def value(self) -> int:
+            """(arg0: parselmouth.Intensity.AveragingMethod) -> int"""
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize self.  See help(type(self)) for accurate signature."""
+    def get_average(self, from_time: float | None = ..., to_time: float | None = ..., averaging_method: Intensity.AveragingMethod = ...) -> float:
+        """get_average(self: parselmouth.Intensity, from_time: Optional[float] = None, to_time: Optional[float] = None, averaging_method: parselmouth.Intensity.AveragingMethod = <AveragingMethod.ENERGY: 1>) -> float"""
+    def get_value(self, time: float, interpolation: ValueInterpolation = ...) -> float:  # type: ignore[override]
+        """get_value(self: parselmouth.Intensity, time: float, interpolation: parselmouth.ValueInterpolation = <ValueInterpolation.CUBIC: 2>) -> float"""
+    def get_maximum(self, from_time: float | None = ..., to_time: float | None = ..., interpolation: ValueInterpolation | str = ...) -> float:  # type: ignore[override]
+        """get_maximum(self: parselmouth.Intensity, from_time: Optional[float] = None, to_time: Optional[float] = None, interpolation: parselmouth.ValueInterpolation = <ValueInterpolation.PARABOLIC: 2>) -> float"""
+
 class Pitch(TimeFrameSampled):
     class Candidate:
         def __init__(self, *args, **kwargs) -> None:
@@ -378,7 +776,8 @@ class Pitch(TimeFrameSampled):
         def as_array(self) -> numpy.ndarray:
             """as_array(self: parselmouth.Pitch.Frame) -> numpy.ndarray"""
         def select(self, *args, **kwargs):
-            """select(self: parselmouth.Pitch.Frame, candidate: parselmouth.Pitch.Candidate) -> None \\\n            select(self: parselmouth.Pitch.Frame, i: int) -> None
+            """select(self: parselmouth.Pitch.Frame, candidate: parselmouth.Pitch.Candidate) -> None \\
+            select(self: parselmouth.Pitch.Frame, i: int) -> None
             """
         def unvoice(self) -> None:
             """unvoice(self: parselmouth.Pitch.Frame) -> None"""
@@ -446,7 +845,8 @@ class Pitch(TimeFrameSampled):
     def unvoice(self, from_time: float | None = ..., to_time: float | None = ...) -> None:
         """unvoice(self: parselmouth.Pitch, from_time: Optional[float] = None, to_time: Optional[float] = None) -> None"""
     def __getitem__(self, index):
-        """__getitem__(self: parselmouth.Pitch, i: int) -> parselmouth.Pitch.Frame \\\n        __getitem__(self: parselmouth.Pitch, ij: Tuple[int, int]) -> parselmouth.Pitch.Candidate
+        """__getitem__(self: parselmouth.Pitch, i: int) -> parselmouth.Pitch.Frame \\
+        __getitem__(self: parselmouth.Pitch, ij: Tuple[int, int]) -> parselmouth.Pitch.Candidate
         """
     def __iter__(self) -> Iterator:
         """__iter__(self: parselmouth.Pitch) -> Iterator"""
@@ -460,124 +860,6 @@ class Pitch(TimeFrameSampled):
     def selected_array(self) -> NDArray[Any]:
         """(arg0: parselmouth.Pitch) -> numpy.ndarray[parselmouth.Pitch.Candidate]"""
 
-class PitchUnit:
-    __members__: ClassVar[dict] = ...  # read-only
-    ERB: ClassVar[PitchUnit] = ...
-    HERTZ: ClassVar[PitchUnit] = ...
-    HERTZ_LOGARITHMIC: ClassVar[PitchUnit] = ...
-    LOG_HERTZ: ClassVar[PitchUnit] = ...
-    MEL: ClassVar[PitchUnit] = ...
-    SEMITONES_1: ClassVar[PitchUnit] = ...
-    SEMITONES_100: ClassVar[PitchUnit] = ...
-    SEMITONES_200: ClassVar[PitchUnit] = ...
-    SEMITONES_440: ClassVar[PitchUnit] = ...
-    __entries: ClassVar[dict] = ...
-    def __init__(self, *args, **kwargs) -> None:
-        """__init__(self: parselmouth.PitchUnit, value: int) -> None \\\n        __init__(self: parselmouth.PitchUnit, arg0: str) -> None
-        """
-    def __eq__(self, other: object) -> bool:
-        """__eq__(self: object, other: object) -> bool"""
-    def __hash__(self) -> int:
-        """__hash__(self: object) -> int"""
-    def __index__(self) -> int:
-        """__index__(self: parselmouth.PitchUnit) -> int"""
-    def __int__(self) -> int:
-        """__int__(self: parselmouth.PitchUnit) -> int"""
-    def __ne__(self, other: object) -> bool:
-        """__ne__(self: object, other: object) -> bool"""
-    @property
-    def name(self) -> str:
-        """name(self: handle) -> str
-
-        name(self: handle) -> str
-        """
-    @property
-    def value(self) -> int:
-        """(arg0: parselmouth.PitchUnit) -> int"""
-
-class PraatError(RuntimeError): ...
-
-class PraatFatal(BaseException): ...
-
-class PraatWarning(UserWarning): ...
-
-class Sampled(Function):
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize self.  See help(type(self)) for accurate signature."""
-    def x_bins(self) -> NDArray[numpy.float64]:
-        """x_bins(self: parselmouth.Sampled) -> NDArray[numpy.float64]"""
-    def x_grid(self) -> NDArray[numpy.float64]:
-        """x_grid(self: parselmouth.Sampled) -> NDArray[numpy.float64]"""
-    def xs(self) -> NDArray[numpy.float64]:
-        """xs(self: parselmouth.Sampled) -> NDArray[numpy.float64]"""
-    def __len__(self) -> int:
-        """__len__(self: parselmouth.Sampled) -> int"""
-    @property
-    def dx(self) -> float:
-        """(self: parselmouth.Sampled) -> float"""
-    @property
-    def nx(self) -> int:
-        """(self: parselmouth.Sampled) -> int"""
-    @property
-    def x1(self) -> float:
-        """(self: parselmouth.Sampled) -> float"""
-
-class SampledXY(Sampled):
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize self.  See help(type(self)) for accurate signature."""
-    def y_bins(self) -> NDArray[numpy.float64]:
-        """y_bins(self: parselmouth.SampledXY) -> NDArray[numpy.float64]"""
-    def y_grid(self) -> NDArray[numpy.float64]:
-        """y_grid(self: parselmouth.SampledXY) -> NDArray[numpy.float64]"""
-    def ys(self) -> NDArray[numpy.float64]:
-        """ys(self: parselmouth.SampledXY) -> NDArray[numpy.float64]"""
-    @property
-    def dy(self) -> float:
-        """(self: parselmouth.SampledXY) -> float"""
-    @property
-    def ny(self) -> int:
-        """(self: parselmouth.SampledXY) -> int"""
-    @property
-    def y1(self) -> float:
-        """(self: parselmouth.SampledXY) -> float"""
-    @property
-    def ymax(self) -> float:
-        """(self: parselmouth.SampledXY) -> float"""
-    @property
-    def ymin(self) -> float:
-        """(self: parselmouth.SampledXY) -> float"""
-    @property
-    def yrange(self) -> tuple[float, float]:
-        """(arg0: parselmouth.SampledXY) -> Tuple[float, float]"""
-
-class SignalOutsideTimeDomain:
-    __members__: ClassVar[dict] = ...  # read-only
-    SIMILAR: ClassVar[SignalOutsideTimeDomain] = ...
-    ZERO: ClassVar[SignalOutsideTimeDomain] = ...
-    __entries: ClassVar[dict] = ...
-    def __init__(self, *args, **kwargs) -> None:
-        """__init__(self: parselmouth.SignalOutsideTimeDomain, value: int) -> None \\\n        __init__(self: parselmouth.SignalOutsideTimeDomain, arg0: str) -> None
-        """
-    def __eq__(self, other: object) -> bool:
-        """__eq__(self: object, other: object) -> bool"""
-    def __hash__(self) -> int:
-        """__hash__(self: object) -> int"""
-    def __index__(self) -> int:
-        """__index__(self: parselmouth.SignalOutsideTimeDomain) -> int"""
-    def __int__(self) -> int:
-        """__int__(self: parselmouth.SignalOutsideTimeDomain) -> int"""
-    def __ne__(self, other: object) -> bool:
-        """__ne__(self: object, other: object) -> bool"""
-    @property
-    def name(self) -> str:
-        """name(self: handle) -> str
-
-        name(self: handle) -> str
-        """
-    @property
-    def value(self) -> int:
-        """(arg0: parselmouth.SignalOutsideTimeDomain) -> int"""
-
 class Sound(TimeFrameSampled, Vector):
     class ToHarmonicityMethod:
         __members__: ClassVar[dict] = ...  # read-only
@@ -586,7 +868,8 @@ class Sound(TimeFrameSampled, Vector):
         GNE: ClassVar[Sound.ToHarmonicityMethod] = ...
         __entries: ClassVar[dict] = ...
         def __init__(self, *args, **kwargs) -> None:
-            """__init__(self: parselmouth.Sound.ToHarmonicityMethod, value: int) -> None \\\n            __init__(self: parselmouth.Sound.ToHarmonicityMethod, arg0: str) -> None
+            """__init__(self: parselmouth.Sound.ToHarmonicityMethod, value: int) -> None \\
+            __init__(self: parselmouth.Sound.ToHarmonicityMethod, arg0: str) -> None
             """
         def __eq__(self, other: object) -> bool:
             """__eq__(self: object, other: object) -> bool"""
@@ -616,7 +899,8 @@ class Sound(TimeFrameSampled, Vector):
         SPINET: ClassVar[Sound.ToPitchMethod] = ...
         __entries: ClassVar[dict] = ...
         def __init__(self, *args, **kwargs) -> None:
-            """__init__(self: parselmouth.Sound.ToPitchMethod, value: int) -> None \\\n            __init__(self: parselmouth.Sound.ToPitchMethod, arg0: str) -> None
+            """__init__(self: parselmouth.Sound.ToPitchMethod, value: int) -> None \\
+            __init__(self: parselmouth.Sound.ToPitchMethod, arg0: str) -> None
             """
         def __eq__(self, other: object) -> bool:
             """__eq__(self: object, other: object) -> bool"""
@@ -640,7 +924,9 @@ class Sound(TimeFrameSampled, Vector):
     sampling_frequency: float
     sampling_period: float
     def __init__(self, *args, **kwargs) -> None:
-        """__init__(self: parselmouth.Sound, other: parselmouth.Sound) -> None \\\n        __init__(self: parselmouth.Sound, values: NDArray[numpy.float64], sampling_frequency: Positive[float] = 44100.0, start_time: float = 0.0) -> None \\\n        __init__(self: parselmouth.Sound, file_path: str) -> None
+        """__init__(self: parselmouth.Sound, other: parselmouth.Sound) -> None \\
+        __init__(self: parselmouth.Sound, values: NDArray[numpy.float64], sampling_frequency: Positive[float] = 44100.0, start_time: float = 0.0) -> None \\
+        __init__(self: parselmouth.Sound, file_path: str) -> None
         """
     def autocorrelate(self, scaling: AmplitudeScaling = ..., signal_outside_time_domain: SignalOutsideTimeDomain = ...) -> Sound:
         """autocorrelate(self: parselmouth.Sound, scaling: parselmouth.AmplitudeScaling = <AmplitudeScaling.PEAK_0_99: 4>, signal_outside_time_domain: parselmouth.SignalOutsideTimeDomain = <SignalOutsideTimeDomain.ZERO: 1>) -> parselmouth.Sound"""
@@ -665,7 +951,8 @@ class Sound(TimeFrameSampled, Vector):
     def extract_all_channels(self) -> list[Sound]:
         """extract_all_channels(self: parselmouth.Sound) -> List[parselmouth.Sound]"""
     def extract_channel(self, *args, **kwargs):
-        """extract_channel(self: parselmouth.Sound, channel: int) -> parselmouth.Sound \\\n        extract_channel(self: parselmouth.Sound, arg0: str) -> parselmouth.Sound
+        """extract_channel(self: parselmouth.Sound, channel: int) -> parselmouth.Sound \\
+        extract_channel(self: parselmouth.Sound, arg0: str) -> parselmouth.Sound
         """
     def extract_left_channel(self) -> Sound:
         """extract_left_channel(self: parselmouth.Sound) -> parselmouth.Sound"""
@@ -736,7 +1023,8 @@ class Sound(TimeFrameSampled, Vector):
     def to_mfcc(self, number_of_coefficients: Positive[int] = ..., window_length: Positive[float] = ..., time_step: Positive[float] = ..., firstFilterFreqency: Positive[float] = ..., distance_between_filters: Positive[float] = ..., maximum_frequency: Positive[float] | None = ...) -> MFCC:
         """to_mfcc(self: parselmouth.Sound, number_of_coefficients: Positive[int] = 12, window_length: Positive[float] = 0.015, time_step: Positive[float] = 0.005, firstFilterFreqency: Positive[float] = 100.0, distance_between_filters: Positive[float] = 100.0, maximum_frequency: Optional[Positive[float]] = None) -> parselmouth.MFCC"""
     def to_pitch(self, *args, **kwargs):
-        """to_pitch(self: parselmouth.Sound, time_step: Optional[Positive[float]] = None, pitch_floor: Positive[float] = 75.0, pitch_ceiling: Positive[float] = 600.0) -> parselmouth.Pitch \\\n        to_pitch(self: parselmouth.Sound, method: parselmouth.Sound.ToPitchMethod, *args, **kwargs) -> object
+        """to_pitch(self: parselmouth.Sound, time_step: Optional[Positive[float]] = None, pitch_floor: Positive[float] = 75.0, pitch_ceiling: Positive[float] = 600.0) -> parselmouth.Pitch \\
+        to_pitch(self: parselmouth.Sound, method: parselmouth.Sound.ToPitchMethod, *args, **kwargs) -> object
         """
     def to_pitch_ac(self, time_step: Positive[float] | None = ..., pitch_floor: Positive[float] = ..., max_number_of_candidates: Positive[int] = ..., very_accurate: bool = ..., silence_threshold: float = ..., voicing_threshold: float = ..., octave_cost: float = ..., octave_jump_cost: float = ..., voiced_unvoiced_cost: float = ..., pitch_ceiling: Positive[float] = ...) -> Pitch:
         """to_pitch_ac(self: parselmouth.Sound, time_step: Optional[Positive[float]] = None, pitch_floor: Positive[float] = 75.0, max_number_of_candidates: Positive[int] = 15, very_accurate: bool = False, silence_threshold: float = 0.03, voicing_threshold: float = 0.45, octave_cost: float = 0.01, octave_jump_cost: float = 0.35, voiced_unvoiced_cost: float = 0.14, pitch_ceiling: Positive[float] = 600.0) -> parselmouth.Pitch"""
@@ -757,82 +1045,6 @@ class Sound(TimeFrameSampled, Vector):
     def n_samples(self) -> int:
         """(self: parselmouth.Sound) -> int"""
 
-class SoundFileFormat:
-    __members__: ClassVar[dict] = ...  # read-only
-    AIFC: ClassVar[SoundFileFormat] = ...
-    AIFF: ClassVar[SoundFileFormat] = ...
-    FLAC: ClassVar[SoundFileFormat] = ...
-    KAY: ClassVar[SoundFileFormat] = ...
-    NEXT_SUN: ClassVar[SoundFileFormat] = ...
-    NIST: ClassVar[SoundFileFormat] = ...
-    RAW_16_BE: ClassVar[SoundFileFormat] = ...
-    RAW_16_LE: ClassVar[SoundFileFormat] = ...
-    RAW_24_BE: ClassVar[SoundFileFormat] = ...
-    RAW_24_LE: ClassVar[SoundFileFormat] = ...
-    RAW_32_BE: ClassVar[SoundFileFormat] = ...
-    RAW_32_LE: ClassVar[SoundFileFormat] = ...
-    RAW_8_SIGNED: ClassVar[SoundFileFormat] = ...
-    RAW_8_UNSIGNED: ClassVar[SoundFileFormat] = ...
-    SESAM: ClassVar[SoundFileFormat] = ...
-    WAV: ClassVar[SoundFileFormat] = ...
-    WAV_24: ClassVar[SoundFileFormat] = ...
-    WAV_32: ClassVar[SoundFileFormat] = ...
-    __entries: ClassVar[dict] = ...
-    def __init__(self, *args, **kwargs) -> None:
-        """__init__(self: parselmouth.SoundFileFormat, value: int) -> None \\\n        __init__(self: parselmouth.SoundFileFormat, arg0: str) -> None
-        """
-    def __eq__(self, other: object) -> bool:
-        """__eq__(self: object, other: object) -> bool"""
-    def __hash__(self) -> int:
-        """__hash__(self: object) -> int"""
-    def __index__(self) -> int:
-        """__index__(self: parselmouth.SoundFileFormat) -> int"""
-    def __int__(self) -> int:
-        """__int__(self: parselmouth.SoundFileFormat) -> int"""
-    def __ne__(self, other: object) -> bool:
-        """__ne__(self: object, other: object) -> bool"""
-    @property
-    def name(self) -> str:
-        """name(self: handle) -> str
-
-        name(self: handle) -> str
-        """
-    @property
-    def value(self) -> int:
-        """(arg0: parselmouth.SoundFileFormat) -> int"""
-
-class SpectralAnalysisWindowShape:
-    __members__: ClassVar[dict] = ...  # read-only
-    BARTLETT: ClassVar[SpectralAnalysisWindowShape] = ...
-    GAUSSIAN: ClassVar[SpectralAnalysisWindowShape] = ...
-    HAMMING: ClassVar[SpectralAnalysisWindowShape] = ...
-    HANNING: ClassVar[SpectralAnalysisWindowShape] = ...
-    SQUARE: ClassVar[SpectralAnalysisWindowShape] = ...
-    WELCH: ClassVar[SpectralAnalysisWindowShape] = ...
-    __entries: ClassVar[dict] = ...
-    def __init__(self, *args, **kwargs) -> None:
-        """__init__(self: parselmouth.SpectralAnalysisWindowShape, value: int) -> None \\\n        __init__(self: parselmouth.SpectralAnalysisWindowShape, arg0: str) -> None
-        """
-    def __eq__(self, other: object) -> bool:
-        """__eq__(self: object, other: object) -> bool"""
-    def __hash__(self) -> int:
-        """__hash__(self: object) -> int"""
-    def __index__(self) -> int:
-        """__index__(self: parselmouth.SpectralAnalysisWindowShape) -> int"""
-    def __int__(self) -> int:
-        """__int__(self: parselmouth.SpectralAnalysisWindowShape) -> int"""
-    def __ne__(self, other: object) -> bool:
-        """__ne__(self: object, other: object) -> bool"""
-    @property
-    def name(self) -> str:
-        """name(self: handle) -> str
-
-        name(self: handle) -> str
-        """
-    @property
-    def value(self) -> int:
-        """(arg0: parselmouth.SpectralAnalysisWindowShape) -> int"""
-
 class Spectrogram(TimeFrameSampled, Matrix):
     def __init__(self, *args, **kwargs) -> None:
         """Initialize self.  See help(type(self)) for accurate signature."""
@@ -847,21 +1059,26 @@ class Spectrogram(TimeFrameSampled, Matrix):
 
 class Spectrum(Matrix):
     def __init__(self, *args, **kwargs) -> None:
-        """__init__(self: parselmouth.Spectrum, values: NDArray[numpy.float64], maximum_frequency: Positive[float]) -> None \\\n        __init__(self: parselmouth.Spectrum, values: numpy.ndarray[numpy.complex128], maximum_frequency: Positive[float]) -> None
+        """__init__(self: parselmouth.Spectrum, values: NDArray[numpy.float64], maximum_frequency: Positive[float]) -> None \\
+        __init__(self: parselmouth.Spectrum, values: numpy.ndarray[numpy.complex128], maximum_frequency: Positive[float]) -> None
         """
     def cepstral_smoothing(self, bandwidth: Positive[float] = ...) -> Spectrum:
         """cepstral_smoothing(self: parselmouth.Spectrum, bandwidth: Positive[float] = 500.0) -> parselmouth.Spectrum"""
     def get_band_density(self, *args, **kwargs):
-        """get_band_density(self: parselmouth.Spectrum, band_floor: Optional[float] = None, band_ceiling: Optional[float] = None) -> float \\\n        get_band_density(self: parselmouth.Spectrum, band: Tuple[Optional[float], Optional[float]] = (None, None)) -> float
+        """get_band_density(self: parselmouth.Spectrum, band_floor: Optional[float] = None, band_ceiling: Optional[float] = None) -> float \\
+        get_band_density(self: parselmouth.Spectrum, band: Tuple[Optional[float], Optional[float]] = (None, None)) -> float
         """
     def get_band_density_difference(self, *args, **kwargs):
-        """get_band_density_difference(self: parselmouth.Spectrum, low_band_floor: Optional[float] = None, low_band_ceiling: Optional[float] = None, high_band_floor: Optional[float] = None, high_band_ceiling: Optional[float] = None) -> float \\\n        get_band_density_difference(self: parselmouth.Spectrum, low_band: Tuple[Optional[float], Optional[float]] = (None, None), high_band: Tuple[Optional[float], Optional[float]] = (None, None)) -> float
+        """get_band_density_difference(self: parselmouth.Spectrum, low_band_floor: Optional[float] = None, low_band_ceiling: Optional[float] = None, high_band_floor: Optional[float] = None, high_band_ceiling: Optional[float] = None) -> float \\
+        get_band_density_difference(self: parselmouth.Spectrum, low_band: Tuple[Optional[float], Optional[float]] = (None, None), high_band: Tuple[Optional[float], Optional[float]] = (None, None)) -> float
         """
     def get_band_energy(self, *args, **kwargs):
-        """get_band_energy(self: parselmouth.Spectrum, band_floor: Optional[float] = None, band_ceiling: Optional[float] = None) -> float \\\n        get_band_energy(self: parselmouth.Spectrum, band: Tuple[Optional[float], Optional[float]] = (None, None)) -> float
+        """get_band_energy(self: parselmouth.Spectrum, band_floor: Optional[float] = None, band_ceiling: Optional[float] = None) -> float \\
+        get_band_energy(self: parselmouth.Spectrum, band: Tuple[Optional[float], Optional[float]] = (None, None)) -> float
         """
     def get_band_energy_difference(self, *args, **kwargs):
-        """get_band_energy_difference(self: parselmouth.Spectrum, low_band_floor: Optional[float] = None, low_band_ceiling: Optional[float] = None, high_band_floor: Optional[float] = None, high_band_ceiling: Optional[float] = None) -> float \\\n        get_band_energy_difference(self: parselmouth.Spectrum, low_band: Tuple[Optional[float], Optional[float]] = (None, None), high_band: Tuple[Optional[float], Optional[float]] = (None, None)) -> float
+        """get_band_energy_difference(self: parselmouth.Spectrum, low_band_floor: Optional[float] = None, low_band_ceiling: Optional[float] = None, high_band_floor: Optional[float] = None, high_band_ceiling: Optional[float] = None) -> float \\
+        get_band_energy_difference(self: parselmouth.Spectrum, low_band: Tuple[Optional[float], Optional[float]] = (None, None), high_band: Tuple[Optional[float], Optional[float]] = (None, None)) -> float
         """
     def get_bin_number_from_frequency(self, frequency: float) -> float:
         """get_bin_number_from_frequency(self: parselmouth.Spectrum, frequency: float) -> float"""
@@ -907,8 +1124,7 @@ class Spectrum(Matrix):
         """to_spectrogram(self: parselmouth.Spectrum) -> parselmouth.Spectrogram"""
     def __getitem__(self, index: int) -> complex:
         """__getitem__(self: parselmouth.Spectrum, index: int) -> complex"""
-    def __iter__(self) -> typing.Iterator[complex]:
-        """def __iter__(self) -> typing.Iterator[complex]"""
+
     def __setitem__(self, index: int, value: complex) -> None:
         """__setitem__(self: parselmouth.Spectrum, index: int, value: complex) -> None"""
     @property
@@ -938,204 +1154,15 @@ class Spectrum(Matrix):
 
 class TextGrid(Function):
     def __init__(self, *args, **kwargs) -> None:
-        """__init__(self: parselmouth.TextGrid, start_time: float, end_time: float, tier_names: str, point_tier_names: str) -> None \\\n        __init__(self: parselmouth.TextGrid, start_time: float, end_time: float, tier_names: List[str] = [], point_tier_names: List[str] = []) -> None \\\n        __init__(self: parselmouth.TextGrid, tgt_text_grid: tgt.core.TextGrid) -> None
+        """__init__(self: parselmouth.TextGrid, start_time: float, end_time: float, tier_names: str, point_tier_names: str) -> None \\
+        __init__(self: parselmouth.TextGrid, start_time: float, end_time: float, tier_names: List[str] = [], point_tier_names: List[str] = []) -> None \\
+        __init__(self: parselmouth.TextGrid, tgt_text_grid: tgt.core.TextGrid) -> None
         """
     @staticmethod
     def from_tgt(tgt_text_grid: tgt.core.TextGrid) -> TextGrid:
         """from_tgt(tgt_text_grid: tgt.core.TextGrid) -> parselmouth.TextGrid"""
     def to_tgt(self, include_empty_intervals: bool = ...) -> tgt.core.TextGrid:
         """to_tgt(self: parselmouth.TextGrid, *, include_empty_intervals: bool = False) -> tgt.core.TextGrid"""
-
-class Thing:
-    name: str
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize self.  See help(type(self)) for accurate signature."""
-    def info(self) -> str:
-        """info(self: parselmouth.Thing) -> str"""
-    @property
-    def class_name(self) -> str:
-        """(arg0: parselmouth.Thing) -> str"""
-    @property
-    def full_name(self) -> str:
-        """(arg0: parselmouth.Thing) -> str"""
-
-class TimeFrameSampled(TimeFunction, Sampled):
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize self.  See help(type(self)) for accurate signature."""
-    def frame_number_to_time(self, frame_number: Positive[int]) -> float:
-        """frame_number_to_time(self: parselmouth.Sampled, frame_number: Positive[int]) -> float"""
-    def get_frame_number_from_time(self, time: float) -> float:
-        """get_frame_number_from_time(self: parselmouth.Sampled, time: float) -> float"""
-    def get_number_of_frames(self) -> int:
-        """get_number_of_frames(self: parselmouth.Sampled) -> int"""
-    def get_time_from_frame_number(self, frame_number: Positive[int]) -> float:
-        """get_time_from_frame_number(self: parselmouth.Sampled, frame_number: Positive[int]) -> float"""
-    def get_time_step(self) -> float:
-        """get_time_step(self: parselmouth.Sampled) -> float"""
-    def t_bins(self) -> NDArray[numpy.float64]:
-        """t_bins(self: parselmouth.Sampled) -> NDArray[numpy.float64]"""
-    def t_grid(self) -> NDArray[numpy.float64]:
-        """t_grid(self: parselmouth.Sampled) -> NDArray[numpy.float64]"""
-    def time_to_frame_number(self, time: float) -> float:
-        """time_to_frame_number(self: parselmouth.Sampled, time: float) -> float"""
-    def ts(self) -> NDArray[numpy.float64]:
-        """ts(self: parselmouth.Sampled) -> NDArray[numpy.float64]"""
-    @property
-    def dt(self) -> float:
-        """(self: parselmouth.TimeFrameSampled) -> float"""
-    @property
-    def n_frames(self) -> int:
-        """(self: parselmouth.TimeFrameSampled) -> int"""
-    @property
-    def nt(self) -> int:
-        """(self: parselmouth.TimeFrameSampled) -> int"""
-    @property
-    def t1(self) -> float:
-        """(self: parselmouth.TimeFrameSampled) -> float"""
-    @property
-    def time_step(self) -> float:
-        """(self: parselmouth.TimeFrameSampled) -> float"""
-
-class TimeFunction(Function):
-    centre_time: float
-    end_time: float
-    start_time: float
-    time_range: tuple[float, float]
-    tmax: float
-    tmin: float
-    trange: tuple[float, float]
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize self.  See help(type(self)) for accurate signature."""
-    def get_end_time(self) -> float:
-        """get_end_time(self: parselmouth.Function) -> float"""
-    def get_start_time(self) -> float:
-        """get_start_time(self: parselmouth.Function) -> float"""
-    def get_total_duration(self) -> float:
-        """get_total_duration(self: parselmouth.Function) -> float"""
-    def scale_times_by(self, scale: Positive[float]) -> None:
-        """scale_times_by(self: parselmouth.Function, scale: Positive[float]) -> None"""
-    def scale_times_to(self, new_start_time: float, new_end_time: float) -> None:
-        """scale_times_to(self: parselmouth.Function, new_start_time: float, new_end_time: float) -> None"""
-    def shift_times_by(self, seconds: float) -> None:
-        """shift_times_by(self: parselmouth.Function, seconds: float) -> None"""
-    def shift_times_to(self, *args, **kwargs):
-        """shift_times_to(self: parselmouth.Function, time: float, new_time: float) -> None \\\n        shift_times_to(self: parselmouth.Function, time: str, new_time: float) -> None
-        """
-    @property
-    def duration(self) -> float:
-        """(arg0: parselmouth.Function) -> float"""
-    @property
-    def total_duration(self) -> float:
-        """(arg0: parselmouth.Function) -> float"""
-
-class ValueInterpolation:
-    __members__: ClassVar[dict] = ...  # read-only
-    CUBIC: ClassVar[ValueInterpolation] = ...
-    LINEAR: ClassVar[ValueInterpolation] = ...
-    NEAREST: ClassVar[ValueInterpolation] = ...
-    SINC70: ClassVar[ValueInterpolation] = ...
-    SINC700: ClassVar[ValueInterpolation] = ...
-    __entries: ClassVar[dict] = ...
-    def __init__(self, *args, **kwargs) -> None:
-        """__init__(self: parselmouth.ValueInterpolation, value: int) -> None \\\n        __init__(self: parselmouth.ValueInterpolation, arg0: str) -> None
-        """
-    def __eq__(self, other: object) -> bool:
-        """__eq__(self: object, other: object) -> bool"""
-    def __hash__(self) -> int:
-        """__hash__(self: object) -> int"""
-    def __index__(self) -> int:
-        """__index__(self: parselmouth.ValueInterpolation) -> int"""
-    def __int__(self) -> int:
-        """__int__(self: parselmouth.ValueInterpolation) -> int"""
-    def __ne__(self, other: object) -> bool:
-        """__ne__(self: object, other: object) -> bool"""
-    @property
-    def name(self) -> str:
-        """name(self: handle) -> str
-
-        name(self: handle) -> str
-        """
-    @property
-    def value(self) -> int:
-        """(arg0: parselmouth.ValueInterpolation) -> int"""
-
-class Vector(Matrix):
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize self.  See help(type(self)) for accurate signature."""
-    def add(self, number: float) -> None:
-        """add(self: parselmouth.Vector, number: float) -> None"""
-    def divide(self, factor: float) -> None:
-        """divide(self: parselmouth.Vector, factor: float) -> None"""
-    def get_value(self, x: float, channel: int | None = ..., interpolation: ValueInterpolation = ...) -> float:
-        """get_value(self: parselmouth.Vector, x: float, channel: Optional[int] = None, interpolation: parselmouth.ValueInterpolation = <ValueInterpolation.CUBIC: 2>) -> float"""
-    def multiply(self, factor: float) -> None:
-        """multiply(self: parselmouth.Vector, factor: float) -> None"""
-    def scale(self, scale: Positive[float]) -> None:
-        """scale(self: parselmouth.Vector, scale: Positive[float]) -> None"""
-    def scale_peak(self, new_peak: Positive[float] = ...) -> None:
-        """scale_peak(self: parselmouth.Vector, new_peak: Positive[float] = 0.99) -> None"""
-    def subtract(self, number: float) -> None:
-        """subtract(self: parselmouth.Vector, number: float) -> None"""
-    def subtract_mean(self) -> None:
-        """subtract_mean(self: parselmouth.Vector) -> None"""
-    def __add__(self, number: float) -> Vector:
-        """__add__(self: parselmouth.Vector, number: float) -> parselmouth.Vector"""
-    def __iadd__(self, number: float) -> Vector:
-        """__iadd__(self: parselmouth.Vector, number: float) -> parselmouth.Vector"""
-    def __imul__(self, factor: float) -> Vector:
-        """__imul__(self: parselmouth.Vector, factor: float) -> parselmouth.Vector"""
-    def __isub__(self, number: float) -> Vector:
-        """__isub__(self: parselmouth.Vector, number: float) -> parselmouth.Vector"""
-    def __itruediv__(self, factor: float) -> Vector:
-        """__itruediv__(self: parselmouth.Vector, factor: float) -> parselmouth.Vector"""
-    def __mul__(self, factor: float) -> Vector:
-        """__mul__(self: parselmouth.Vector, factor: float) -> parselmouth.Vector"""
-    def __radd__(self, number: float) -> Vector:
-        """__radd__(self: parselmouth.Vector, number: float) -> parselmouth.Vector"""
-    def __rmul__(self, factor: float) -> Vector:
-        """__rmul__(self: parselmouth.Vector, factor: float) -> parselmouth.Vector"""
-    def __sub__(self, number: float) -> Vector:
-        """__sub__(self: parselmouth.Vector, number: float) -> parselmouth.Vector"""
-    def __truediv__(self, factor: float) -> Vector:
-        """__truediv__(self: parselmouth.Vector, factor: float) -> parselmouth.Vector"""
-
-class WindowShape:
-    __members__: ClassVar[dict] = ...  # read-only
-    GAUSSIAN1: ClassVar[WindowShape] = ...
-    GAUSSIAN2: ClassVar[WindowShape] = ...
-    GAUSSIAN3: ClassVar[WindowShape] = ...
-    GAUSSIAN4: ClassVar[WindowShape] = ...
-    GAUSSIAN5: ClassVar[WindowShape] = ...
-    HAMMING: ClassVar[WindowShape] = ...
-    HANNING: ClassVar[WindowShape] = ...
-    KAISER1: ClassVar[WindowShape] = ...
-    KAISER2: ClassVar[WindowShape] = ...
-    PARABOLIC: ClassVar[WindowShape] = ...
-    RECTANGULAR: ClassVar[WindowShape] = ...
-    TRIANGULAR: ClassVar[WindowShape] = ...
-    __entries: ClassVar[dict] = ...
-    def __init__(self, *args, **kwargs) -> None:
-        """__init__(self: parselmouth.WindowShape, value: int) -> None \\\n        __init__(self: parselmouth.WindowShape, arg0: str) -> None
-        """
-    def __eq__(self, other: object) -> bool:
-        """__eq__(self: object, other: object) -> bool"""
-    def __hash__(self) -> int:
-        """__hash__(self: object) -> int"""
-    def __index__(self) -> int:
-        """__index__(self: parselmouth.WindowShape) -> int"""
-    def __int__(self) -> int:
-        """__int__(self: parselmouth.WindowShape) -> int"""
-    def __ne__(self, other: object) -> bool:
-        """__ne__(self: object, other: object) -> bool"""
-    @property
-    def name(self) -> str:
-        """name(self: handle) -> str
-
-        name(self: handle) -> str
-        """
-    @property
-    def value(self) -> int:
-        """(arg0: parselmouth.WindowShape) -> int"""
 
 def read(file_path: str) -> Data:
     """read(file_path: str) -> parselmouth.Data

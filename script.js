@@ -357,8 +357,7 @@ playUserBtn.addEventListener('click', () => {
 });
 
 // ======= Submit last recording =======
-// Convert trimmed AudioBuffer to MP3 (using lamejs) and trigger a local download.
-// Filename: "<StudentID> - <word>.mp3". Mark the word as submitted and persist.
+// Uploads the MP3 to the PythonAnywhere server.
 submitBtn.addEventListener('click', async () => {
   if (!guardStudentInfo()) return;
   if (!selectedWord) { submitSay('Select a word first.'); return; }
@@ -386,28 +385,52 @@ submitBtn.addEventListener('click', async () => {
     }
     const end = mp3enc.flush();
     if (end.length) out.push(new Uint8Array(end));
+
+    // 1. Create the Blob
     const mp3Blob = new Blob(out, { type: 'audio/mpeg' });
 
-    // Download locally
+    // 2. Prepare Data for Server
     const sid = idInput.value.trim();
-    const filename = `${sid} - ${selectedWord}.mp3`;
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(mp3Blob);
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    if (!sid) {
+      submitSay('⚠️ Enter Student ID first!');
+      return;
+    }
 
-    // Mark submitted + persist
-    const prog = loadProgress(sid);
-    prog[selectedWord] = true;
-    saveProgress(sid, prog);
-    refreshSubmittedColors();
+    const formData = new FormData();
+    // 'file' matches the request.files['file'] in your Python Flask app
+    formData.append('file', mp3Blob, `${sid}-${selectedWord}.mp3`);
+    formData.append('studentId', sid);
+    formData.append('word', selectedWord);
 
-    submitSay(`Saved locally as "${filename}".`);
+    // 3. UI Feedback
+    submitSay('Uploading...');
+    submitBtn.disabled = true;
+
+    // 4. Send to PythonAnywhere
+    const response = await fetch('/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (response.ok) {
+      submitSay(`✅ Saved: ${selectedWord}`);
+
+      // Mark as done in local storage (turn green)
+      const prog = loadProgress(sid);
+      prog[selectedWord] = true;
+      saveProgress(sid, prog);
+      refreshSubmittedColors();
+
+    } else {
+      submitSay('⚠️ Server Error. Try again.');
+      console.error('Server responded with error');
+    }
+
   } catch (err) {
     console.error(err);
-    submitSay('Export failed. Please try again.');
+    submitSay('⚠️ Network Error.');
+  } finally {
+    submitBtn.disabled = false;
   }
 });
 
