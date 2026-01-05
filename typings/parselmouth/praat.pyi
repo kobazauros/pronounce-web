@@ -1,4 +1,4 @@
-def call(*args, **kwargs):
+def call(*args: object, **kwargs: object) -> object:  # pyright : ignore[reportExplicitAny]
     '''call(command: str, *args, **kwargs) -> object \\\n    call(object: parselmouth.Data, command: str, *args, **kwargs) -> object \\\n    call(objects: List[parselmouth.Data], command: str, *args, **kwargs) -> object
 
     Call a Praat command.
@@ -82,7 +82,8 @@ def call(*args, **kwargs):
     parselmouth.praat.run, parselmouth.praat.run_file
     :praat:`Scripting`
     '''
-def run(*args, **kwargs):
+def run(*args: object, **kwargs: object) -> object:
+
     '''run(script: str, *args, **kwargs) -> object \\\n    run(object: parselmouth.Data, script: str, *args, **kwargs) -> object \\\n    run(objects: List[parselmouth.Data], script: str, *args, **kwargs) -> object
 
     Run a Praat script.
@@ -167,7 +168,8 @@ def run(*args, **kwargs):
     parselmouth.praat.run_file, parselmouth.praat.call
     :praat:`Scripting`
     '''
-def run_file(*args, **kwargs):
+def run_file(*args: object, **kwargs: object) -> object:
+
     """run_file(path: str, *args, **kwargs) -> object \\\n    run_file(object: parselmouth.Data, path: str, *args, **kwargs) -> object \\\n    run_file(objects: List[parselmouth.Data], path: str, *args, **kwargs) -> object
 
     Run a Praat script from file.
