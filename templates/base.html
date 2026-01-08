@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pronounce Web - {% block title %}{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .word-link.word-submitted { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
+        .word-link.word-pending { background-color: #ffffff; border-color: #f1f5f9; color: #64748b; }
+        .active-selection { border-color: #6366f1 !important; background-color: #eef2ff !important; color: #4338ca !important; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 flex flex-col min-h-screen">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-slate-900 text-white shadow-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{{ url_for('index') }}" class="flex items-center space-x-3 group">
+                        <div class="bg-indigo-500 p-2 rounded-lg group-hover:bg-indigo-400 transition">
+                            <i class="fas fa-microphone-lines text-white"></i>
+                        </div>
+                        <span class="font-black text-xl tracking-tighter uppercase">Pronounce<span class="text-indigo-400">Web</span></span>
+                    </a>
+                    <!-- Connection Status Indicator -->
+                    <div class="ml-6 hidden sm:flex items-center space-x-2 border-l border-slate-700 pl-6">
+                        <div class="w-2 h-2 rounded-full bg-gray-500" id="status-dot"></div>
+                        <span class="text-[10px] uppercase font-bold text-slate-400 tracking-widest" id="connection-status">Connecting...</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    {% if current_user.is_authenticated %}
+                        <div class="hidden md:flex flex-col items-end">
+                            <span class="text-xs font-bold text-slate-400 uppercase">Participant</span>
+                            <span class="text-sm font-medium">{{ current_user.first_name }} {{ current_user.last_name }}</span>
+                        </div>
+                        <a href="{{ url_for('auth.logout') }}" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition shadow-lg">
+                            <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="text-slate-300 hover:text-white font-bold text-sm">Login</a>
+                        <a href="{{ url_for('auth.register') }}" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-sm font-bold transition">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="mb-6 p-4 rounded-xl shadow-sm border flex items-center space-x-3
+                    {% if category == 'danger' %}bg-rose-50 border-rose-200 text-rose-800
+                    {% elif category == 'success' %}bg-emerald-50 border-emerald-200 text-emerald-800
+                    {% elif category == 'warning' %}bg-amber-50 border-amber-200 text-amber-800
+                    {% else %}bg-sky-50 border-sky-200 text-sky-800{% endif %}">
+                    <i class="fas {% if category == 'success' %}fa-check-circle{% elif category == 'danger' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                    <span class="font-medium">{{ message }}</span>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-400 text-xs font-medium">
+                &copy; 2024 MCU Faculty of Education | M.Ed Thesis Project
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

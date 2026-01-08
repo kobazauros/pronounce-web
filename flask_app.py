@@ -1,73 +1,100 @@
 import os
-from flask import Flask, request, jsonify, send_from_directory
 
+from flask import Flask, jsonify, render_template, request
+from flask_login import LoginManager, current_user, login_required
+from flask_migrate import Migrate
+
+from auth_routes import auth
+from config import Config
+from models import db
+
+# 1. Initialize Flask Application
 app = Flask(__name__)
+app.config.from_object(Config)
 
-# --- CONFIGURATION ---
-# 1. Find the absolute path to the folder containing this file
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# 2. Initialize Extensions
+db.init_app(app)
+migrate = Migrate(app, db)
 
-# 2. Join it with 'submissions' so it always ends up in /home/username/mysite/submissions
-UPLOAD_FOLDER = os.path.join(BASE_DIR, 'submissions')
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# 3. Configure Flask-Login
+login_manager = LoginManager(app)
+# This ensures that if a user isn't logged in, they are sent to the login page
+login_manager.login_view = "auth.login"
+login_manager.login_message_category = "info"
 
-@app.route('/')
+
+@login_manager.user_loader
+def load_user(user_id):
+    """Flask-Login requirement to reload the user object from the session ID."""
+    from models import User
+
+    return User.query.get(int(user_id))
+
+
+# 4. Register Blueprints
+# This connects the login/register logic from auth_routes.py to the app
+app.register_blueprint(auth)
+
+
+# 5. Shell Context for Debugging
+@app.shell_context_processor
+def make_shell_context():
+    from models import AnalysisResult, Submission, User, Word
+
+    return {
+        "db": db,
+        "User": User,
+        "Word": Word,
+        "Submission": Submission,
+        "AnalysisResult": AnalysisResult,
+    }
+
+
+# 6. Main Application Route (Recording Page)
+@app.route("/")
+@login_required  # Prevents unauthenticated access
 def index():
-    return send_from_directory('.', 'index.html')
+    """
+    Renders the main student recording interface.
+    Passes the curriculum (20 words) to the frontend.
+    """
+    from models import Word
 
-@app.route('/<path:filename>')
-def serve_static(filename):
-    return send_from_directory('.', filename)
+    words = Word.query.order_by(Word.sequence_order).all()
+    return render_template("index.html", words=words)
 
-@app.route('/audio/<path:filename>')
-def serve_audio(filename):
-    return send_from_directory('audio', filename)
 
-@app.route('/upload', methods=['POST'])
+# 7. File Upload Route
+@app.route("/upload", methods=["POST"])
+@login_required
 def upload_file():
-    if 'file' not in request.files:
+    """Handles the audio submission from the frontend."""
+    if "file" not in request.files:
         return jsonify({"error": "No file part"}), 400
 
-    file = request.files['file']
-    student_id = request.form.get('studentId', 'unknown')
-    student_name = request.form.get('studentName', 'unknown')
-    word = request.form.get('word', 'unknown')
-
-    # NEW: Get the test type (Default to 'pre' if missing)
-    test_type = request.form.get('testType', 'pre')
-
-    if file.filename == '':
+    file = request.files["file"]
+    if file.filename == "":
         return jsonify({"error": "No selected file"}), 400
 
-    safe_name = "".join([c for c in student_name if c.isalnum() or c in (' ', '_')]).replace(" ", "_")
-    filename = f"{student_id}_{safe_name}_{word}.mp3"
+    # Create user-specific folder in submissions
+    user_folder = os.path.join(app.config["UPLOAD_FOLDER"], str(current_user.id))
+    os.makedirs(user_folder, exist_ok=True)
 
-    # NEW: Determine folder based on selection
-    if test_type == 'post':
-        sub_folder = 'post'
-    else:
-        sub_folder = 'pre'
+    # Save the file
+    file_path = os.path.join(user_folder, file.filename)
+    file.save(file_path)
 
-    # Create the specific subfolder (e.g., submissions/pre)
-    target_dir = os.path.join(UPLOAD_FOLDER, sub_folder)
-    os.makedirs(target_dir, exist_ok=True)
+    # Note: In Phase 3, we will add code here to create a Submission
+    # record in the DB and trigger the vowel analysis.
 
-    # Save to that new folder
-    save_path = os.path.join(target_dir, filename)
+    return jsonify({"success": True, "filename": file.filename}), 200
 
-    response = None
-    status_code = 200
 
-    try:
-        file.save(save_path)
-        print(f"Saved: {filename} to {save_path}")
-        response = jsonify({"message": f"Saved {filename}"})
-    except Exception as e:
-        print(f"Error saving file: {e}")
-        response = jsonify({"error": "Failed to save file"})
-        status_code = 500
+if __name__ == "__main__":
+    # Ensure necessary project directories exist for audio and uploads
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+    os.makedirs(app.config["AUDIO_FOLDER"], exist_ok=True)
+    os.makedirs(os.path.join(os.getcwd(), "instance"), exist_ok=True)
 
-    return response, status_code
-
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # Run the server in debug mode for development
+    app.run(debug=True)
