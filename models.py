@@ -42,6 +42,24 @@ class User(UserMixin, db.Model):
     # Relationships
     submissions = db.relationship("Submission", backref="user", lazy="dynamic")
 
+    def __init__(
+        self,
+        username=None,
+        first_name=None,
+        last_name=None,
+        student_id=None,
+        role="student",
+        consented_at=None,
+        created_at=None,
+    ):
+        self.username = username
+        self.first_name = first_name
+        self.last_name = last_name
+        self.student_id = student_id
+        self.role = role
+        self.consented_at = consented_at
+        self.created_at = created_at
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -108,6 +126,20 @@ class Submission(db.Model):
         uselist=False,
         cascade="all, delete-orphan",
     )
+
+    def __init__(
+        self,
+        user_id=None,
+        word_id=None,
+        test_type="pre",
+        file_path=None,
+        file_size_bytes=None,
+    ):
+        self.user_id = user_id
+        self.word_id = word_id
+        self.test_type = test_type
+        self.file_path = file_path
+        self.file_size_bytes = file_size_bytes
 
     def __repr__(self):
         return f"<Submission {self.id}: User {self.user_id}>"

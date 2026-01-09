@@ -80,12 +80,16 @@ Tech Stack: Flask, SQLite (Dev) / PostgreSQL (Prod), SQLAlchemy, Flask-Login, Do
 
 ### **Phase 3: UI/UX Implementation (Core Thesis Tool)**
 
-* \[ \] **Status Fix:** Update script.js to change text from "Connecting..." to "Online" after successful fetch.  
+* [x] **Status Fix:** Update script.js to change text from "Connecting..." to "Online" after successful fetch.  
 * \[ \] **Design Alignment (TODO):** Re-style the student recorder, word list, and sidebar dashboard to match the high-fidelity "Design Preview."  
-* \[ \] **Progress Tracking:** Dynamically calculate completion (Words Done / 20\) in the sidebar using existing JS logic.  
+* [x] **Progress Tracking:** Dynamically calculate completion (Words Done / 20\) in the sidebar using existing JS logic.  
 * \[x\] **Audio Engine:** Core logic for noise monitoring, trimming, and WAV conversion (Working).  
 * \[x\] **Waveform Sync:** Standardized visual scaling via Wavesurfer.js.  
 * \[x\] **Reset Logic:** Ensure UI purges old audio data when a new word is selected.
+* [x] **Mic Permissions:** Design a "Permission Denied" modal with clear setup instructions.
+* [x] **Routing Correction:** Update auth_routes.py to redirect Teachers/Admins to their dashboards.  
+* [x] **Teacher View:** Create table monitoring class-wide progress and "Deep Voice" alerts.  
+* [x] **Admin Console:** User management and curriculum (Word) editor.
 
 ### **Phase 4: Real-Time Analysis (The Vowel Engine)**
 
@@ -101,25 +105,18 @@ Tech Stack: Flask, SQLite (Dev) / PostgreSQL (Prod), SQLAlchemy, Flask-Login, Do
 * \[ \] **Feedback Loop:** Return analysis scores (Match %) to the student UI in JSON response.  
 * \[ \] **Comparison Visuals:** Display Euclidean distance $d \= \\sqrt{(F1\_1-F1\_2)^2 \+ (F2\_1-F2\_2)^2}$ on waveform.
 
-### **Phase 6: Teacher & Admin Dashboards**
-
-* \[ \] **Routing Correction:** Update auth\_routes.py to redirect Teachers/Admins to their dashboards.  
-* \[ \] **Teacher View:** Create table monitoring class-wide progress and "Deep Voice" alerts.  
-* \[ \] **Admin Console:** User management and curriculum (Word) editor.
-
-### **Phase 7: Quality Assurance, UX & Accessibility**
+### **Phase 6: Quality Assurance, UX & Accessibility**
 
 * \[ \] **Error Handling:** Implement global handlers for analysis failures (e.g., silence/clipping).  
 * \[ \] **Mobile Optimization:** Ensure the waveform comparison and sidebar are responsive.  
-* \[ \] **Mic Permissions:** Design a "Permission Denied" modal with clear setup instructions.
 
-### **Phase 8: Deployment & Infrastructure**
+### **Phase 7: Deployment & Infrastructure**
 
 * \[ \] **VPS Setup:** Provision DigitalOcean droplet (Singapore region).  
 * \[ \] **Security:** Implement SSL (Certbot) — Mandatory for production microphone access.  
 * \[ \] **Production Config:** Set up Gunicorn app server and Nginx reverse proxy.
 
-### **Phase 9: Future Optimization (Post-Thesis / Version 2.0)**
+### **Phase 8: Future Optimization (Post-Thesis / Version 2.0)**
 
 * \[ \] **HTMX Refactor:** Replace UI JavaScript with HTMX to reduce frontend complexity.  
 * \[ \] **Performance Polish:** Move audio analysis to a background task queue (Celery/Redis).  

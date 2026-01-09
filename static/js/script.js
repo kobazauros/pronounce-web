@@ -1,41 +1,26 @@
-// -------------------------------------------------------------
-// script.js – Corrected for static/audio location & Robust Status
-// -------------------------------------------------------------
+/**
+ * static/js/script.js
+ * Optimized for One-Page Layout & Visual Word Status.
+ */
 
-// ======= Configuration =======
+const Config = {
+    AUTO_STOP_SILENCE_MS: 1500,
+    MAX_RECORDING_MS: 5000,
+    AUDIO_EXT: 'mp3',
+    TARGET_RATE: 16000,
+    TRIM_THRESHOLD_FACTOR: 3.5, 
+    WORDS_LIMIT: 20,
+    COLORS: {
+        MODEL: '#0ea5e9', // Sky Blue
+        USER: '#f43f5e',  // Rose Red
+        GHOST: 'rgba(255, 255, 255, 0.1)',
+        STAGE_BG: '#020617' // Dark Slate
+    }
+};
+
 let WORDS = [];
-const AUDIO_EXT = 'mp3';
-const TARGET_RATE = 16000;
 let audioContext = null; 
 let autoCheckInterval = null; 
-
-// UI References
-const idInput = document.getElementById('student-id');
-const nameInput = document.getElementById('student-name');
-const testTypeInput = document.getElementById('test-type'); 
-const wordList = document.getElementById('word-list');
-const sampleTitle = document.getElementById('sample-word-placeholder');
-const playBtn = document.getElementById('play-sample');
-const recStartBtn = document.getElementById('record-start');
-const recStopBtn = document.getElementById('record-stop');
-const playUserBtn = document.getElementById('play-user');
-const submitBtn = document.getElementById('submit-recording');
-const sampleWF = document.getElementById('sample-waveform-container');
-const userWF = document.getElementById('user-waveform-container');
-const overlapWF = document.getElementById('difference-waveform-container');
-const msgBox = document.getElementById('message-box');
-const sampleMsg = document.getElementById('sample-message');
-const submitMsg = document.getElementById('submit-msg');
-
-// Status UI
-const statusDot = document.getElementById('status-dot');
-const statusText = document.getElementById('connection-status');
-
-// Noise UI
-const noiseLevelDisplay = document.getElementById('noise-level-display');
-const noiseIndicatorIcon = document.getElementById('noise-indicator-icon');
-
-// ======= State Management =======
 let sampleBuf = null;
 let userBuf = null;
 let sampleWS = null;
@@ -47,229 +32,329 @@ let selectedWord = null;
 let isAppBusy = false;
 let isMonitoring = false;
 let monitorStarted = false;
-
 let measuredNoiseFloor = 0.015; 
+let userProgress = { pre: [], post: [] };
 
-// ======= Helpers =======
-const getAC = async () => {
-  if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: TARGET_RATE });
-  }
-  if (audioContext.state === 'suspended') await audioContext.resume();
-  return audioContext;
+const UI = {
+    wordList: document.getElementById('word-list'),
+    sampleTitle: document.getElementById('sample-word-placeholder'),
+    phonetic: document.getElementById('phonetic-display'),
+    playBtn: document.getElementById('play-sample'),
+    recStartBtn: document.getElementById('record-start'),
+    recStopBtn: document.getElementById('record-stop'),
+    playUserBtn: document.getElementById('play-user'),
+    submitBtn: document.getElementById('submit-recording'),
+    mainStage: document.getElementById('difference-waveform-container'),
+    legend: document.getElementById('comparison-legend'),
+    msgBox: document.getElementById('message-box'),
+    sampleMsg: document.getElementById('sample-message'),
+    submitMsg: document.getElementById('submit-msg'),
+    testTypeInput: document.getElementById('test-type'),
+    statusDot: document.getElementById('status-dot'),
+    statusText: document.getElementById('connection-status'),
+    noiseLevel: document.getElementById('noise-level-display'),
+    noiseIcon: document.getElementById('noise-indicator-icon'),
+    progressFill: document.getElementById('progress-bar-fill'),
+    progressPercent: document.getElementById('progress-percent')
 };
 
-const say = txt => { if (msgBox) msgBox.textContent = txt ?? ''; };
-const sampleSay = txt => { if (sampleMsg) sampleMsg.textContent = txt ?? ''; };
-const submitSay = txt => { if (submitMsg) submitMsg.textContent = txt ?? ''; };
+// ======= Helpers =======
 
-/**
- * Updates the Navbar Status Indicator
- */
-function updateSystemStatus(status) {
-    if (!statusText || !statusDot) return;
-    
-    if (status === 'online') {
-        statusText.textContent = 'Online';
-        statusDot.style.backgroundColor = '#22c55e'; // Green
-    } else if (status === 'offline') {
-        statusText.textContent = 'Offline';
-        statusDot.style.backgroundColor = '#ef4444'; // Red
-    } else {
-        statusText.textContent = 'Connecting...';
-        statusDot.style.backgroundColor = '#94a3b8'; // Slate
+const say = txt => { if (UI.msgBox) UI.msgBox.textContent = txt ?? 'Ready'; };
+
+const getAC = async () => {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: Config.TARGET_RATE });
     }
-}
-
-function trimSilence(buffer, threshold = 0.01) {
-    const pcm = buffer.getChannelData(0);
-    let start = 0;
-    let end = pcm.length - 1;
-    while (start < pcm.length && Math.abs(pcm[start]) < threshold) start++;
-    while (end > start && Math.abs(pcm[end]) < threshold) end--;
-    const padding = Math.floor(buffer.sampleRate * 0.05);
-    start = Math.max(0, start - padding);
-    end = Math.min(pcm.length - 1, end + padding);
-    const newLength = end - start;
-    if (newLength <= 0) return buffer;
-    const trimmed = audioContext.createBuffer(1, newLength, buffer.sampleRate);
-    trimmed.copyToChannel(pcm.subarray(start, end), 0);
-    return trimmed;
-}
+    if (audioContext.state === 'suspended') await audioContext.resume();
+    return audioContext;
+};
 
 function bufferToWav(buffer) {
     const length = buffer.length * 2;
     const arrayBuffer = new ArrayBuffer(44 + length);
     const view = new DataView(arrayBuffer);
-    const sampleRate = buffer.sampleRate;
-    const writeString = (offset, string) => {
-        for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
-    };
-    writeString(0, 'RIFF');
-    view.setUint32(4, 36 + length, true);
-    writeString(8, 'WAVE');
-    writeString(12, 'fmt ');
-    view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true);
-    view.setUint16(22, 1, true);
-    view.setUint32(24, sampleRate, true);
-    view.setUint32(28, sampleRate * 2, true);
-    view.setUint16(32, 2, true);
-    view.setUint16(34, 16, true);
-    writeString(36, 'data');
-    view.setUint32(40, length, true);
+    const writeString = (off, s) => { for (let i = 0; i < s.length; i++) view.setUint8(off + i, s.charCodeAt(i)); };
+    writeString(0, 'RIFF'); view.setUint32(4, 36 + length, true);
+    writeString(8, 'WAVE'); writeString(12, 'fmt ');
+    view.setUint32(16, 16, true); view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true); view.setUint32(24, buffer.sampleRate, true);
+    view.setUint32(28, buffer.sampleRate * 2, true);
+    view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+    writeString(36, 'data'); view.setUint32(40, length, true);
     const data = buffer.getChannelData(0);
-    let offset = 44;
-    for (let i = 0; i < data.length; i++, offset += 2) {
+    for (let i = 0, off = 44; i < data.length; i++, off += 2) {
         const s = Math.max(-1, Math.min(1, data[i]));
-        view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+        view.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
     }
     return new Blob([arrayBuffer], { type: 'audio/wav' });
 }
 
-function clearOldData() {
-    lastRecordingBlob = null;
-    userBuf = null;
-    if (userWS) { userWS.destroy(); userWS = null; }
-    if (sampleWS) { sampleWS.destroy(); sampleWS = null; }
-    if (overlapWF) overlapWF.innerHTML = '';
-    if (submitBtn) submitBtn.disabled = true;
-    if (playUserBtn) playUserBtn.disabled = true;
-    if (recStartBtn) recStartBtn.disabled = false;
-    if (recStopBtn) recStopBtn.disabled = true;
-    submitSay('');
-    say('Ready to record.');
+function trimSilence(buffer, threshold = 0.015) {
+    const pcm = buffer.getChannelData(0);
+    let start = 0, end = pcm.length - 1;
+    while (start < pcm.length && Math.abs(pcm[start]) < threshold) start++;
+    while (end > start && Math.abs(pcm[end]) < threshold) end--;
+    const padding = Math.floor(buffer.sampleRate * 0.03);
+    start = Math.max(0, start - padding);
+    end = Math.min(pcm.length - 1, end + padding);
+    const trimmed = audioContext.createBuffer(1, Math.max(1, end - start), buffer.sampleRate);
+    trimmed.copyToChannel(pcm.subarray(start, end), 0);
+    return trimmed;
 }
 
-// ======= Initialization =======
-async function loadManifest() {
-  updateSystemStatus('connecting');
-  try {
-    const res = await fetch('/static/audio/index.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    
-    // Robust parsing logic
-    let arr = [];
-    if (Array.isArray(data)) arr = data;
-    else if (data && Array.isArray(data.words)) arr = data.words;
-    
-    if (arr.length === 0) throw new Error("Empty manifest data");
-
-    WORDS = arr.map(item => {
-      const w = item.word || item;
-      return String(w).replace(/\.[^/.]+$/, '');
-    }).slice(0, 20);
-    
-    buildWordList();
-    updateSystemStatus('online');
-  } catch (e) {
-    console.error('Manifest load failed.', e);
-    updateSystemStatus('offline');
-    say("System Error: Check static/audio/index.json");
-  }
-}
-
-function buildWordList() {
-  if (!wordList) return;
-  wordList.innerHTML = '';
-  [...WORDS].sort((a, b) => a.localeCompare(b)).forEach(w => {
-    const a = document.createElement('a');
-    a.href = '#';
-    a.textContent = w;
-    a.className = 'word-link word-pending p-3 border-2 border-slate-100 rounded-xl text-center text-xs font-black uppercase transition-all duration-200 hover:border-indigo-300 hover:bg-indigo-50 shadow-sm';
-    a.dataset.word = w;
-    a.addEventListener('click', async (e) => {
-      e.preventDefault();
-      await getAC();
-      if (!monitorStarted) startNoiseMonitor();
-      document.querySelectorAll('.word-link').forEach(el => el.classList.remove('active-selection'));
-      a.classList.add('active-selection');
-      selectedWord = w;
-      clearOldData();
-      if (sampleTitle) sampleTitle.textContent = w;
-      if (playBtn) playBtn.disabled = false;
-      sampleSay('Click "Play" to hear the model.');
-    });
-    wordList.appendChild(a);
-  });
-  refreshSubmittedColors();
-}
-
-async function startNoiseMonitor() {
-  if (isMonitoring || isAppBusy) return;
-  try {
-    const ctx = await getAC();
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const source = ctx.createMediaStreamSource(stream);
-    const monitorAnalyser = ctx.createAnalyser();
-    monitorAnalyser.fftSize = 2048;
-    source.connect(monitorAnalyser);
-    const buffer = new Float32Array(monitorAnalyser.fftSize);
-    isMonitoring = true; monitorStarted = true;
-    function loop() {
-      if (!isMonitoring) return;
-      requestAnimationFrame(loop);
-      monitorAnalyser.getFloatTimeDomainData(buffer);
-      let peak = 0;
-      for (let i = 0; i < buffer.length; i++) peak = Math.max(peak, Math.abs(buffer[i]));
-      measuredNoiseFloor = (measuredNoiseFloor * 0.95) + (peak * 0.05);
-      const level = (peak * 1000).toFixed(0);
-      if (noiseLevelDisplay) noiseLevelDisplay.textContent = `Level: ${level}`;
-      if (noiseIndicatorIcon) {
-          noiseIndicatorIcon.style.backgroundColor = peak < 0.02 ? "#22c55e" : (peak < 0.05 ? "#f97316" : "#ef4444");
-      }
+function clearStage() {
+    if (sampleWS) { try { sampleWS.destroy(); } catch(e){} sampleWS = null; }
+    if (userWS) { try { userWS.destroy(); } catch(e){} userWS = null; }
+    if (UI.mainStage) {
+        UI.mainStage.innerHTML = '';
+        UI.mainStage.style.backgroundColor = Config.COLORS.STAGE_BG;
     }
-    loop();
-  } catch (err) { console.warn("Monitor Error:", err); }
-}
-
-function pauseMonitoring() {
-  isMonitoring = false;
+    if (UI.legend) UI.legend.style.opacity = '0';
 }
 
 function makeWS(container, colour) {
-  return WaveSurfer.create({
-    container, height: 100, waveColor: colour, cursorColor: 'transparent', 
-    interact: false, barWidth: 2, barRadius: 3, normalize: true 
-  });
+    // Reduced height dynamically for the one-page fit
+    const containerHeight = container.offsetHeight || 180;
+    return WaveSurfer.create({
+        container: container,
+        height: containerHeight, 
+        waveColor: colour,
+        progressColor: colour,
+        cursorWidth: 0,
+        interact: false,
+        barWidth: 2,
+        barGap: 2,
+        barRadius: 4,
+        normalize: true,
+        fillParent: true
+    });
 }
 
-playBtn.addEventListener('click', async () => {
-    if (!selectedWord) return;
-    isAppBusy = true; pauseMonitoring(); 
-    sampleSay('Loading...');
+// ======= Data Management =======
+
+async function loadManifest() {
     try {
-        const url = `/static/audio/${selectedWord}.${AUDIO_EXT}`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Audio file not found");
-        const arrayBuf = await res.arrayBuffer();
+        const res = await fetch('/api/words', { cache: 'no-store' });
+        const data = await res.json();
+        WORDS = Array.isArray(data) ? data : (data.words || []);
+        buildWordList();
+        await fetchUserProgress();
+        if (UI.statusText) {
+            UI.statusText.textContent = 'ONLINE';
+            UI.statusDot.style.backgroundColor = '#22c55e';
+        }
+        startNoiseMonitor();
+    } catch (e) {
+        if (UI.statusText) { UI.statusText.textContent = 'ERROR'; UI.statusDot.style.backgroundColor = '#ef4444'; }
+    }
+}
+
+async function fetchUserProgress() {
+    try {
+        const res = await fetch('/get_progress');
+        if (res.ok) {
+            userProgress = await res.json();
+            refreshProgressUI();
+        }
+    } catch (e) { console.warn("Sync failed", e); }
+}
+
+function buildWordList() {
+    if (!UI.wordList) return;
+    UI.wordList.innerHTML = '';
+    const sorted = [...WORDS].sort((a, b) => {
+        const wordA = (typeof a === 'object') ? a.word : a;
+        const wordB = (typeof b === 'object') ? b.word : b;
+        return wordA.localeCompare(wordB);
+    });
+
+    sorted.forEach((item) => {
+        const w = (typeof item === 'object') ? item.word : item;
+        const ipa = (typeof item === 'object') ? item.ipa : null;
+        
+        const a = document.createElement('a');
+        a.href = '#';
+        // Added Tailwind classes for better touch targets (py-2.5) and visual feedback
+        a.className = 'word-link group flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all border border-transparent hover:border-slate-200';
+        a.dataset.word = w;
+        if (ipa) a.dataset.ipa = ipa;
+        
+        a.innerHTML = `<span>${w}</span><i class="status-icon far fa-circle"></i>`;
+        
+        a.onclick = async (e) => {
+            e.preventDefault();
+            await getAC();
+            if (!monitorStarted) startNoiseMonitor();
+            document.querySelectorAll('.word-link').forEach(el => el.classList.remove('active-selection'));
+            a.classList.add('active-selection', 'bg-slate-100', 'border-slate-200', 'text-slate-900');
+            selectedWord = w;
+            resetStageData();
+            
+            UI.sampleTitle.textContent = w;
+            UI.playBtn.disabled = false;
+            
+            // Show transcription if available, otherwise clear
+            if (ipa || a.dataset.ipa) {
+                UI.phonetic.textContent = ipa || a.dataset.ipa;
+                UI.phonetic.style.opacity = '1';
+            } else {
+                UI.phonetic.textContent = '/ ... /';
+                UI.phonetic.style.opacity = '0.3';
+            }
+        };
+        UI.wordList.appendChild(a);
+    });
+}
+
+function refreshProgressUI() {
+    const type = UI.testTypeInput?.value || 'pre';
+    const done = userProgress[type] || [];
+    const total = WORDS.length;
+    
+    document.querySelectorAll('.word-link').forEach(el => {
+        const isDone = done.includes(el.dataset.word);
+        // Toggle visual state for completed items
+        el.classList.toggle('opacity-50', isDone && !el.classList.contains('active-selection'));
+        el.classList.toggle('word-submitted', isDone);
+        
+        const icon = el.querySelector('.status-icon');
+        if (icon) {
+            if (isDone) {
+                icon.className = 'status-icon fas fa-check-circle text-green-500';
+            } else {
+                icon.className = 'status-icon far fa-circle opacity-20';
+            }
+        }
+    });
+    
+    const percent = total > 0 ? Math.round((done.length / total) * 100) : 0;
+    if (UI.progressFill) UI.progressFill.style.width = `${percent}%`;
+    if (UI.progressPercent) UI.progressPercent.textContent = `${percent}%`;
+}
+
+function resetStageData() {
+    lastRecordingBlob = null;
+    userBuf = null;
+    clearStage();
+    UI.submitBtn.disabled = true;
+    UI.playUserBtn.disabled = true;
+    UI.recStartBtn.disabled = false;
+    UI.recStopBtn.style.opacity = '0';
+    UI.recStopBtn.style.pointerEvents = 'none';
+    if (UI.testTypeInput) UI.testTypeInput.disabled = false;
+    if (UI.submitMsg) UI.submitMsg.textContent = '';
+    say('');
+}
+
+async function startNoiseMonitor() {
+    if (isMonitoring || isAppBusy) return;
+    try {
         const ctx = await getAC();
-        const rawBuf = await ctx.decodeAudioData(arrayBuf);
-        sampleBuf = trimSilence(rawBuf, 0.005); 
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const source = ctx.createMediaStreamSource(stream);
+        const analyzer = ctx.createAnalyser();
+        analyzer.fftSize = 2048;
+        source.connect(analyzer);
+        const buffer = new Float32Array(analyzer.fftSize);
+        isMonitoring = true; 
+        monitorStarted = true;
+        const loop = () => {
+            if (!isMonitoring) return;
+            requestAnimationFrame(loop);
+            analyzer.getFloatTimeDomainData(buffer);
+            let peak = 0;
+            for (let i = 0; i < buffer.length; i++) peak = Math.max(peak, Math.abs(buffer[i]));
+            measuredNoiseFloor = (measuredNoiseFloor * 0.95) + (peak * 0.05);
+            if (UI.noiseIcon) UI.noiseIcon.style.backgroundColor = peak < 0.02 ? "#22c55e" : "#f59e0b";
+            
+            const isQuiet = peak < 0.02;
+            if (UI.noiseIcon) UI.noiseIcon.style.backgroundColor = isQuiet ? "#22c55e" : "#f59e0b";
+            if (UI.noiseLevel) {
+                UI.noiseLevel.textContent = isQuiet ? "QUIET" : "NOISY";
+                // Toggle visibility/urgency colors
+                UI.noiseLevel.classList.remove('text-slate-300');
+                UI.noiseLevel.classList.toggle('text-slate-400', isQuiet);
+                UI.noiseLevel.classList.toggle('text-amber-500', !isQuiet);
+            }
+        };
+        loop();
+    } catch (err) { 
+        console.warn("Monitor Error", err);
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+            if (UI.statusText) { UI.statusText.textContent = 'MIC BLOCKED'; UI.statusDot.style.backgroundColor = '#ef4444'; }
+            alert("Microphone access is blocked. Please allow access in your browser settings to use this app.");
+        }
+    }
+}
+
+// ======= Interactions =======
+
+function renderComparison() {
+    if (!userBuf) return;
+    clearStage();
+    UI.legend.style.opacity = '1';
+    UI.mainStage.style.position = 'relative';
+
+    const sDiv = document.createElement('div'), uDiv = document.createElement('div');
+    
+    Object.assign(sDiv.style, { 
+        position: 'absolute', top: '0', left: '0', zIndex: '1',
+        opacity: '0.6', width: '100%', height: '100%' 
+    });
+    Object.assign(uDiv.style, { 
+        position: 'absolute', top: '0', left: '0', zIndex: '2',
+        opacity: '0.9', mixBlendMode: 'screen', width: '100%', height: '100%' 
+    });
+
+    UI.mainStage.append(sDiv, uDiv);
+    
+    if (sampleBuf) {
+        const modelCompare = makeWS(sDiv, Config.COLORS.MODEL);
+        modelCompare.load(URL.createObjectURL(bufferToWav(sampleBuf)));
+    }
+    userWS = makeWS(uDiv, Config.COLORS.USER);
+    userWS.load(URL.createObjectURL(bufferToWav(userBuf)));
+}
+
+UI.playBtn.onclick = async () => {
+    if (!selectedWord) return;
+    isAppBusy = true; 
+    try {
+        const res = await fetch(`/static/audio/${selectedWord}.${Config.AUDIO_EXT}`);
+        const ctx = await getAC();
+        const raw = await ctx.decodeAudioData(await res.arrayBuffer());
+        sampleBuf = trimSilence(raw, 0.005); 
         const src = ctx.createBufferSource();
         src.buffer = sampleBuf; 
         src.connect(ctx.destination);
-        src.onended = () => { isAppBusy = false; startNoiseMonitor(); };
+        src.onended = () => { isAppBusy = false; };
         src.start();
-        const trimmedUrl = URL.createObjectURL(bufferToWav(sampleBuf));
-        if (sampleWS) sampleWS.destroy();
-        sampleWS = makeWS('#sample-waveform-container', '#475569');
-        sampleWS.load(trimmedUrl);
-        sampleSay('Playing...');
-    } catch (e) { 
-        sampleSay('Audio error.'); isAppBusy = false; startNoiseMonitor(); 
-    }
-});
 
-recStartBtn.addEventListener('click', async () => {
-    if (!selectedWord) return say('Select a word first.');
+        if (userBuf) {
+            renderComparison();
+        } else {
+            clearStage();
+            sampleWS = makeWS(UI.mainStage, Config.COLORS.MODEL);
+            sampleWS.load(URL.createObjectURL(bufferToWav(sampleBuf)));
+        }
+    } catch (e) { isAppBusy = false; }
+};
+
+UI.recStartBtn.onclick = async () => {
+    if (!selectedWord) return;
     const ctx = await getAC();
-    isAppBusy = true; pauseMonitoring(); 
+    isAppBusy = true; 
+    UI.recStartBtn.disabled = true;
+    UI.recStopBtn.style.opacity = '1';
+    UI.recStopBtn.style.pointerEvents = 'auto';
+    if (UI.testTypeInput) UI.testTypeInput.disabled = true;
+    
+    if (sampleWS) sampleWS.setOptions({ waveColor: Config.COLORS.GHOST });
+    say('RECORDING...');
+
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-            audio: { echoCancellation: true, autoGainControl: true, noiseSuppression: true } 
-        });
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream);
         chunks = [];
         mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
@@ -277,105 +362,83 @@ recStartBtn.addEventListener('click', async () => {
             if (autoCheckInterval) clearInterval(autoCheckInterval);
             const rawBlob = new Blob(chunks, { type: 'audio/webm' });
             stream.getTracks().forEach(t => t.stop());
-            isAppBusy = false; startNoiseMonitor(); 
-            recStartBtn.disabled = false;
-            recStopBtn.disabled = true;
-            const decodedBuf = await ctx.decodeAudioData(await rawBlob.arrayBuffer());
-            userBuf = trimSilence(decodedBuf, Math.max(0.01, measuredNoiseFloor * 1.5)); 
+            isAppBusy = false; 
+            UI.recStartBtn.disabled = false;
+            UI.recStopBtn.style.opacity = '0';
+            UI.recStopBtn.style.pointerEvents = 'none';
+            if (UI.testTypeInput) UI.testTypeInput.disabled = false;
+
+            const decoded = await ctx.decodeAudioData(await rawBlob.arrayBuffer());
+            const thresh = Math.max(0.018, measuredNoiseFloor * Config.TRIM_THRESHOLD_FACTOR);
+            userBuf = trimSilence(decoded, thresh); 
             lastRecordingBlob = bufferToWav(userBuf); 
-            if (lastRecordingBlob.size < 1000) { say('Too short.'); return; }
-            submitBtn.disabled = false;
-            playUserBtn.disabled = false;
-            say('Recorded.');
-            const blobUrl = URL.createObjectURL(lastRecordingBlob);
-            if (userWS) userWS.destroy();
-            userWS = makeWS('#user-waveform-container', '#6366f1');
-            userWS.load(blobUrl);
-            renderComparison(blobUrl);
+            
+            if (lastRecordingBlob.size < 1000) { say('TOO LOW'); return; }
+            
+            UI.submitBtn.disabled = false;
+            UI.playUserBtn.disabled = false;
+            say('READY');
+            
+            renderComparison();
         };
         mediaRecorder.start();
-        recStartBtn.disabled = true;
-        recStopBtn.disabled = false;
-        say('Recording...');
         const startTime = Date.now();
         let silenceStart = null;
-        const micSrc = ctx.createMediaStreamSource(stream);
-        const recAnalyser = ctx.createAnalyser();
-        micSrc.connect(recAnalyser);
-        const dataArr = new Float32Array(recAnalyser.fftSize);
+        const analyzer = ctx.createAnalyser();
+        ctx.createMediaStreamSource(stream).connect(analyzer);
+        const dataArr = new Float32Array(analyzer.fftSize);
         autoCheckInterval = setInterval(() => {
-            recAnalyser.getFloatTimeDomainData(dataArr);
+            const elapsed = Date.now() - startTime;
+            if (elapsed > Config.MAX_RECORDING_MS) { mediaRecorder.stop(); return; }
+            analyzer.getFloatTimeDomainData(dataArr);
             let peak = 0;
             for (let i = 0; i < dataArr.length; i++) peak = Math.max(peak, Math.abs(dataArr[i]));
-            const grace = (Date.now() - startTime) < 1500;
-            const dynamicThreshold = Math.max(0.012, measuredNoiseFloor * 2);
-            if (peak < dynamicThreshold && !grace) {
+            if (peak < Math.max(0.012, measuredNoiseFloor * 2.5) && elapsed > 1000) {
                 if (!silenceStart) silenceStart = Date.now();
-                if (Date.now() - silenceStart > 1500) if (mediaRecorder.state === 'recording') mediaRecorder.stop();
+                if (Date.now() - silenceStart > Config.AUTO_STOP_SILENCE_MS) mediaRecorder.stop();
             } else silenceStart = null;
         }, 100);
-    } catch (e) { say('Mic denied.'); isAppBusy = false; startNoiseMonitor(); }
-});
+    } catch (e) { isAppBusy = false; }
+};
 
-recStopBtn.addEventListener('click', () => {
-    if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
-});
-
-playUserBtn.addEventListener('click', async () => {
+UI.recStopBtn.onclick = () => { if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop(); };
+UI.playUserBtn.onclick = async () => {
     if (!userBuf) return;
+    if (!userWS) renderComparison();
     const ctx = await getAC();
     const src = ctx.createBufferSource();
     src.buffer = userBuf;
     src.connect(ctx.destination);
     src.start();
-    say('Playing recording...');
-});
+};
 
-function renderComparison(blobUrl) {
-    if (!overlapWF) return;
-    overlapWF.innerHTML = '';
-    const sDiv = document.createElement('div');
-    const uDiv = document.createElement('div');
-    Object.assign(sDiv.style, { position: 'absolute', inset: 0, opacity: '0.4' });
-    Object.assign(uDiv.style, { position: 'absolute', inset: 0, opacity: '0.8', mixBlendMode: 'screen' });
-    overlapWF.style.position = 'relative';
-    overlapWF.append(sDiv, uDiv);
-    const ws1 = makeWS(sDiv, '#ffffff');
-    const ws2 = makeWS(uDiv, '#6366f1');
-    ws1.load(URL.createObjectURL(bufferToWav(sampleBuf)));
-    ws2.load(blobUrl);
-}
-
-submitBtn.addEventListener('click', async (e) => {
-    e.preventDefault(); // Safety to prevent implicit form reload
+UI.submitBtn.onclick = async (e) => {
+    e.preventDefault();
     if (!lastRecordingBlob) return;
-    submitSay('Saving...');
-    submitBtn.disabled = true;
-    const formData = new FormData();
-    const sid = idInput?.value || 'unknown';
-    formData.append('file', lastRecordingBlob, `${sid}-${selectedWord}.wav`);
-    formData.append('word', selectedWord);
-    formData.append('testType', testTypeInput?.value || 'pre');
+    if (UI.submitMsg) UI.submitMsg.textContent = 'SAVING...';
+    UI.submitBtn.disabled = true;
+    if (UI.testTypeInput) UI.testTypeInput.disabled = true;
+    const fd = new FormData();
+    fd.append('file', lastRecordingBlob, 'attempt.wav');
+    fd.append('word', selectedWord);
+    fd.append('testType', UI.testTypeInput?.value || 'pre');
     try {
-        const res = await fetch('/upload', { method: 'POST', body: formData });
-        if (res.ok) {
-            submitSay('✅ Saved');
-            const prog = JSON.parse(localStorage.getItem('thesis_prog') || '{}');
-            prog[selectedWord] = true;
-            localStorage.setItem('thesis_prog', JSON.stringify(prog));
-            refreshSubmittedColors();
-        } else { submitSay('⚠️ Error'); submitBtn.disabled = false; }
-    } catch (e) { submitSay('⚠️ Network Error'); submitBtn.disabled = false; }
-});
-
-function refreshSubmittedColors() {
-    const prog = JSON.parse(localStorage.getItem('thesis_prog') || '{}');
-    document.querySelectorAll('.word-link').forEach(el => {
-        if (prog[el.dataset.word]) {
-            el.classList.add('word-submitted');
-            el.classList.remove('word-pending');
+        const res = await fetch('/upload', { method: 'POST', body: fd });
+        if (res.ok) { 
+            if (UI.submitMsg) UI.submitMsg.textContent = '✅ SAVED'; 
+            await fetchUserProgress(); 
+            if (UI.testTypeInput) UI.testTypeInput.disabled = false;
+        } else { 
+            if (UI.submitMsg) UI.submitMsg.textContent = '⚠️ ERROR'; 
+            UI.submitBtn.disabled = false; 
+            if (UI.testTypeInput) UI.testTypeInput.disabled = false;
         }
-    });
-}
+    } catch (e) { 
+        if (UI.submitMsg) UI.submitMsg.textContent = '⚠️ TIMEOUT'; 
+        UI.submitBtn.disabled = false; 
+        if (UI.testTypeInput) UI.testTypeInput.disabled = false;
+    }
+};
 
-window.addEventListener('load', loadManifest);
+if (UI.testTypeInput) UI.testTypeInput.onchange = refreshProgressUI;
+window.onload = loadManifest;

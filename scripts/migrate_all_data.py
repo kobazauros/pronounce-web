@@ -130,7 +130,9 @@ def import_csv_data():
                     user_id=user.id,
                     word_id=word_map[word_text],
                     test_type=row.get("test_type", "pre").lower(),
-                    file_path=os.path.join("submissions", str(user.id), temp_filename),
+                    file_path=os.path.join(str(user.id), temp_filename).replace(
+                        "\\", "/"
+                    ),
                     timestamp=datetime.now(timezone.utc),
                     file_size_bytes=0,
                 )  # type: ignore
@@ -218,7 +220,9 @@ def link_and_move_files():
                     user_id=user.id,
                     word_id=word_map[word_text],
                     test_type="pre",
-                    file_path=os.path.join("submissions", str(user.id), new_filename),
+                    file_path=os.path.join(str(user.id), new_filename).replace(
+                        "\\", "/"
+                    ),
                     timestamp=datetime.now(timezone.utc),
                     file_size_bytes=0,
                 )  # type: ignore

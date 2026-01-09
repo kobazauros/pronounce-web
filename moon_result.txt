@@ -1,3 +1,0 @@
-verify_moon.txt 2>&1
-submissions\pre\670120182_Konstantin_Bantov_moon.mp3
- Analyzed 670120182_Konstantin_Bantov_moon.mp3 (Pre-test) -> Dist: 1655.4 Hz

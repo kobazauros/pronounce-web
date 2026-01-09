@@ -21,6 +21,10 @@
   "notebook.codeActionsOnSave": {
     "notebook.source.fixAll": "explicit",
     "notebook.source.organizeImports": "explicit"
-  }
+  },
+
+  // 4. Disable CSS validation for Jinja2 templates to avoid false positives with {{ }} syntax
+  "css.lint.validProperties": ["composes"],
+  "css.validate": false
 }
 

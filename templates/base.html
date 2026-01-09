@@ -6,11 +6,9 @@
     <title>Pronounce Web - {% block title %}{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .word-link.word-submitted { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
-        .word-link.word-pending { background-color: #ffffff; border-color: #f1f5f9; color: #64748b; }
-        .active-selection { border-color: #6366f1 !important; background-color: #eef2ff !important; color: #4338ca !important; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-    </style>
+    <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
 </head>
 <body class="bg-slate-50 font-sans text-slate-900 flex flex-col min-h-screen">
 
@@ -25,11 +23,12 @@
                         </div>
                         <span class="font-black text-xl tracking-tighter uppercase">Pronounce<span class="text-indigo-400">Web</span></span>
                     </a>
-                    <!-- Connection Status Indicator -->
-                    <div class="ml-6 hidden sm:flex items-center space-x-2 border-l border-slate-700 pl-6">
-                        <div class="w-2 h-2 rounded-full bg-gray-500" id="status-dot"></div>
-                        <span class="text-[10px] uppercase font-bold text-slate-400 tracking-widest" id="connection-status">Connecting...</span>
-                    </div>
+                    {% if current_user.role == 'student' %}
+                        <div class="ml-6 hidden sm:flex items-center space-x-2 border-l border-slate-700 pl-6">
+                            <div class="w-2 h-2 rounded-full bg-gray-500" id="status-dot"></div>
+                            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-widest" id="connection-status">Connecting...</span>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="flex items-center space-x-6">
                     {% if current_user.is_authenticated %}
@@ -51,7 +50,6 @@
 
     <main class="flex-grow">
         <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            <!-- Flash Messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
                 {% for category, message in messages %}
@@ -71,12 +69,13 @@
         </div>
     </main>
 
-    <footer class="bg-white border-t border-slate-200 py-6">
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <p class="text-slate-400 text-xs font-medium">
                 &copy; 2024 MCU Faculty of Education | M.Ed Thesis Project
             </p>
         </div>
     </footer>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

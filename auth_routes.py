@@ -19,6 +19,10 @@ auth = Blueprint("auth", __name__)
 @auth.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
+        if current_user.role == "admin":
+            return redirect(url_for("dashboards.admin_dashboard"))
+        elif current_user.role == "teacher":
+            return redirect(url_for("dashboards.teacher_dashboard"))
         return redirect(url_for("index"))
 
     if request.method == "POST":
@@ -33,6 +37,13 @@ def login():
             return redirect(url_for("auth.login"))
 
         login_user(user, remember=remember)
+        current_app.logger.info(f"User '{user.username}' logged in successfully.")
+
+        if user.role == "admin":
+            return redirect(url_for("dashboards.admin_dashboard"))
+        elif user.role == "teacher":
+            return redirect(url_for("dashboards.teacher_dashboard"))
+
         return redirect(url_for("index"))
 
     return render_template("login.html")
@@ -60,6 +71,12 @@ def register():
             flash("Username already exists.", "danger")
             return redirect(url_for("auth.register"))
 
+        # Student ID must also be unique if provided.
+        if student_id:
+            if User.query.filter_by(student_id=student_id).first():
+                flash("A user with this Student ID is already registered.", "danger")
+                return redirect(url_for("auth.register"))
+
         # Check Role
         role = "student"
         is_teacher = False
@@ -74,19 +91,34 @@ def register():
             )
             return redirect(url_for("auth.register"))
 
+        # If student_id is an empty string, store it as None to avoid unique constraint issues
+        final_student_id = student_id if student_id else None
+
         new_user = User(
             username=username,
             first_name=first_name,
             last_name=last_name,
-            student_id=student_id if role == "student" else None,
+            student_id=final_student_id if role == "student" else None,
             role=role,
             # Consent is recorded as "system-bypassed" or timestamp for students
             consented_at=datetime.now(timezone.utc),
         )
         new_user.set_password(password)
 
-        db.session.add(new_user)
-        db.session.commit()
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            current_app.logger.info(
+                f"New user registered: '{username}' with role '{role}'."
+            )
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error during user registration: {e}")
+            flash(
+                "A server error occurred during registration. Please try again later.",
+                "danger",
+            )
+            return redirect(url_for("auth.register"))
 
         if role == "teacher":
             flash(
