@@ -2,17 +2,18 @@
 """
 Thesis Vowel Analyzer (Adaptive Reference + VTLN)
 """
+
 import argparse
-import math
 import json
+import math
 from pathlib import Path
 from typing import TypedDict, cast
-from parselmouth.praat import call  # pyright: ignore[reportMissingModuleSource]
+
+import librosa
 import numpy as np
 import pandas as pd
-import librosa
 import parselmouth
-
+from parselmouth.praat import call  # pyright: ignore[reportMissingModuleSource]
 
 # --- CONFIGURATION ---
 DIPHTHONGS = {"aɪ", "əʊ", "ɔɪ", "eɪ", "eə", "aʊ", "ɪə", "ʊə"}
@@ -77,7 +78,6 @@ def get_vowel_type(vowel_symbol: str) -> str:
 
 
 def load_audio_mono(path: Path, target_sr: int = 16000) -> tuple[np.ndarray, int]:
-
     try:
         y: np.ndarray
         y, sr = librosa.load(path.as_posix(), sr=None, mono=True)
@@ -155,7 +155,6 @@ def measure_formants(
     points: tuple[float, ...] = (0.5,),
     ceiling: float = 5500.0,
 ) -> list[tuple[float, float]]:
-
     if segment is None:
         return [(np.nan, np.nan)] * len(points)
 
@@ -290,7 +289,6 @@ def main():
 
             # Cast effectively handles the Any from json.load for strict typed dict usage
             for entry in cast(list[WordInfo], data.get("words", [])):
-
                 w = str(entry.get("word", "")).lower()
 
                 word_map[w] = entry

@@ -34,10 +34,10 @@ def get_word_data(
         request_headers = DEFAULT_REQUESTS_HEADERS
 
     link = f"{LINK_PREFIX}/dictionary/english/{word}"
-    
+
     transcription = None
     audio_bytes = None
-    
+
     try:
         time.sleep(1)
         page = requests.get(link, headers=request_headers, timeout=timeout)
@@ -56,13 +56,16 @@ def get_word_data(
             for content in ipa_span.contents:
                 if isinstance(content, str):
                     final_ipa_parts.append(content.strip())
-                elif (
-                    content.name == "span"
-                    and "sp" in content.get("class", [])
-                    and "dsp" in content.get("class", [])
-                ):
-                    final_ipa_parts.append(f"({content.text.strip()})")
-            
+                elif isinstance(content, bs4.Tag):
+                    classes = content.attrs.get("class", [])
+                    if (
+                        content.name == "span"
+                        and isinstance(classes, list)
+                        and "sp" in classes
+                        and "dsp" in classes
+                    ):
+                        final_ipa_parts.append(f"({content.text.strip()})")
+
             transcription = f"/{''.join(final_ipa_parts)}/"
 
         # 2. Get the MP3 file bytes.
@@ -82,7 +85,6 @@ def get_word_data(
                 # Log or handle MP3 download error if needed, but don't stop.
                 print(f"Warning: Could not download MP3 for '{word}': {e}")
 
-
     except requests.exceptions.RequestException as e:
         print(f"Error: Could not fetch page for '{word}': {e}")
         return None, None
@@ -96,7 +98,7 @@ if __name__ == "__main__":
     """
     word_to_find = "ear"
     print(f"--- Fetching data for '{word_to_find}' ---")
-    
+
     ipa, audio = get_word_data(word_to_find)
 
     if ipa:

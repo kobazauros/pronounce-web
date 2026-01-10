@@ -45,7 +45,6 @@ if not app.debug and not app.testing:
     )
     app.logger.addHandler(file_handler)
     app.logger.setLevel(logging.INFO)
-    app.logger.info("Pronounce application startup")
 
 # 2. Initialize Extensions
 db.init_app(app)
@@ -189,13 +188,16 @@ def upload_file() -> tuple[Response, int]:
             f"User '{current_user.username}' uploaded file for word '{word.text}' ({test_type}-test). Path: {db_file_path}"
         )
         # Note: In Phase 4, we will trigger vowel analysis here
-        return jsonify(
-            {
-                "success": True,
-                "submission_id": new_submission.id,
-                "filename": unique_filename,
-            }
-        ), 200
+        return (
+            jsonify(
+                {
+                    "success": True,
+                    "submission_id": new_submission.id,
+                    "filename": unique_filename,
+                }
+            ),
+            200,
+        )
 
     except Exception:
         db.session.rollback()

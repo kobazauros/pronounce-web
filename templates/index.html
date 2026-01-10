@@ -3,12 +3,13 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+
 <!-- Use h-[calc(100vh-140px)] to ensure everything stays above the fold -->
 <div class="flex flex-col lg:flex-row gap-4 h-[calc(100vh-160px)] overflow-hidden">
-    
+
     <!-- Center: Recording & Comparison Stage -->
     <div class="flex-grow bg-white rounded-3xl p-4 shadow-sm border border-slate-200 flex flex-col min-w-0">
-        
+
         <!-- Header -->
         <div class="text-center mb-2 shrink-0">
             <h2 id="sample-word-placeholder" class="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">Select Word</h2>
@@ -57,6 +58,7 @@
             </div>
         </div>
 
+
         <!-- Monitor Footer -->
         <div class="mt-1 pt-1 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-2">
@@ -65,7 +67,14 @@
             </div>
             <div id="sample-message" class="text-[10px] font-black uppercase tracking-widest text-sky-500 opacity-0"></div>
         </div>
+        <p class="text-gray-600 text-sm mt-2 text-center">
+            Choose phase: Pre-Test or Post-Test from dropdown on right. <br>
+            Choose the word in right sidebar and listen to it by clicking 🔊 button. 
+            Click the 🎙️ button and ▶ button to record and listen to yourself. <br> 
+            Repeat until satisfied, then save recording.
+        </p>
     </div>
+
 
     <!-- Right Sidebar -->
     <div class="w-full lg:w-60 flex flex-col gap-3 shrink-0 h-full overflow-hidden">
