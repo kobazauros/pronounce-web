@@ -11,14 +11,16 @@ from flask import (
 )
 from flask_login import current_user, login_required, login_user, logout_user
 
-from models import User, db
+from models import SystemConfig, User, db
 
 auth = Blueprint("auth", __name__)
 
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
-    if current_user.is_authenticated:
+    # If user is already logged in, redirect them away from login page,
+    # UNLESS maintenance mode is active, in which case they may need to re-login as admin.
+    if current_user.is_authenticated and not SystemConfig.get_bool("maintenance_mode"):
         if current_user.role == "admin":
             return redirect(url_for("dashboards.admin_dashboard"))
         elif current_user.role == "teacher":
@@ -35,6 +37,10 @@ def login():
         if not user or not user.check_password(password):
             flash("Please check your login details and try again.", "danger")
             return redirect(url_for("auth.login"))
+
+        # If maintenance mode is on, show maintenance page to non-admins trying to log in.
+        if SystemConfig.get_bool("maintenance_mode") and user.role != "admin":
+            return render_template("maintenance.html"), 503
 
         login_user(user, remember=remember)
         current_app.logger.info(f"User '{user.username}' logged in successfully.")
@@ -53,6 +59,11 @@ def login():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for("index"))
+
+    # Check if registration is open
+    if not SystemConfig.get_bool("registration_open", default=True):
+        flash("New user registration is currently closed by the administrator.", "info")
+        return redirect(url_for("auth.login"))
 
     # Fetch the code from config to pass to template and check in POST
     teacher_code = current_app.config.get("TEACHER_INVITE_CODE", "MCU-2024-PRO")

@@ -50,7 +50,6 @@ class User(UserMixin, db.Model):
         student_id=None,
         role="student",
         consented_at=None,
-        created_at=None,
     ):
         self.username = username
         self.first_name = first_name
@@ -58,7 +57,6 @@ class User(UserMixin, db.Model):
         self.student_id = student_id
         self.role = role
         self.consented_at = consented_at
-        self.created_at = created_at
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -184,3 +182,43 @@ class AnalysisResult(db.Model):
 
     def __repr__(self):
         return f"<Analysis Result for Sub #{self.submission_id}>"
+
+
+class SystemConfig(db.Model):
+    """Stores key-value system configuration settings."""
+
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(50), unique=True, nullable=False)
+    value = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, key=None, value=None):
+        self.key = key
+        self.value = value
+
+    def __repr__(self):
+        return f"<SystemConfig {self.key}={self.value}>"
+
+    @staticmethod
+    def get(key, default=None):
+        """Helper to get a config value by key."""
+        config = SystemConfig.query.filter_by(key=key).first()
+        return config.value if config else default
+
+    @staticmethod
+    def get_bool(key, default=False):
+        """Helper to get a config value as a boolean."""
+        val = SystemConfig.get(key)
+        if val is None:
+            return default
+        return val.lower() in ["true", "1", "t", "y", "yes"]
+
+    @staticmethod
+    def set(key, value):
+        """Helper to set a config value. The value is converted to a string."""
+        config = SystemConfig.query.filter_by(key=key).first()
+        if not config:
+            config = SystemConfig(key=key, value=str(value))
+            db.session.add(config)  # type: ignore
+        else:
+            config.value = str(value)
+        # No commit here, let the caller handle the transaction

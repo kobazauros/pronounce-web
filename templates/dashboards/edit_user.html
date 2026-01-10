@@ -11,12 +11,12 @@
                 <h1 class="text-2xl font-bold text-gray-800">Edit User: {{ user.username }}</h1>
                 <p class="text-gray-600">Update the user's details and role.</p>
             </div>
-            <a href="{{ url_for('dashboards.admin_dashboard', page=request.args.get('page', 1)) }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">&larr; Back to Dashboard</a>
+            <a href="{{ url_for('dashboards.admin_dashboard', page=page, search=search_query) }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">&larr; Back to Dashboard</a>
         </div>
 
         <!-- Edit Form -->
         <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-            <form method="POST" action="{{ url_for('dashboards.edit_user', user_id=user.id, page=request.args.get('page', 1)) }}">
+            <form method="POST" action="{{ url_for('dashboards.edit_user', user_id=user.id, page=page, search=search_query) }}">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- First Name -->
                     <div>
@@ -54,7 +54,7 @@
 
                 <!-- Actions -->
                 <div class="mt-8 pt-6 border-t border-gray-200 flex justify-end gap-3">
-                    <a href="{{ url_for('dashboards.admin_dashboard', page=request.args.get('page', 1)) }}"
+                    <a href="{{ url_for('dashboards.admin_dashboard', page=page, search=search_query) }}"
                        class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Cancel
                     </a>

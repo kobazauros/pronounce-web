@@ -7,15 +7,19 @@ from flask import (
     Blueprint,
     current_app,
     flash,
+    jsonify,
     redirect,
     render_template,
     request,
     send_from_directory,
     url_for,
+    session,
 )
 from flask_login import current_user, login_required
+from werkzeug.utils import secure_filename
 
-from models import Submission, User, Word, db
+from models import Submission, SystemConfig, User, Word, db
+from scripts import parser as word_parser
 
 dashboards = Blueprint("dashboards", __name__)
 
@@ -27,12 +31,27 @@ def admin_dashboard():
         flash("Access denied. Administrator privileges required.", "danger")
         return redirect(url_for("index"))
 
-    # Pagination
+    # Search and Pagination
     page = request.args.get("page", 1, type=int)
     per_page = 8  # Display 8 users per page
+    search_query = request.args.get("search", "")
+
+    # Base query
+    users_query = User.query
+
+    # Apply search filter if a query is provided
+    if search_query:
+        search_term = f"%{search_query}%"
+        users_query = users_query.filter(
+            db.or_(
+                User.username.ilike(search_term),
+                User.first_name.ilike(search_term),
+                User.last_name.ilike(search_term),
+            )
+        )
 
     # Fetch Paginated Data
-    users_pagination = User.query.order_by(User.created_at.desc()).paginate(  # type: ignore
+    users_pagination = users_query.order_by(User.created_at.desc()).paginate(  # type: ignore
         page=page, per_page=per_page, error_out=False
     )
     words = Word.query.all()
@@ -90,6 +109,7 @@ def admin_dashboard():
     stats = {
         "total_users": User.query.count(),
         "new_users_today": User.query.filter(User.created_at >= today_start).count(),
+        "UTC_now": datetime.now(timezone.utc).strftime("%H:%M:%S"),
         "total_submissions": Submission.query.count(),
         "active_words": len(words),
         "total_teachers": User.query.filter_by(role="teacher").count(),
@@ -98,12 +118,27 @@ def admin_dashboard():
         "cpu_load": cpu_load_percent,
     }
 
+    # --- Get System Config ---
+    # This ensures default values are created on first run
+    config_settings = {
+        "registration_open": SystemConfig.get_bool("registration_open", True),
+        "maintenance_mode": SystemConfig.get_bool("maintenance_mode", False),
+    }
+    # If the keys don't exist, set them to their default values
+    if SystemConfig.get("registration_open") is None:
+        SystemConfig.set("registration_open", True)
+    if SystemConfig.get("maintenance_mode") is None:
+        SystemConfig.set("maintenance_mode", False)
+    db.session.commit()
+
     return render_template(
         "dashboards/admin_view.html",
         stats=stats,
         users=user_data,
         pagination=users_pagination,
         words=words,
+        config=config_settings,
+        search_query=search_query,
     )
 
 
@@ -225,6 +260,8 @@ def edit_user(user_id):
         return redirect(url_for("index"))
 
     user_to_edit = User.query.get_or_404(user_id)
+    search_query = request.args.get("search", "")
+    page = request.args.get("page", 1, type=int)
 
     if request.method == "POST":
         # --- Update Logic ---
@@ -273,15 +310,51 @@ def edit_user(user_id):
             flash(
                 f"User '{user_to_edit.username}' was updated successfully.", "success"
             )
-            page = request.args.get("page", 1, type=int)
-            return redirect(url_for("dashboards.admin_dashboard", page=page))
+            return redirect(
+                url_for("dashboards.admin_dashboard", page=page, search=search_query)
+            )
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Error updating user {user_id}: {e}")
             flash("An error occurred while updating the user.", "danger")
 
     # --- Display Form Logic (GET request) ---
-    return render_template("dashboards/edit_user.html", user=user_to_edit)
+    return render_template(
+        "dashboards/edit_user.html",
+        user=user_to_edit,
+        search_query=search_query,
+        page=page,
+    )
+
+
+@dashboards.route("/admin/config/update", methods=["POST"])
+@login_required
+def update_config():
+    """API endpoint to update system configuration."""
+    if current_user.role != "admin":
+        return jsonify({"success": False, "error": "Access denied"}), 403
+
+    data = request.get_json()
+    key = data.get("key")
+    value = data.get("value")
+
+    if key not in ["registration_open", "maintenance_mode"]:
+        return jsonify({"success": False, "error": "Invalid configuration key"}), 400
+
+    try:
+        SystemConfig.set(key, value)
+        db.session.commit()
+        current_app.logger.info(
+            f"Admin '{current_user.username}' updated system config: set '{key}' to '{value}'."
+        )
+        return jsonify({"success": True, "key": key, "value": value})
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error updating system config: {e}")
+        return (
+            jsonify({"success": False, "error": "Database error occurred"}),
+            500,
+        )
 
 
 @dashboards.route("/admin/logs/download")
@@ -301,6 +374,221 @@ def download_logs():
         return redirect(url_for("dashboards.admin_dashboard"))
 
     return send_from_directory(directory=log_dir, path=log_filename, as_attachment=True)
+
+
+@dashboards.route("/admin/generate-pronunciation")
+@login_required
+def generate_pronunciation():
+    if current_user.role != "admin":
+        return jsonify({"error": "Access denied"}), 403
+
+    word_text = request.args.get("word", "").strip()
+    if not word_text:
+        return jsonify({"error": "Word parameter is required"}), 400
+
+    try:
+        ipa, audio_bytes = word_parser.get_word_data(word_text)
+        
+        if not ipa and not audio_bytes:
+            return jsonify({"error": f"Could not retrieve any data for '{word_text}'."}), 404
+
+        response_data = {"ipa": ipa}
+
+        if audio_bytes:
+            audio_folder = os.path.join(current_app.static_folder, "audio")
+            if not os.path.exists(audio_folder):
+                os.makedirs(audio_folder)
+            
+            filename = secure_filename(f"{word_text.lower()}.mp3")
+            save_path = os.path.join(audio_folder, filename)
+            
+            with open(save_path, "wb") as f:
+                f.write(audio_bytes)
+            
+            db_audio_path = f"audio/{filename}"
+            session['generated_audio_path'] = db_audio_path
+            response_data["audio_path"] = url_for('static', filename=db_audio_path)
+
+        return jsonify(response_data)
+
+    except Exception as e:
+        current_app.logger.error(f"Error generating pronunciation for '{word_text}': {e}")
+        return jsonify({"error": "An internal server error occurred."}), 500
+
+
+@dashboards.route("/admin/word/add", methods=["GET", "POST"])
+@login_required
+def add_word():
+    if current_user.role != "admin":
+        flash("Access denied.", "danger")
+        return redirect(url_for("index"))
+
+    if request.method == "POST":
+        word_text = request.form.get("word_text", "").strip()
+        ipa = request.form.get("ipa_transcription", "").strip()
+        audio_file = request.files.get("audio_file")
+
+        if not word_text:
+            flash("Word text cannot be empty.", "danger")
+            return render_template("dashboards/manage_word.html", word=None)
+
+        # Check for duplicate word
+        if Word.query.filter(Word.text.ilike(word_text)).first():
+            flash(f"The word '{word_text}' already exists in the wordlist.", "danger")
+            return render_template("dashboards/manage_word.html", word=None)
+            
+        # Determine the next sequence order
+        max_sequence = db.session.query(db.func.max(Word.sequence_order)).scalar() or 0
+        new_word = Word(text=word_text, ipa=ipa, sequence_order=max_sequence + 1)
+
+        # Handle audio file
+        audio_path = None
+        if audio_file and audio_file.filename:
+            audio_folder = os.path.join(current_app.static_folder, "audio")
+            filename = secure_filename(f"{word_text.lower()}.mp3")
+            audio_path = os.path.join(audio_folder, filename)
+            audio_file.save(audio_path)
+            new_word.audio_path = f"audio/{filename}"
+        elif session.get('generated_audio_path'):
+            new_word.audio_path = session.pop('generated_audio_path', None)
+
+        db.session.add(new_word)
+        db.session.commit()
+
+        flash(f"Successfully added the word '{word_text}'.", "success")
+        next_url = request.args.get('next')
+        if next_url:
+            return redirect(next_url)
+        return redirect(url_for("dashboards.admin_dashboard"))
+
+    # For GET request
+    session.pop('generated_audio_path', None) # Clear session cache
+    return render_template("dashboards/manage_word.html", word=None)
+
+
+@dashboards.route("/admin/word/edit/<int:word_id>", methods=["GET", "POST"])
+@login_required
+def edit_word(word_id):
+    if current_user.role != "admin":
+        flash("Access denied.", "danger")
+        return redirect(url_for("index"))
+
+    word = Word.query.get_or_404(word_id)
+
+    if request.method == "POST":
+        word_text = request.form.get("word_text", "").strip()
+        ipa = request.form.get("ipa_transcription", "").strip()
+        audio_file = request.files.get("audio_file")
+
+        if not word_text:
+            flash("Word text cannot be empty.", "danger")
+            return render_template("dashboards/manage_word.html", word=word)
+
+        # Check if text is being changed to something that already exists
+        if word_text.lower() != word.text.lower():
+            if Word.query.filter(Word.text.ilike(word_text)).first():
+                flash(f"The word '{word_text}' already exists.", "danger")
+                return render_template("dashboards/manage_word.html", word=word)
+
+        word.text = word_text
+        word.ipa = ipa
+        
+        # Handle audio file update
+        if audio_file and audio_file.filename:
+            # If a new file is uploaded, save it and update path
+            audio_folder = os.path.join(current_app.static_folder, "audio")
+            filename = secure_filename(f"{word_text.lower()}.mp3")
+            audio_path = os.path.join(audio_folder, filename)
+            audio_file.save(audio_path)
+            word.audio_path = f"audio/{filename}"
+        elif session.get('generated_audio_path'):
+            # If a file was generated, use that path
+            word.audio_path = session.pop('generated_audio_path', None)
+        
+        db.session.commit()
+        flash(f"Successfully updated '{word_text}'.", "success")
+        next_url = request.args.get('next')
+        if next_url:
+            return redirect(next_url)
+        return redirect(url_for("dashboards.admin_dashboard"))
+
+    # For GET request
+    session.pop('generated_audio_path', None) # Clear session cache
+    return render_template("dashboards/manage_word.html", word=word)
+
+
+@dashboards.route("/admin/word/<int:word_id>/delete", methods=["POST"])
+@login_required
+def delete_word(word_id):
+    if current_user.role != "admin":
+        flash("Access denied.", "danger")
+        return redirect(url_for("index"))
+
+    word = Word.query.get_or_404(word_id)
+    word_text = word.text
+    next_url = request.args.get('next')
+    redirect_url = next_url or url_for("dashboards.admin_dashboard")
+
+    delete_word_flag = request.form.get("delete_word") == "on"
+    delete_submissions_flag = request.form.get("delete_submissions") == "on"
+
+    if not delete_word_flag:
+        flash("You must confirm deletion by checking the first box.", "warning")
+        return redirect(redirect_url)
+
+    try:
+        # 1. Delete associated submissions if requested
+        if delete_submissions_flag:
+            submissions = Submission.query.filter_by(word_id=word_id).all()
+            for sub in submissions:
+                # Delete associated analysis results (cascade should handle this)
+                # Delete physical submission file
+                if sub.file_path:
+                    full_path = os.path.join(current_app.config["UPLOAD_FOLDER"], sub.file_path)
+                    if os.path.exists(full_path):
+                        os.remove(full_path)
+                db.session.delete(sub)
+            flash(f"Deleted all student submissions for '{word_text}'.", "info")
+
+        # 2. Delete the word's own audio file
+        if word.audio_path:
+            full_audio_path = os.path.join(current_app.static_folder, word.audio_path)
+            if os.path.exists(full_audio_path):
+                os.remove(full_audio_path)
+
+        # 3. Delete the word itself
+        db.session.delete(word)
+        db.session.commit()
+        
+        flash(f"Successfully deleted the word '{word_text}'.", "success")
+        return redirect(redirect_url)
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error deleting word '{word_text}': {e}")
+        flash("An error occurred while deleting the word.", "danger")
+        return redirect(redirect_url)
+
+
+@dashboards.route("/admin/words")
+@login_required
+def manage_all_words():
+    if current_user.role != "admin":
+        flash("Access denied.", "danger")
+        return redirect(url_for("index"))
+
+    words = Word.query.order_by(Word.text).all()
+    word_stats = []
+    for word in words:
+        submission_count = word.submissions.count()
+        last_submission = word.submissions.order_by(Submission.timestamp.desc()).first()
+        word_stats.append({
+            "word": word,
+            "submission_count": submission_count,
+            "last_submission_str": last_submission.timestamp.strftime("%Y-%m-%d") if last_submission else "Never"
+        })
+
+    return render_template("dashboards/manage_all_words.html", word_stats=word_stats)
 
 
 @dashboards.route("/admin/user/<int:user_id>/delete", methods=["POST"])

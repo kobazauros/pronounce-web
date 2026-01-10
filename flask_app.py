@@ -19,7 +19,7 @@ from flask_migrate import Migrate
 from auth_routes import auth
 from config import Config
 from dashboard_routes import dashboards
-from models import Submission, User, Word, db
+from models import Submission, SystemConfig, User, Word, db
 
 # 1. Initialize Flask Application
 app = Flask(__name__)
@@ -55,6 +55,7 @@ migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "auth.login"  # type: ignore
+login_manager.login_message = "Please log to use this service."
 login_manager.login_message_category = "info"
 
 
@@ -67,6 +68,35 @@ def load_user(user_id: str) -> User | None:
 # 4. Register Blueprints
 app.register_blueprint(auth)
 app.register_blueprint(dashboards, url_prefix="/dashboard")
+
+
+# 5. Global Request Hook for Maintenance Mode
+@app.before_request
+def check_for_maintenance():
+    """
+    Before any request, check if the site is in maintenance mode.
+    If so, redirect to login or show a maintenance page.
+    """
+    from flask import redirect, url_for
+
+    # Check if maintenance mode is enabled
+    if SystemConfig.get_bool("maintenance_mode"):
+        # Allow admins to access the site
+        if current_user.is_authenticated and current_user.role == "admin":
+            return
+
+        # Allow access to essential endpoints (auth, static files, config updates)
+        if request.endpoint and request.endpoint.startswith(
+            ("auth.", "static", "dashboards.update_config")
+        ):
+            return
+
+        # If user hits the root URL (/), redirect them to the login page.
+        if request.endpoint == "index":
+            return redirect(url_for("auth.login"))
+
+        # For all other unauthorized endpoints, show the maintenance page.
+        return render_template("maintenance.html"), 503
 
 
 # 5. Shell Context for Debugging

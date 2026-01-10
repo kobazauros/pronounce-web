@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Wordlist{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Manage Wordlist</h1>
+            <p class="text-gray-600">A complete overview of all words in the system.</p>
+            <p class="text-gray-600">This service is designed to work with <strong>mono-syllabic</strong> words only.</p>
+        </div>
+        <div class="flex gap-3">
+             <a href="{{ url_for('dashboards.admin_dashboard') }}" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition shadow-sm flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+            <a href="{{ url_for('dashboards.add_word', next=url_for('dashboards.manage_all_words')) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                Add New Word
+            </a>
+        </div>
+    </div>
+
+    <!-- Words Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Word</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">IPA</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Audio Preview</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Submissions</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Last Activity</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for word_stat in word_stats %}
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-sm font-bold text-gray-900">{{ word_stat.word.text }}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-sm text-gray-500 font-mono">{{ word_stat.word.ipa }}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if word_stat.word.audio_path %}
+                                <audio controls class="h-8 w-60" src="{{ url_for('static', filename=word_stat.word.audio_path) }}"></audio>
+                            {% else %}
+                                <span class="text-xs text-gray-400">No audio</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                            <span class="text-sm text-gray-600">{{ word_stat.submission_count }}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ word_stat.last_submission_str }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex justify-end gap-3">
+                                <a href="{{ url_for('dashboards.edit_word', word_id=word_stat.word.id, next=url_for('dashboards.manage_all_words')) }}" class="px-3 py-1 rounded-md transition bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-900">Edit</a>
+                                <button onclick="openWordDeleteModal('{{ word_stat.word.id }}', '{{ word_stat.word.text }}', '{{ url_for('dashboards.delete_word', word_id=word_stat.word.id, next=url_for('dashboards.manage_all_words')) }}')" class="px-3 py-1 rounded-md transition bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-900">
+                                    Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Re-using the word delete modal from admin_view -->
+<div id="word-delete-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+  <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+    <form id="word-delete-form" method="POST" action="">
+      <div class="mt-3 text-center">
+        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+            <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+        </div>
+        <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">Delete Word</h3>
+        <div class="mt-2 px-7 py-3 text-left">
+          <p class="text-sm text-gray-600 mb-4">
+            You are about to delete the word: <strong id="modal-word-name" class="text-gray-800"></strong>. Please confirm the deletion options below.
+          </p>
+          <div class="space-y-3">
+              <label for="delete-word-checkbox" class="flex items-start">
+                  <input type="checkbox" id="delete-word-checkbox" name="delete_word" class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500 mt-0.5">
+                  <div class="ml-3 text-sm">
+                      <span class="font-medium text-gray-900">Delete Word Entry</span>
+                      <p class="text-gray-500">Permanently delete the word from the curriculum list and remove its audio file.</p>
+                  </div>
+              </label>
+              <label for="delete-submissions-checkbox" class="flex items-start">
+                  <input type="checkbox" id="delete-submissions-checkbox" name="delete_submissions" class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500 mt-0.5" disabled>
+                  <div class="ml-3 text-sm">
+                      <span id="delete-submissions-label" class="font-medium text-gray-400">Delete All Student Submissions</span>
+                      <p id="delete-submissions-desc" class="text-gray-400">This will permanently delete all student recordings for this word.</p>
+                  </div>
+              </label>
+          </div>
+        </div>
+        <div class="items-center px-4 py-3 bg-gray-50 rounded-b-md">
+          <button id="word-cancel-btn" type="button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 mr-2">
+            Cancel
+          </button>
+          <button id="word-delete-submit-btn" type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-red-300" disabled>
+              Yes, Delete
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Word Delete Modal Logic
+  const wordDeleteModal = document.getElementById('word-delete-modal');
+  const wordCancelBtn = document.getElementById('word-cancel-btn');
+  const wordDeleteForm = document.getElementById('word-delete-form');
+  const modalWordName = document.getElementById('modal-word-name');
+  const deleteWordCheckbox = document.getElementById('delete-word-checkbox');
+  const deleteSubmissionsCheckbox = document.getElementById('delete-submissions-checkbox');
+  const deleteSubmissionsLabel = document.getElementById('delete-submissions-label');
+  const deleteSubmissionsDesc = document.getElementById('delete-submissions-desc');
+  const wordDeleteSubmitBtn = document.getElementById('word-delete-submit-btn');
+
+  function openWordDeleteModal(wordId, wordName, deleteUrl) {
+    modalWordName.textContent = wordName;
+    wordDeleteForm.action = deleteUrl;
+    wordDeleteModal.classList.remove('hidden');
+  }
+
+  function closeWordDeleteModal() {
+    wordDeleteModal.classList.add('hidden');
+    // Reset form state
+    deleteWordCheckbox.checked = false;
+    deleteSubmissionsCheckbox.checked = false;
+    deleteSubmissionsCheckbox.disabled = true;
+    wordDeleteSubmitBtn.disabled = true;
+    deleteSubmissionsLabel.classList.add('text-gray-400');
+    deleteSubmissionsDesc.classList.add('text-gray-400');
+  }
+
+  deleteWordCheckbox.addEventListener('change', () => {
+    const isChecked = deleteWordCheckbox.checked;
+    deleteSubmissionsCheckbox.disabled = !isChecked;
+    wordDeleteSubmitBtn.disabled = !isChecked;
+    if (isChecked) {
+        deleteSubmissionsLabel.classList.remove('text-gray-400');
+        deleteSubmissionsDesc.classList.remove('text-gray-400');
+    } else {
+        deleteSubmissionsCheckbox.checked = false; // Uncheck it if parent is unchecked
+        deleteSubmissionsLabel.classList.add('text-gray-400');
+        deleteSubmissionsDesc.classList.add('text-gray-400');
+    }
+  });
+
+  wordCancelBtn.addEventListener('click', closeWordDeleteModal);
+  window.addEventListener('click', (event) => {
+    if (event.target === wordDeleteModal) {
+      closeWordDeleteModal();
+    }
+  });
+</script>
+{% endblock %}

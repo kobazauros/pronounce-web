@@ -15,10 +15,10 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 Export Logs
             </a>
-            <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
+            <a href="{{ url_for('dashboards.add_word') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                 Add Word
-            </button>
+            </a>
         </div>
     </div>
 
@@ -37,9 +37,9 @@
             </div>
             <div class="mt-2 flex items-center text-sm">
                 <span class="text-green-500 font-medium flex items-center">
-                    {{ stats.new_users_today }} new
+                    {{ stats.new_users_today }} today
                 </span>
-                <span class="text-gray-400 ml-2">today</span>
+                <span class="text-gray-400 ml-2">{{ stats.UTC_now }} UTC time</span>
             </div>
         </div>
 
@@ -100,10 +100,12 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
                     <h2 class="text-lg font-bold text-gray-800">User Directory</h2>
-                    <div class="relative">
-                        <input type="text" placeholder="Search by name or ID..." class="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-64">
-                        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </div>
+                    <form method="GET" action="{{ url_for('dashboards.admin_dashboard') }}">
+                        <div class="relative">
+                            <input type="text" name="search" placeholder="Search by name or ID..." class="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-64" value="{{ search_query or '' }}">
+                            <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                    </form>
                 </div>
                 
                 <div class="overflow-x-auto">
@@ -126,7 +128,7 @@
                                         </div>
                                         <div class="ml-4">
                                             <div class="text-sm font-medium text-gray-900">{{ user.name }}</div>
-                                            <div class="text-xs text-gray-500">{{ user.email }}</div>
+                                            <div class="text-xs text-gray-500">{{ user.username }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -150,7 +152,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end gap-3">
-                                        <a href="{{ url_for('dashboards.edit_user', user_id=user.id, page=pagination.page) }}" class="px-3 py-1 rounded-md transition bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-900">Edit</a>
+                                        <a href="{{ url_for('dashboards.edit_user', user_id=user.id, page=pagination.page, search=search_query) }}" class="px-3 py-1 rounded-md transition bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-900">Edit</a>
                                         <button 
                                             onclick="openDeleteModal('{{ user.id }}', '{{ user.name }}')" 
                                             class="px-3 py-1 rounded-md transition bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-900">Delete
@@ -169,12 +171,12 @@
                     </span>
                     <div class="flex gap-2">
                         {% if pagination.has_prev %}
-                            <a href="{{ url_for('dashboards.admin_dashboard', page=pagination.prev_num) }}" class="px-3 py-1 border border-gray-300 rounded-md text-xs text-gray-600 hover:bg-gray-100 transition">Previous</a>
+                            <a href="{{ url_for('dashboards.admin_dashboard', page=pagination.prev_num, search=search_query) }}" class="px-3 py-1 border border-gray-300 rounded-md text-xs text-gray-600 hover:bg-gray-100 transition">Previous</a>
                         {% else %}
                             <button class="px-3 py-1 border border-gray-200 rounded-md text-xs text-gray-400 bg-gray-50 cursor-not-allowed" disabled>Previous</button>
                         {% endif %}
                         {% if pagination.has_next %}
-                            <a href="{{ url_for('dashboards.admin_dashboard', page=pagination.next_num) }}" class="px-3 py-1 border border-gray-300 rounded-md text-xs text-gray-600 hover:bg-gray-100 transition">Next</a>
+                            <a href="{{ url_for('dashboards.admin_dashboard', page=pagination.next_num, search=search_query) }}" class="px-3 py-1 border border-gray-300 rounded-md text-xs text-gray-600 hover:bg-gray-100 transition">Next</a>
                         {% else %}
                             <button class="px-3 py-1 border border-gray-200 rounded-md text-xs text-gray-400 bg-gray-50 cursor-not-allowed" disabled>Next</button>
                         {% endif %}
@@ -199,13 +201,13 @@
                             <div class="flex justify-between items-center">
                                 <div>
                                     <span class="text-sm font-bold text-gray-900 block">{{ word.text }}</span>
-                                    <span class="text-xs text-gray-500 font-mono">/{{ word.ipa }}/</span>
+                                    <span class="text-xs text-gray-500 font-mono">{{ word.ipa }}</span>
                                 </div>
                                 <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button class="text-gray-400 hover:text-indigo-600" title="Edit">
+                                    <a href="{{ url_for('dashboards.edit_word', word_id=word.id) }}" class="text-gray-400 hover:text-indigo-600" title="Edit">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                    </button>
-                                    <button class="text-gray-400 hover:text-red-600" title="Delete">
+                                    </a>
+                                    <button onclick="openWordDeleteModal('{{ word.id }}', '{{ word.text }}')" class="text-gray-400 hover:text-red-600" title="Delete">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                     </button>
                                 </div>
@@ -215,7 +217,7 @@
                     </ul>
                 </div>
                 <div class="px-6 py-3 bg-gray-50 border-t border-gray-100 text-center">
-                    <button class="text-xs text-indigo-600 font-medium hover:text-indigo-800">Manage All Words</button>
+                    <a href="{{ url_for('dashboards.manage_all_words') }}" class="text-xs text-indigo-600 font-medium hover:text-indigo-800">Manage All Words</a>
                 </div>
             </div>
 
@@ -225,15 +227,15 @@
                 <div class="space-y-4">
                     <div class="flex items-center justify-between">
                         <span class="text-sm text-gray-600">Registration Open</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" value="" class="sr-only peer" checked>
+                        <label for="registration-toggle" class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="registration-toggle" class="sr-only peer" data-key="registration_open" {% if config.registration_open %}checked{% endif %}>
                             <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                         </label>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-sm text-gray-600">Maintenance Mode</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" value="" class="sr-only peer">
+                        <label for="maintenance-toggle" class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="maintenance-toggle" class="sr-only peer" data-key="maintenance_mode" {% if config.maintenance_mode %}checked{% endif %}>
                             <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-600"></div>
                         </label>
                     </div>
@@ -244,7 +246,7 @@
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
+<!-- User Delete Confirmation Modal -->
 <div id="delete-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
   <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
     <div class="mt-3 text-center">
@@ -271,27 +273,168 @@
   </div>
 </div>
 
+<!-- Word Delete Confirmation Modal -->
+<div id="word-delete-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+  <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+    <form id="word-delete-form" method="POST" action="">
+      <div class="mt-3 text-center">
+        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+            <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+        </div>
+        <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">Delete Word</h3>
+        <div class="mt-2 px-7 py-3 text-left">
+          <p class="text-sm text-gray-600 mb-4">
+            You are about to delete the word: <strong id="modal-word-name" class="text-gray-800"></strong>. Please confirm the deletion options below.
+          </p>
+          <div class="space-y-3">
+              <label for="delete-word-checkbox" class="flex items-start">
+                  <input type="checkbox" id="delete-word-checkbox" name="delete_word" class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500 mt-0.5">
+                  <div class="ml-3 text-sm">
+                      <span class="font-medium text-gray-900">Delete Word Entry</span>
+                      <p class="text-gray-500">Permanently delete the word from the curriculum list and remove its audio file.</p>
+                  </div>
+              </label>
+              <label for="delete-submissions-checkbox" class="flex items-start">
+                  <input type="checkbox" id="delete-submissions-checkbox" name="delete_submissions" class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500 mt-0.5" disabled>
+                  <div class="ml-3 text-sm">
+                      <span id="delete-submissions-label" class="font-medium text-gray-400">Delete All Student Submissions</span>
+                      <p id="delete-submissions-desc" class="text-gray-400">This will permanently delete all student recordings for this word.</p>
+                  </div>
+              </label>
+          </div>
+        </div>
+        <div class="items-center px-4 py-3 bg-gray-50 rounded-b-md">
+          <button id="word-cancel-btn" type="button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 mr-2">
+            Cancel
+          </button>
+          <button id="word-delete-submit-btn" type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-red-300" disabled>
+              Yes, Delete
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
-  const modal = document.getElementById('delete-modal');
-  const cancelBtn = document.getElementById('cancel-btn');
-  const deleteForm = document.getElementById('delete-form');
+  // User Delete Modal
+  const userDeleteModal = document.getElementById('delete-modal');
+  const userCancelBtn = document.getElementById('cancel-btn');
+  const userDeleteForm = document.getElementById('delete-form');
   const modalUserName = document.getElementById('modal-user-name');
 
   function openDeleteModal(userId, userName) {
     modalUserName.textContent = userName;
-    deleteForm.action = `/dashboard/admin/user/${userId}/delete`;
-    modal.classList.remove('hidden');
+    userDeleteForm.action = `/dashboard/admin/user/${userId}/delete`;
+    userDeleteModal.classList.remove('hidden');
   }
 
   function closeDeleteModal() {
-    modal.classList.add('hidden');
+    userDeleteModal.classList.add('hidden');
   }
 
-  cancelBtn.addEventListener('click', closeDeleteModal);
-
+  userCancelBtn.addEventListener('click', closeDeleteModal);
   window.addEventListener('click', (event) => {
-    if (event.target === modal) {
+    if (event.target === userDeleteModal) {
       closeDeleteModal();
+    }
+  });
+
+  // Word Delete Modal
+  const wordDeleteModal = document.getElementById('word-delete-modal');
+  const wordCancelBtn = document.getElementById('word-cancel-btn');
+  const wordDeleteForm = document.getElementById('word-delete-form');
+  const modalWordName = document.getElementById('modal-word-name');
+  const deleteWordCheckbox = document.getElementById('delete-word-checkbox');
+  const deleteSubmissionsCheckbox = document.getElementById('delete-submissions-checkbox');
+  const deleteSubmissionsLabel = document.getElementById('delete-submissions-label');
+  const deleteSubmissionsDesc = document.getElementById('delete-submissions-desc');
+  const wordDeleteSubmitBtn = document.getElementById('word-delete-submit-btn');
+
+  function openWordDeleteModal(wordId, wordName) {
+    modalWordName.textContent = wordName;
+    wordDeleteForm.action = `/dashboard/admin/word/${wordId}/delete`;
+    wordDeleteModal.classList.remove('hidden');
+  }
+
+  function closeWordDeleteModal() {
+    wordDeleteModal.classList.add('hidden');
+    // Reset form state
+    deleteWordCheckbox.checked = false;
+    deleteSubmissionsCheckbox.checked = false;
+    deleteSubmissionsCheckbox.disabled = true;
+    wordDeleteSubmitBtn.disabled = true;
+    deleteSubmissionsLabel.classList.add('text-gray-400');
+    deleteSubmissionsDesc.classList.add('text-gray-400');
+  }
+
+  deleteWordCheckbox.addEventListener('change', () => {
+    const isChecked = deleteWordCheckbox.checked;
+    deleteSubmissionsCheckbox.disabled = !isChecked;
+    wordDeleteSubmitBtn.disabled = !isChecked;
+    if (isChecked) {
+        deleteSubmissionsLabel.classList.remove('text-gray-400');
+        deleteSubmissionsDesc.classList.remove('text-gray-400');
+    } else {
+        deleteSubmissionsCheckbox.checked = false; // Uncheck it if parent is unchecked
+        deleteSubmissionsLabel.classList.add('text-gray-400');
+        deleteSubmissionsDesc.classList.add('text-gray-400');
+    }
+  });
+
+  wordCancelBtn.addEventListener('click', closeWordDeleteModal);
+  window.addEventListener('click', (event) => {
+    if (event.target === wordDeleteModal) {
+      closeWordDeleteModal();
+    }
+  });
+  
+</script>
+
+<script>
+  // System Config Toggles
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggles = document.querySelectorAll('input[type="checkbox"][data-key]');
+
+    toggles.forEach(toggle => {
+      toggle.addEventListener('change', (event) => {
+        const key = event.target.dataset.key;
+        const value = event.target.checked;
+
+        fetch('/dashboard/admin/config/update', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ key, value }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (!data.success) {
+            console.error('Failed to update config:', data.error);
+            // Revert the toggle on failure
+            event.target.checked = !value;
+          }
+        });
+      });
+    });
+  });
+</script>
+
+<script>
+  // Responsive search
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.querySelector('input[name="search"]');
+    if (searchInput) {
+      const searchForm = searchInput.closest('form');
+      let debounceTimeout;
+
+      searchInput.addEventListener('input', () => {
+          clearTimeout(debounceTimeout);
+          debounceTimeout = setTimeout(() => {
+              searchForm.submit();
+          }, 300); // 300ms delay
+      });
     }
   });
 </script>
