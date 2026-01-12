@@ -1,0 +1,1447 @@
+{"event": "noise_sample", "timestamp": 1768129610.38, "peak": 0, "db": -80, "noiseFloor": 6.24827885955688e-73}
+{"event": "noise_sample", "timestamp": 1768129611.396, "peak": 0, "db": -80, "noiseFloor": 2.7346410352049644e-74}
+{"event": "noise_sample", "timestamp": 1768129612.413, "peak": 0, "db": -80, "noiseFloor": 1.1968514465369476e-75}
+{"event": "noise_sample", "timestamp": 1768129613.429, "peak": 0, "db": -80, "noiseFloor": 5.238177028123986e-77}
+{"event": "noise_sample", "timestamp": 1768129614.446, "peak": 0, "db": -80, "noiseFloor": 2.2925567460655416e-78}
+{"event": "noise_sample", "timestamp": 1768129615.462, "peak": 0, "db": -80, "noiseFloor": 1.003367470345491e-79}
+{"event": "noise_sample", "timestamp": 1768129616.479, "peak": 0, "db": -80, "noiseFloor": 4.391369078542009e-81}
+{"event": "play_example", "timestamp": 1768129616.71, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768129617.679, "peak": 0, "db": -80, "noiseFloor": 2.1415608236665566e-81}
+{"event": "noise_sample", "timestamp": 1768129618.696, "peak": 0, "db": -80, "noiseFloor": 9.372821283141707e-83}
+{"event": "noise_sample", "timestamp": 1768129619.712, "peak": 0, "db": -80, "noiseFloor": 4.1021379283221506e-84}
+{"event": "record_start", "timestamp": 1768129620.377, "word": "moon"}
+{"event": "record_stop", "timestamp": 1768129624.68, "size": 68882}
+{"event": "noise_sample", "timestamp": 1768129624.702, "peak": 0, "db": -80, "noiseFloor": 5.271745916961843e-85}
+{"event": "noise_sample", "timestamp": 1768129625.712, "peak": 0, "db": -80, "noiseFloor": 2.3072486096948085e-86}
+{"event": "noise_sample", "timestamp": 1768129626.729, "peak": 0, "db": -80, "noiseFloor": 1.00979755678486e-87}
+{"event": "noise_sample", "timestamp": 1768129627.745, "peak": 0, "db": -80, "noiseFloor": 4.4195111935663995e-89}
+{"event": "noise_sample", "timestamp": 1768129628.762, "peak": 0, "db": -80, "noiseFloor": 1.934256926927787e-90}
+{"event": "noise_sample", "timestamp": 1768129629.779, "peak": 0, "db": -80, "noiseFloor": 8.465528642204841e-92}
+{"event": "noise_sample", "timestamp": 1768129630.795, "peak": 0, "db": -80, "noiseFloor": 3.7050494272142827e-93}
+{"event": "noise_sample", "timestamp": 1768129631.812, "peak": 0, "db": -80, "noiseFloor": 1.6215633823105926e-94}
+{"event": "noise_sample", "timestamp": 1768129632.829, "peak": 0, "db": -80, "noiseFloor": 7.0969844114268375e-96}
+{"event": "noise_sample", "timestamp": 1768129633.845, "peak": 0, "db": -80, "noiseFloor": 3.1060881298556754e-97}
+{"event": "noise_sample", "timestamp": 1768129634.862, "peak": 0, "db": -80, "noiseFloor": 1.3594201298929805e-98}
+{"event": "noise_sample", "timestamp": 1768129635.878, "peak": 0, "db": -80, "noiseFloor": 5.949680151683639e-100}
+{"event": "noise_sample", "timestamp": 1768129636.895, "peak": 0, "db": -80, "noiseFloor": 2.6039554019348684e-101}
+{"event": "noise_sample", "timestamp": 1768129641.495, "peak": 0, "db": -80, "noiseFloor": 2.4737576318381248e-101}
+{"event": "noise_sample", "timestamp": 1768129642.511, "peak": 0, "db": -80, "noiseFloor": 1.0826724099915966e-102}
+{"event": "noise_sample", "timestamp": 1768129643.528, "peak": 0, "db": -80, "noiseFloor": 4.738457528218011e-104}
+{"event": "noise_sample", "timestamp": 1768129644.545, "peak": 0, "db": -80, "noiseFloor": 2.0738479654155227e-105}
+{"event": "noise_sample", "timestamp": 1768129645.561, "peak": 0, "db": -80, "noiseFloor": 9.07646709513827e-107}
+{"event": "noise_sample", "timestamp": 1768129646.578, "peak": 0, "db": -80, "noiseFloor": 3.972434638554685e-108}
+{"event": "noise_sample", "timestamp": 1768129647.595, "peak": 0, "db": -80, "noiseFloor": 1.738588020226685e-109}
+{"event": "noise_sample", "timestamp": 1768129648.611, "peak": 0, "db": -80, "noiseFloor": 7.609158058231775e-111}
+{"event": "noise_sample", "timestamp": 1768129649.628, "peak": 0, "db": -80, "noiseFloor": 3.330247630925491e-112}
+{"event": "noise_sample", "timestamp": 1768129650.644, "peak": 0, "db": -80, "noiseFloor": 1.4575264698683487e-113}
+{"event": "noise_sample", "timestamp": 1768129707.626, "peak": 0, "db": -80, "noiseFloor": 4.963775849363396e-114}
+{"event": "noise_sample", "timestamp": 1768129708.643, "peak": 0, "db": -80, "noiseFloor": 2.172461478166354e-115}
+{"event": "noise_sample", "timestamp": 1768129716.242, "peak": 0, "db": -80, "noiseFloor": 2.063838404258036e-115}
+{"event": "noise_sample", "timestamp": 1768129717.259, "peak": 0, "db": -80, "noiseFloor": 9.032658940443335e-117}
+{"event": "noise_sample", "timestamp": 1768129955.635, "peak": 0, "db": -80, "noiseFloor": 1.662243283362596e-117}
+{"event": "noise_sample", "timestamp": 1768129956.651, "peak": 0, "db": -80, "noiseFloor": 7.275025323532946e-119}
+{"event": "noise_sample", "timestamp": 1768130479.001, "peak": 0, "db": -80, "noiseFloor": 6.565710354488484e-119}
+{"event": "noise_sample", "timestamp": 1768130480.018, "peak": 0, "db": -80, "noiseFloor": 2.8735690842594188e-120}
+{"event": "noise_sample", "timestamp": 1768130528.099, "peak": 0, "db": -80, "noiseFloor": 2.449935757831226e-121}
+{"event": "noise_sample", "timestamp": 1768130529.1, "peak": 0, "db": -80, "noiseFloor": 1.0722464549951883e-122}
+{"event": "noise_sample", "timestamp": 1768130530.116, "peak": 0, "db": -80, "noiseFloor": 4.6928269713795165e-124}
+{"event": "noise_sample", "timestamp": 1768130531.133, "peak": 0, "db": -80, "noiseFloor": 2.0538771548940079e-125}
+{"event": "noise_sample", "timestamp": 1768130532.149, "peak": 0, "db": -80, "noiseFloor": 8.989062228636673e-127}
+{"event": "noise_sample", "timestamp": 1768130533.166, "peak": 0, "db": -80, "noiseFloor": 3.934180754567691e-128}
+{"event": "noise_sample", "timestamp": 1768130534.183, "peak": 0, "db": -80, "noiseFloor": 1.72184570714205e-129}
+{"event": "noise_sample", "timestamp": 1768130535.2, "peak": 0, "db": -80, "noiseFloor": 7.535883133385138e-131}
+{"event": "noise_sample", "timestamp": 1768130536.205, "peak": 0, "db": -80, "noiseFloor": 3.471766211442148e-132}
+{"event": "noise_sample", "timestamp": 1768130537.216, "peak": 0, "db": -80, "noiseFloor": 1.5194639291628985e-133}
+{"event": "noise_sample", "timestamp": 1768130538.233, "peak": 0, "db": -80, "noiseFloor": 6.650132789523598e-135}
+{"event": "noise_sample", "timestamp": 1768130539.249, "peak": 0, "db": -80, "noiseFloor": 2.9105176680739562e-136}
+{"event": "noise_sample", "timestamp": 1768130540.266, "peak": 0, "db": -80, "noiseFloor": 1.2738261572033233e-137}
+{"event": "noise_sample", "timestamp": 1768130541.283, "peak": 0, "db": -80, "noiseFloor": 5.575066925634461e-139}
+{"event": "noise_sample", "timestamp": 1768130542.299, "peak": 0, "db": -80, "noiseFloor": 2.4400010197264457e-140}
+{"event": "noise_sample", "timestamp": 1768130543.316, "peak": 0, "db": -80, "noiseFloor": 1.0678983868141738e-141}
+{"event": "noise_sample", "timestamp": 1768130544.332, "peak": 0, "db": -80, "noiseFloor": 4.673797081806827e-143}
+{"event": "noise_sample", "timestamp": 1768130545.333, "peak": 0.001672849990427494, "db": -55.530860036107875, "noiseFloor": 0.014333642499521373}
+{"event": "noise_sample", "timestamp": 1768130546.349, "peak": 0.00269710598513484, "db": -51.3820397446178, "noiseFloor": 0.0037311281005115633}
+{"event": "noise_sample", "timestamp": 1768130547.366, "peak": 0.0617157407104969, "db": -24.19208108502215, "noiseFloor": 0.3380854692402561}
+{"event": "noise_sample", "timestamp": 1768130548.382, "peak": 0.0016750885406509042, "db": -55.5192446477685, "noiseFloor": 0.01673792262655033}
+{"event": "noise_sample", "timestamp": 1768130549.399, "peak": 0.0017063008854165673, "db": -55.358887677272186, "noiseFloor": 0.0020600790478523096}
+{"event": "noise_sample", "timestamp": 1768130550.405, "peak": 0.0008103568106889725, "db": -61.82647426952233, "noiseFloor": 0.001245382726723642}
+{"event": "noise_sample", "timestamp": 1768130551.416, "peak": 0.0023173424415290356, "db": -52.70019568606989, "noiseFloor": 0.002353696938923972}
+{"event": "noise_sample", "timestamp": 1768130552.432, "peak": 0.0011148889316245914, "db": -59.05536792200603, "noiseFloor": 0.0024763974755235506}
+{"event": "noise_sample", "timestamp": 1768130553.438, "peak": 0.002054605633020401, "db": -53.745430510689616, "noiseFloor": 0.0019773733746027895}
+{"event": "noise_sample", "timestamp": 1768130554.449, "peak": 0.001486040186136961, "db": -56.55938892077471, "noiseFloor": 0.0014881694370310978}
+{"event": "noise_sample", "timestamp": 1768130555.465, "peak": 0.00123663863632828, "db": -58.15514377906135, "noiseFloor": 0.0015399895299318225}
+{"event": "noise_sample", "timestamp": 1768130556.482, "peak": 0.0006727016880176961, "db": -63.44354965071883, "noiseFloor": 0.0011497759840290113}
+{"event": "noise_sample", "timestamp": 1768130557.499, "peak": 0.0009035842376761138, "db": -60.8806270722976, "noiseFloor": 0.0010203992183485844}
+{"event": "noise_sample", "timestamp": 1768130558.515, "peak": 0.0010918041225522757, "db": -59.23710540341624, "noiseFloor": 0.0010226531306784957}
+{"event": "noise_sample", "timestamp": 1768130559.532, "peak": 0.1900697946548462, "db": -14.421737889625136, "noiseFloor": 0.1354434806566261}
+{"event": "noise_sample", "timestamp": 1768130560.549, "peak": 0.0009563276544213295, "db": -60.38786570829801, "noiseFloor": 0.01383729478435164}
+{"event": "play_example", "timestamp": 1768130561.186, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768130562.199, "peak": 0.007102108560502529, "db": -42.972253870012594, "noiseFloor": 0.003185155148120002}
+{"event": "noise_sample", "timestamp": 1768130563.215, "peak": 0.0009799948893487453, "db": -60.17552378275064, "noiseFloor": 0.0016377178174388947}
+{"event": "noise_sample", "timestamp": 1768130564.232, "peak": 0.0012706968700513244, "db": -57.919160796399076, "noiseFloor": 0.001869390946638668}
+{"event": "noise_sample", "timestamp": 1768130565.248, "peak": 0.20364569127559662, "db": -13.822495485193675, "noiseFloor": 0.06635564390324679}
+{"event": "noise_sample", "timestamp": 1768130566.265, "peak": 0.001228213426657021, "db": -58.214523185629986, "noiseFloor": 0.024913632767668316}
+{"event": "record_start", "timestamp": 1768130566.988, "word": "moon"}
+{"event": "record_stop", "timestamp": 1768130569.893, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768130569.898, "peak": 0.001505079329945147, "db": -56.44881217217424, "noiseFloor": 0.004391885839183618}
+{"event": "noise_sample", "timestamp": 1768130570.915, "peak": 0.002365946304053068, "db": -52.51990232111085, "noiseFloor": 0.0017002458220353124}
+{"event": "play_user", "timestamp": 1768130571.896, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768130572.798, "peak": 0.0006672560703009367, "db": -63.514149331364855, "noiseFloor": 0.0019561713236649287}
+{"event": "noise_sample", "timestamp": 1768130573.815, "peak": 0.0007564395782537758, "db": -62.424515123574835, "noiseFloor": 0.0011925761254192899}
+{"event": "play_user", "timestamp": 1768130574.25, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768130575.148, "peak": 0.0006380099803209305, "db": -63.903450552084394, "noiseFloor": 0.001074512736619326}
+{"event": "noise_sample", "timestamp": 1768130576.165, "peak": 0.0010280412388965487, "db": -59.75978927362442, "noiseFloor": 0.0011778435270619941}
+{"event": "noise_sample", "timestamp": 1768130577.181, "peak": 0.0010246571619063616, "db": -59.78842840140039, "noiseFloor": 0.0011781593558655974}
+{"event": "noise_sample", "timestamp": 1768130578.198, "peak": 0.0012638404732570052, "db": -57.966154817852846, "noiseFloor": 0.0011031722627095598}
+{"event": "noise_sample", "timestamp": 1768130579.215, "peak": 0.001288164989091456, "db": -57.80057017332756, "noiseFloor": 0.0012670854412073745}
+{"event": "noise_sample", "timestamp": 1768130580.231, "peak": 0.0012398288818076253, "db": -58.1327650195763, "noiseFloor": 0.0010651654438105097}
+{"event": "noise_sample", "timestamp": 1768130581.248, "peak": 0.000742636329960078, "db": -62.584476175850476, "noiseFloor": 0.0007949756007410901}
+{"event": "noise_sample", "timestamp": 1768130582.265, "peak": 0.0009372432250529528, "db": -60.56295380463668, "noiseFloor": 0.000725397676883677}
+{"event": "noise_sample", "timestamp": 1768130583.281, "peak": 0.0006270348676480353, "db": -64.05416617202663, "noiseFloor": 0.0007566483348647767}
+{"event": "noise_sample", "timestamp": 1768130584.298, "peak": 0.0009048884967342019, "db": -60.86809865316633, "noiseFloor": 0.0007577268266127845}
+{"event": "noise_sample", "timestamp": 1768130585.314, "peak": 0.0008314976003021002, "db": -61.602779996286955, "noiseFloor": 0.0008998771357915954}
+{"event": "noise_sample", "timestamp": 1768130679.931, "peak": 0.0007586549618281424, "db": -62.39911394835076, "noiseFloor": 0.0008329723568848804}
+{"event": "noise_sample", "timestamp": 1768130680.945, "peak": 0, "db": -80, "noiseFloor": 3.771962559481114e-05}
+{"event": "noise_sample", "timestamp": 1768130681.961, "peak": 0, "db": -80, "noiseFloor": 1.6508487905652347e-06}
+{"event": "noise_sample", "timestamp": 1768130682.978, "peak": 0, "db": -80, "noiseFloor": 7.225155834223345e-08}
+{"event": "noise_sample", "timestamp": 1768130683.994, "peak": 0, "db": -80, "noiseFloor": 3.1621840308546905e-09}
+{"event": "noise_sample", "timestamp": 1768130684.878, "peak": 3.911863313987851e-05, "db": -88.15232656960035, "noiseFloor": 0.014251955931656993}
+{"event": "noise_sample", "timestamp": 1768130685.895, "peak": 0.004795367363840342, "db": -46.38356233513279, "noiseFloor": 0.00445940294508592}
+{"event": "noise_sample", "timestamp": 1768130686.911, "peak": 0.0032284660264849663, "db": -49.820075587286055, "noiseFloor": 0.0031522799004401938}
+{"event": "noise_sample", "timestamp": 1768130687.918, "peak": 0.003471632022410631, "db": -49.18932628688002, "noiseFloor": 0.0035320452525686263}
+{"event": "noise_sample", "timestamp": 1768130688.934, "peak": 0.0021904720924794674, "db": -53.189245510838035, "noiseFloor": 0.002411572372042088}
+{"event": "noise_sample", "timestamp": 1768130689.935, "peak": 0.0022850455716252327, "db": -52.822102683803735, "noiseFloor": 0.002661817468149994}
+{"event": "noise_sample", "timestamp": 1768130690.944, "peak": 0.004387410823255777, "db": -47.15583395462049, "noiseFloor": 0.0031385843026865996}
+{"event": "noise_sample", "timestamp": 1768130691.961, "peak": 0.002955344272777438, "db": -50.58783840354956, "noiseFloor": 0.004115214715231601}
+{"event": "play_example", "timestamp": 1768130692.373, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768130693.378, "peak": 0.028606822714209557, "db": -30.870607509615198, "noiseFloor": 0.005413672983417021}
+{"event": "record_start", "timestamp": 1768130694.131, "word": "moon"}
+{"event": "record_stop", "timestamp": 1768130697.037, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768130697.054, "peak": 0.0016643002163618803, "db": -55.57536660719116, "noiseFloor": 0.0024721588600521618}
+{"event": "noise_sample", "timestamp": 1768130698.061, "peak": 0.0017326599918305874, "db": -55.22573305223297, "noiseFloor": 0.00203728347719578}
+{"event": "noise_sample", "timestamp": 1768130699.077, "peak": 0.0031250733882188797, "db": -50.10279558736288, "noiseFloor": 0.0025998742673566085}
+{"event": "noise_sample", "timestamp": 1768130700.094, "peak": 0.002408241853117943, "db": -52.365998004429066, "noiseFloor": 0.002469080090710191}
+{"event": "noise_sample", "timestamp": 1768130701.111, "peak": 0.006159919314086437, "db": -44.20849952838851, "noiseFloor": 0.005131080293048125}
+{"event": "noise_sample", "timestamp": 1768130702.127, "peak": 0.0014545891899615526, "db": -56.745192885786565, "noiseFloor": 0.0023537393393190985}
+{"event": "noise_sample", "timestamp": 1768130703.144, "peak": 0.005520277190953493, "db": -45.160782287883094, "noiseFloor": 0.003083254165141145}
+{"event": "noise_sample", "timestamp": 1768130704.16, "peak": 0.0011214498663321137, "db": -59.004402729841075, "noiseFloor": 0.0020816120912448026}
+{"event": "noise_sample", "timestamp": 1768130705.177, "peak": 0.0035896985791623592, "db": -48.89884033708161, "noiseFloor": 0.0031607711578226397}
+{"event": "record_start", "timestamp": 1768130705.726, "word": "moon"}
+{"event": "record_stop", "timestamp": 1768130708.731, "size": 48596}
+{"event": "noise_sample", "timestamp": 1768130708.75, "peak": 0.0010855477303266525, "db": -59.28702152688562, "noiseFloor": 0.002398768826436826}
+{"event": "noise_sample", "timestamp": 1768130709.76, "peak": 0.0014002848183736205, "db": -57.07567239404454, "noiseFloor": 0.0012167299013618874}
+{"event": "noise_sample", "timestamp": 1768130710.777, "peak": 0.0016364718321710825, "db": -55.72182931201348, "noiseFloor": 0.0018073680178596109}
+{"event": "noise_sample", "timestamp": 1768130711.794, "peak": 0.002441445831209421, "db": -52.24705814082932, "noiseFloor": 0.00264389204598335}
+{"event": "noise_sample", "timestamp": 1768130712.81, "peak": 0.002386716427281499, "db": -52.44398355436612, "noiseFloor": 0.0016633176584435496}
+{"event": "noise_sample", "timestamp": 1768130713.827, "peak": 0.0011394064640626311, "db": -58.86642642079604, "noiseFloor": 0.001960345359664524}
+{"event": "noise_sample", "timestamp": 1768130714.844, "peak": 0.0011483544949442148, "db": -58.79848050648138, "noiseFloor": 0.0015705797107253515}
+{"event": "noise_sample", "timestamp": 1768130715.86, "peak": 0.0007951888837851584, "db": -61.99059399436047, "noiseFloor": 0.001114533138967687}
+{"event": "noise_sample", "timestamp": 1768130716.877, "peak": 0.007258240599185228, "db": -42.78337279444631, "noiseFloor": 0.0028328913433554185}
+{"event": "noise_sample", "timestamp": 1768130717.893, "peak": 0.30821481347084045, "db": -10.222929839669344, "noiseFloor": 0.14394530964603036}
+{"event": "noise_sample", "timestamp": 1768130718.91, "peak": 0.0007800948224030435, "db": -62.157052091229225, "noiseFloor": 0.05030342933654743}
+{"event": "noise_sample", "timestamp": 1768130719.927, "peak": 0.0010667525930330157, "db": -59.43872585592446, "noiseFloor": 0.0030698882785942256}
+{"event": "play_user", "timestamp": 1768130720.803, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768130721.743, "peak": 0.0016102166846394539, "db": -55.862313552516326, "noiseFloor": 0.0012503347475482515}
+{"event": "noise_sample", "timestamp": 1768130722.76, "peak": 0.0010704494779929519, "db": -59.408676505674876, "noiseFloor": 0.001433473154362891}
+{"event": "noise_sample", "timestamp": 1768130723.777, "peak": 0.0009581572958268225, "db": -60.371263782896065, "noiseFloor": 0.0013515876707870978}
+{"event": "play_user", "timestamp": 1768130724.128, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768130725.06, "peak": 0.0006671382579952478, "db": -63.51568306793159, "noiseFloor": 0.0013171082498552162}
+{"event": "noise_sample", "timestamp": 1768130726.077, "peak": 0.0016966852126643062, "db": -55.40797450407753, "noiseFloor": 0.0014369264688611238}
+{"event": "noise_sample", "timestamp": 1768130727.093, "peak": 0.05439462885260582, "db": -25.288879643844915, "noiseFloor": 0.00784578576301559}
+{"event": "noise_sample", "timestamp": 1768130728.11, "peak": 0.004385627340525389, "db": -47.15936548704786, "noiseFloor": 0.06924629493886508}
+{"event": "noise_sample", "timestamp": 1768130729.127, "peak": 0.0014296562876552343, "db": -56.89536722716022, "noiseFloor": 0.0044313349123054485}
+{"event": "noise_sample", "timestamp": 1768130730.143, "peak": 0.0017436057096347213, "db": -55.17103435010941, "noiseFloor": 0.0015899903920105817}
+{"event": "noise_sample", "timestamp": 1768130731.16, "peak": 0.0012255578767508268, "db": -58.23332348897256, "noiseFloor": 0.0014450942199131598}
+{"event": "noise_sample", "timestamp": 1768130732.176, "peak": 0.0011175594991073012, "db": -59.03458691298361, "noiseFloor": 0.0012331270075850698}
+{"event": "noise_sample", "timestamp": 1768130825.373, "peak": 0.0012202542275190353, "db": -58.27099358148031, "noiseFloor": 0.0016313654218596976}
+{"event": "noise_sample", "timestamp": 1768130826.39, "peak": 0.0029598399996757507, "db": -50.57463530001062, "noiseFloor": 0.003557867769131682}
+{"event": "noise_sample", "timestamp": 1768130827.407, "peak": 0.0015602685743942857, "db": -56.136012772167334, "noiseFloor": 0.002493763724837439}
+{"event": "noise_sample", "timestamp": 1768130828.423, "peak": 0.00277125695720315, "db": -51.14646407171315, "noiseFloor": 0.0025144374713967463}
+{"event": "noise_sample", "timestamp": 1768130829.44, "peak": 0.001856335555203259, "db": -54.62687034034807, "noiseFloor": 0.0025358396030618893}
+{"event": "noise_sample", "timestamp": 1768130830.456, "peak": 0.0034130197018384933, "db": -49.33722409452072, "noiseFloor": 0.002325661424700735}
+{"event": "noise_sample", "timestamp": 1768130831.473, "peak": 0.0016198845114558935, "db": -55.81031894155856, "noiseFloor": 0.0015697664774211519}
+{"event": "noise_sample", "timestamp": 1768130832.49, "peak": 0.0017074275529012084, "db": -55.35315429222851, "noiseFloor": 0.0018969343124918838}
+{"event": "noise_sample", "timestamp": 1768130833.506, "peak": 0.002266891533508897, "db": -52.891385190989865, "noiseFloor": 0.0016909474109643064}
+{"event": "noise_sample", "timestamp": 1768130834.524, "peak": 0.0013814258854836226, "db": -57.19344820682661, "noiseFloor": 0.0019324152051214127}
+{"event": "noise_sample", "timestamp": 1768130835.54, "peak": 0.0016430024988949299, "db": -55.687235520642, "noiseFloor": 0.0020182916978096653}
+{"event": "noise_sample", "timestamp": 1768130836.557, "peak": 0.0014336013700813055, "db": -56.871431852600125, "noiseFloor": 0.0014289661151280586}
+{"event": "noise_sample", "timestamp": 1768130837.573, "peak": 0.0016438164748251438, "db": -55.68293342472558, "noiseFloor": 0.0013536632079749298}
+{"event": "play_example", "timestamp": 1768130837.685, "word": "sit"}
+{"event": "noise_sample", "timestamp": 1768130838.59, "peak": 0.0015596054727211595, "db": -56.13970499047572, "noiseFloor": 0.001537842020414277}
+{"event": "noise_sample", "timestamp": 1768130839.606, "peak": 0.0016481888014823198, "db": -55.65986081945959, "noiseFloor": 0.0018356758665270402}
+{"event": "record_start", "timestamp": 1768130839.759, "word": "sit"}
+{"event": "record_stop", "timestamp": 1768130842.266, "size": 39902}
+{"event": "noise_sample", "timestamp": 1768130842.284, "peak": 0.0014268073718994856, "db": -56.912693109087506, "noiseFloor": 0.0017947275124303038}
+{"event": "noise_sample", "timestamp": 1768130843.289, "peak": 0.0013919193297624588, "db": -57.12771868034583, "noiseFloor": 0.0013391473517197201}
+{"event": "noise_sample", "timestamp": 1768130844.306, "peak": 0.0015263821696862578, "db": -56.326734315746364, "noiseFloor": 0.0015391150187333592}
+{"event": "noise_sample", "timestamp": 1768130845.323, "peak": 0.0026321045588701963, "db": -51.593937252237495, "noiseFloor": 0.0017012063059009882}
+{"event": "noise_sample", "timestamp": 1768130846.339, "peak": 0.0016775951953604817, "db": -55.50625652724217, "noiseFloor": 0.002232174821356413}
+{"event": "noise_sample", "timestamp": 1768130847.356, "peak": 0.0018806417938321829, "db": -54.513878334357216, "noiseFloor": 0.002057197828725518}
+{"event": "noise_sample", "timestamp": 1768130848.373, "peak": 0.0014500584220513701, "db": -56.77228999856388, "noiseFloor": 0.001890593577067553}
+{"event": "noise_sample", "timestamp": 1768130849.389, "peak": 0.0038737482391297817, "db": -48.2373721633534, "noiseFloor": 0.0018608341294928952}
+{"event": "noise_sample", "timestamp": 1768130850.406, "peak": 0.0009864589665085077, "db": -60.11841950554068, "noiseFloor": 0.0014122913049287255}
+{"event": "noise_sample", "timestamp": 1768130851.422, "peak": 0.001358867739327252, "db": -57.336456235116444, "noiseFloor": 0.0016708170238170254}
+{"event": "noise_sample", "timestamp": 1768130852.439, "peak": 0.0031450174283236265, "db": -50.04753887080472, "noiseFloor": 0.002131445838963879}
+{"event": "noise_sample", "timestamp": 1768130853.456, "peak": 0.0019422852201387286, "db": -54.233739891887225, "noiseFloor": 0.0016017392550083298}
+{"event": "noise_sample", "timestamp": 1768130854.472, "peak": 0.0029612048529088497, "db": -50.570630951095865, "noiseFloor": 0.006346750452762038}
+{"event": "noise_sample", "timestamp": 1768130855.489, "peak": 0.0012031594524160028, "db": -58.39353625261367, "noiseFloor": 0.0016757173494629017}
+{"event": "noise_sample", "timestamp": 1768130856.506, "peak": 0.0016635023057460785, "db": -55.57953185656317, "noiseFloor": 0.001556704439025084}
+{"event": "noise_sample", "timestamp": 1768130857.522, "peak": 0.0009904542239382863, "db": -60.08331183108828, "noiseFloor": 0.0017307713875761126}
+{"event": "noise_sample", "timestamp": 1768130858.539, "peak": 0.001716368249617517, "db": -55.307790557961496, "noiseFloor": 0.0015991371222111035}
+{"event": "noise_sample", "timestamp": 1768130859.555, "peak": 0.0013892153510823846, "db": -57.14460852603438, "noiseFloor": 0.0012985759309005745}
+{"event": "noise_sample", "timestamp": 1768130860.572, "peak": 0.0012330542085692286, "db": -58.180356603284345, "noiseFloor": 0.0014379523008978977}
+{"event": "noise_sample", "timestamp": 1768130888.871, "peak": 0.0014810065040364861, "db": -56.58886068425573, "noiseFloor": 0.0013606295690332228}
+{"event": "noise_sample", "timestamp": 1768130889.888, "peak": 0.007428667973726988, "db": -42.581781042477246, "noiseFloor": 0.007715000536896837}
+{"event": "noise_sample", "timestamp": 1768130890.905, "peak": 0.008620450273156166, "db": -41.289400980397026, "noiseFloor": 0.008393130535611526}
+{"event": "noise_sample", "timestamp": 1768130891.921, "peak": 0.00540466932579875, "db": -45.344617447253455, "noiseFloor": 0.006605690164331071}
+{"event": "noise_sample", "timestamp": 1768130892.938, "peak": 0.004649771843105555, "db": -46.65136713450739, "noiseFloor": 0.005673828658631022}
+{"event": "noise_sample", "timestamp": 1768130893.954, "peak": 0.003196030156686902, "db": -49.90778262958317, "noiseFloor": 0.004899887714569607}
+{"event": "noise_sample", "timestamp": 1768130894.971, "peak": 0.002914183773100376, "db": -50.70966128792429, "noiseFloor": 0.003973373411476827}
+{"event": "noise_sample", "timestamp": 1768130895.988, "peak": 0.005230543203651905, "db": -45.629064126676546, "noiseFloor": 0.0041759602422882435}
+{"event": "play_example", "timestamp": 1768130896.174, "word": "sit"}
+{"event": "noise_sample", "timestamp": 1768130897.004, "peak": 0.0038260025903582573, "db": -48.345094805474425, "noiseFloor": 0.003709063913161732}
+{"event": "noise_sample", "timestamp": 1768130898.021, "peak": 0.004645938519388437, "db": -46.65853083202868, "noiseFloor": 0.00465355927520015}
+{"event": "record_start", "timestamp": 1768130898.93, "word": "sit"}
+{"event": "record_stop", "timestamp": 1768130901.634, "size": 43766}
+{"event": "noise_sample", "timestamp": 1768130901.637, "peak": 0.003198720049113035, "db": -49.90047535115079, "noiseFloor": 0.003020624475953546}
+{"event": "noise_sample", "timestamp": 1768130902.654, "peak": 0.005970044061541557, "db": -44.480449271503915, "noiseFloor": 0.0035081698323847794}
+{"event": "noise_sample", "timestamp": 1768130903.671, "peak": 0.0022881238255649805, "db": -52.810409533730144, "noiseFloor": 0.004451499418557062}
+{"event": "noise_sample", "timestamp": 1768130904.687, "peak": 0.0035364413633942604, "db": -49.02867076840109, "noiseFloor": 0.002514161184979655}
+{"event": "noise_sample", "timestamp": 1768130905.704, "peak": 0.0023975626099854708, "db": -52.404600856733765, "noiseFloor": 0.0028997037174185165}
+{"event": "noise_sample", "timestamp": 1768130906.721, "peak": 0.0017343597719445825, "db": -55.21721616760697, "noiseFloor": 0.006557872778921923}
+{"event": "noise_sample", "timestamp": 1768130907.737, "peak": 0.0014724570792168379, "db": -56.639147112901526, "noiseFloor": 0.0022239843723084285}
+{"event": "noise_sample", "timestamp": 1768130908.754, "peak": 0.01581921987235546, "db": -36.01629875239919, "noiseFloor": 0.004846729771954207}
+{"event": "noise_sample", "timestamp": 1768130909.771, "peak": 0.0016096570761874318, "db": -55.86533273753089, "noiseFloor": 0.0020618493927171922}
+{"event": "noise_sample", "timestamp": 1768130910.787, "peak": 0.002159405965358019, "db": -53.313314064469495, "noiseFloor": 0.0038450787388980617}
+{"event": "noise_sample", "timestamp": 1768130914.204, "peak": 0.0020207667257636786, "db": -53.88967635770876, "noiseFloor": 0.0021608771031464045}
+{"event": "noise_sample", "timestamp": 1768130915.22, "peak": 0.0013675093650817871, "db": -57.28139381631599, "noiseFloor": 0.0017071065087143548}
+{"event": "noise_sample", "timestamp": 1768130942.986, "peak": 0.002211105776950717, "db": -53.10780961475616, "noiseFloor": 0.001728188920908065}
+{"event": "noise_sample", "timestamp": 1768130944.003, "peak": 0.0012488163774833083, "db": -58.070028287894374, "noiseFloor": 0.001299528440150405}
+{"event": "noise_sample", "timestamp": 1768130945.019, "peak": 0.41880741715431213, "db": -7.559712709841712, "noiseFloor": 0.31691267289258657}
+{"event": "noise_sample", "timestamp": 1768130946.036, "peak": 0.0026998845860362053, "db": -51.37309601103456, "noiseFloor": 0.02464852248414948}
+{"event": "noise_sample", "timestamp": 1768130947.053, "peak": 0.0013375281123444438, "db": -57.473941623028004, "noiseFloor": 0.0020988431532763673}
+{"event": "noise_sample", "timestamp": 1768130992.185, "peak": 0.0013570897281169891, "db": -57.3478287337943, "noiseFloor": 0.001262587308824805}
+{"event": "noise_sample", "timestamp": 1768130993.202, "peak": 0.0012187095126137137, "db": -58.28199597955876, "noiseFloor": 0.0016844475197229638}
+{"event": "play_example", "timestamp": 1768130993.916, "word": "sit"}
+{"event": "noise_sample", "timestamp": 1768130994.568, "peak": 0.0008722699130885303, "db": -61.18698214477384, "noiseFloor": 0.001516342592855605}
+{"event": "noise_sample", "timestamp": 1768130995.585, "peak": 0.005352286621928215, "db": -45.42921275163288, "noiseFloor": 0.003458271975021944}
+{"event": "noise_sample", "timestamp": 1768130996.601, "peak": 0.005127687938511372, "db": -45.80156826068333, "noiseFloor": 0.0029563464381371155}
+{"event": "noise_sample", "timestamp": 1768130997.618, "peak": 0.0019257309613749385, "db": -54.30808774144403, "noiseFloor": 0.004408686098286016}
+{"event": "record_start", "timestamp": 1768130998.204, "word": "sit"}
+{"event": "record_stop", "timestamp": 1768131003.219, "size": 80474}
+{"event": "noise_sample", "timestamp": 1768131003.24, "peak": 0.0034435063134878874, "db": -49.259982328436365, "noiseFloor": 0.003571209624417148}
+{"event": "noise_sample", "timestamp": 1768131004.251, "peak": 0.002949359593912959, "db": -50.60544547720124, "noiseFloor": 0.004005495474033808}
+{"event": "noise_sample", "timestamp": 1768131005.267, "peak": 0.0011146923061460257, "db": -59.056899929167145, "noiseFloor": 0.002491535600722959}
+{"event": "noise_sample", "timestamp": 1768131006.284, "peak": 0.0015896507538855076, "db": -55.97396559309655, "noiseFloor": 0.002221895836761426}
+{"event": "noise_sample", "timestamp": 1768131007.301, "peak": 0.0013370364904403687, "db": -57.47713479596247, "noiseFloor": 0.0020133498054735713}
+{"event": "noise_sample", "timestamp": 1768131008.317, "peak": 0.001638234592974186, "db": -55.71247815481945, "noiseFloor": 0.0016618763655813521}
+{"event": "noise_sample", "timestamp": 1768131009.334, "peak": 0.0014968813629820943, "db": -56.49625237582359, "noiseFloor": 0.001472548173730588}
+{"event": "noise_sample", "timestamp": 1768131010.351, "peak": 0.003008262487128377, "db": -50.43368543781891, "noiseFloor": 0.0016031906839689507}
+{"event": "noise_sample", "timestamp": 1768131011.367, "peak": 0.001290687476284802, "db": -57.78357807885408, "noiseFloor": 0.001619806311075188}
+{"event": "noise_sample", "timestamp": 1768131012.384, "peak": 0.0017276173457503319, "db": -55.25104888334704, "noiseFloor": 0.0015637164920607647}
+{"event": "noise_sample", "timestamp": 1768131013.4, "peak": 0.001935878535732627, "db": -54.26243790869238, "noiseFloor": 0.001876091019152549}
+{"event": "noise_sample", "timestamp": 1768131014.417, "peak": 0.00213498342782259, "db": -53.412109834166834, "noiseFloor": 0.0016680736027085538}
+{"event": "noise_sample", "timestamp": 1768131015.434, "peak": 0.002332005649805069, "db": -52.645408034725364, "noiseFloor": 0.001483235527973053}
+{"event": "noise_sample", "timestamp": 1768131016.45, "peak": 0.0021373326890170574, "db": -53.402557439182594, "noiseFloor": 0.0012473263938026949}
+{"event": "noise_sample", "timestamp": 1768131017.467, "peak": 0.0008910036412999034, "db": -61.00241042222045, "noiseFloor": 0.0010615768036869788}
+{"event": "noise_sample", "timestamp": 1768131018.473, "peak": 0.0015195640735328197, "db": -56.365619657056705, "noiseFloor": 0.0010790154828161853}
+{"event": "noise_sample", "timestamp": 1768131019.484, "peak": 0.0013494279701262712, "db": -57.39700584588503, "noiseFloor": 0.001331946068631451}
+{"event": "noise_sample", "timestamp": 1768131020.5, "peak": 0.0011156011605635285, "db": -59.04982085215572, "noiseFloor": 0.001232909143521331}
+{"event": "play_example", "timestamp": 1768131021.174, "word": "ear"}
+{"event": "noise_sample", "timestamp": 1768131021.884, "peak": 0.0006115902797318995, "db": -64.27078851268766, "noiseFloor": 0.0012605065050158852}
+{"event": "noise_sample", "timestamp": 1768131022.9, "peak": 0.0010643379064276814, "db": -59.458409403240296, "noiseFloor": 0.0012301441354366984}
+{"event": "record_start", "timestamp": 1768131022.924, "word": "ear"}
+{"event": "record_stop", "timestamp": 1768131025.826, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768131025.843, "peak": 0.0008845465490594506, "db": -61.0655861501057, "noiseFloor": 0.0012015225540468934}
+{"event": "noise_sample", "timestamp": 1768131026.85, "peak": 0.0007414022693410516, "db": -62.59892177964979, "noiseFloor": 0.0011675352320267382}
+{"event": "noise_sample", "timestamp": 1768131027.867, "peak": 0.0023929208982735872, "db": -52.421433148592826, "noiseFloor": 0.0034151512300399085}
+{"event": "noise_sample", "timestamp": 1768131028.883, "peak": 0.0018417846877127886, "db": -54.695222840045076, "noiseFloor": 0.002509730534591827}
+{"event": "noise_sample", "timestamp": 1768131029.9, "peak": 0.0011104595614597201, "db": -59.08994504225917, "noiseFloor": 0.0017338102190139152}
+{"event": "noise_sample", "timestamp": 1768131030.917, "peak": 0.0009262642706744373, "db": -60.665301758337755, "noiseFloor": 0.0011234189375138265}
+{"event": "noise_sample", "timestamp": 1768131031.934, "peak": 0.0007171136094257236, "db": -62.88824070705927, "noiseFloor": 0.0010476507445876429}
+{"event": "noise_sample", "timestamp": 1768131032.95, "peak": 0.0009842965519055724, "db": -60.13748072541817, "noiseFloor": 0.0010491923066889629}
+{"event": "noise_sample", "timestamp": 1768131033.967, "peak": 0.0033617387525737286, "db": -49.468720789519665, "noiseFloor": 0.001480150176159767}
+{"event": "noise_sample", "timestamp": 1768131034.983, "peak": 0.0006069199880585074, "db": -64.33737118788818, "noiseFloor": 0.0011629739397979479}
+{"event": "noise_sample", "timestamp": 1768131036, "peak": 0.0009716781787574291, "db": -60.249551004611774, "noiseFloor": 0.001080884632741142}
+{"event": "play_example", "timestamp": 1768131036.006, "word": "cow"}
+{"event": "noise_sample", "timestamp": 1768131037.016, "peak": 0.0011988369515165687, "db": -58.42479758692656, "noiseFloor": 0.0009347411865597764}
+{"event": "record_start", "timestamp": 1768131037.546, "word": "cow"}
+{"event": "record_stop", "timestamp": 1768131040.548, "size": 48596}
+{"event": "noise_sample", "timestamp": 1768131040.55, "peak": 0.0011059065582230687, "db": -59.12563132974894, "noiseFloor": 0.0009012046873115482}
+{"event": "noise_sample", "timestamp": 1768131041.566, "peak": 0.001027412130497396, "db": -59.76510621866187, "noiseFloor": 0.0012316174833869795}
+{"event": "noise_sample", "timestamp": 1768131042.583, "peak": 0.0008728037355467677, "db": -61.18166807323672, "noiseFloor": 0.001021948392220023}
+{"event": "noise_sample", "timestamp": 1768131043.6, "peak": 0.001204974134452641, "db": -58.380445508007206, "noiseFloor": 0.0011820755524371794}
+{"event": "noise_sample", "timestamp": 1768131044.606, "peak": 0.0023408138658851385, "db": -52.61266237308028, "noiseFloor": 0.0011624664531701245}
+{"event": "noise_sample", "timestamp": 1768131045.622, "peak": 0.0006598819163627923, "db": -63.610675460684895, "noiseFloor": 0.0008619905515319549}
+{"event": "noise_sample", "timestamp": 1768131046.633, "peak": 0.0010562398238107562, "db": -59.52474924338466, "noiseFloor": 0.0009604926637978703}
+{"event": "noise_sample", "timestamp": 1768131047.65, "peak": 0.001286411308683455, "db": -57.812403014990295, "noiseFloor": 0.001012132015866384}
+{"event": "noise_sample", "timestamp": 1768131048.666, "peak": 0.0012462206650525331, "db": -58.08810102946541, "noiseFloor": 0.0011871273153256988}
+{"event": "noise_sample", "timestamp": 1768131049.683, "peak": 0.0014047849690541625, "db": -57.04780296571501, "noiseFloor": 0.0009977881684604928}
+{"event": "play_example", "timestamp": 1768131050.479, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768131051.249, "peak": 0.0005954643129371107, "db": -64.50288522632462, "noiseFloor": 0.0009465126621766644}
+{"event": "noise_sample", "timestamp": 1768131052.266, "peak": 0.001353500410914421, "db": -57.37083216088629, "noiseFloor": 0.0011594907166622426}
+{"event": "noise_sample", "timestamp": 1768131053.283, "peak": 0.0008755125454626977, "db": -61.15475252819125, "noiseFloor": 0.0009246204301646243}
+{"event": "record_start", "timestamp": 1768131054.154, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768131057.057, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768131057.072, "peak": 0.0009689461439847946, "db": -60.27400722513998, "noiseFloor": 0.0011156914739332583}
+{"event": "noise_sample", "timestamp": 1768131058.082, "peak": 0.0020752353593707085, "db": -53.65865282742856, "noiseFloor": 0.0014534911248570166}
+{"event": "noise_sample", "timestamp": 1768131059.099, "peak": 0.0005994475795887411, "db": -64.44497578060154, "noiseFloor": 0.0010507225813168616}
+{"event": "noise_sample", "timestamp": 1768131060.116, "peak": 0.0017363970400765538, "db": -55.20701926292701, "noiseFloor": 0.001577921449855001}
+{"event": "noise_sample", "timestamp": 1768131061.132, "peak": 0.000802824622951448, "db": -61.90758631990549, "noiseFloor": 0.000975257812536233}
+{"event": "noise_sample", "timestamp": 1768131062.149, "peak": 0.0017617532284930348, "db": -55.08109847931092, "noiseFloor": 0.002262481761697304}
+{"event": "noise_sample", "timestamp": 1768131063.166, "peak": 0.002633029129356146, "db": -51.59088672483908, "noiseFloor": 0.0016523099319399076}
+{"event": "noise_sample", "timestamp": 1768131064.182, "peak": 0.0015190978301689029, "db": -56.36828513190292, "noiseFloor": 0.0015483994665406778}
+{"event": "noise_sample", "timestamp": 1768131065.199, "peak": 0.0007628110470250249, "db": -62.35166052260795, "noiseFloor": 0.0018480597384082868}
+{"event": "noise_sample", "timestamp": 1768131066.216, "peak": 0.002355720615014434, "db": -52.55752435029949, "noiseFloor": 0.0014940335638035265}
+{"event": "noise_sample", "timestamp": 1768131067.232, "peak": 0.0008099841070361435, "db": -61.830470049444756, "noiseFloor": 0.0009815091318157497}
+{"event": "noise_sample", "timestamp": 1768131068.249, "peak": 0.0007091944571584463, "db": -62.98469334734761, "noiseFloor": 0.0012837161764920227}
+{"event": "record_start", "timestamp": 1768131068.496, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768131071.6, "size": 49562}
+{"event": "noise_sample", "timestamp": 1768131071.616, "peak": 0.0007893141591921449, "db": -62.05500212978242, "noiseFloor": 0.0009395475515709532}
+{"event": "noise_sample", "timestamp": 1768131072.632, "peak": 0.0015034070238471031, "db": -56.45846850163467, "noiseFloor": 0.0008695353575943086}
+{"event": "noise_sample", "timestamp": 1768131073.649, "peak": 0.0007163603440858424, "db": -62.89736927224397, "noiseFloor": 0.000907425138004897}
+{"event": "noise_sample", "timestamp": 1768131074.665, "peak": 0.0012291147140786052, "db": -58.208151644688975, "noiseFloor": 0.0007745440873559323}
+{"event": "play_example", "timestamp": 1768131075.427, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768131076.166, "peak": 0.0004296429397072643, "db": -67.33784641088147, "noiseFloor": 0.0007944141096507712}
+{"event": "noise_sample", "timestamp": 1768131077.182, "peak": 0.0007731210207566619, "db": -62.23505036657641, "noiseFloor": 0.000659592423262691}
+{"event": "noise_sample", "timestamp": 1768131078.198, "peak": 0.00039811167516745627, "db": -67.99990171903134, "noiseFloor": 0.0005362305580327989}
+{"event": "record_start", "timestamp": 1768131078.384, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768131081.287, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768131081.302, "peak": 0.0006826450699009001, "db": -63.31610083849018, "noiseFloor": 0.0005687030519295453}
+{"event": "noise_sample", "timestamp": 1768131082.315, "peak": 0.0005733172292821109, "db": -64.83210013294487, "noiseFloor": 0.0004913725133431388}
+{"event": "noise_sample", "timestamp": 1768131083.332, "peak": 0.0009350198088213801, "db": -60.583583766064294, "noiseFloor": 0.0008271739304547196}
+{"event": "noise_sample", "timestamp": 1768131084.348, "peak": 0.0016010720282793045, "db": -55.91178259608504, "noiseFloor": 0.00110498832188691}
+{"event": "noise_sample", "timestamp": 1768131085.365, "peak": 0.0004649255133699626, "db": -66.65233241418464, "noiseFloor": 0.0006137491400294854}
+{"event": "noise_sample", "timestamp": 1768131086.382, "peak": 0.0005188080831430852, "db": -65.69986532265, "noiseFloor": 0.0005042502579811999}
+{"event": "noise_sample", "timestamp": 1768131087.398, "peak": 0.0006409097695723176, "db": -63.86406216579065, "noiseFloor": 0.0005143196812773435}
+{"event": "noise_sample", "timestamp": 1768131088.415, "peak": 0.0012944742338731885, "db": -57.75813179292612, "noiseFloor": 0.0006504458868774388}
+{"event": "noise_sample", "timestamp": 1768131089.431, "peak": 0.0005026966682635248, "db": -65.97387986295635, "noiseFloor": 0.0006574985612249837}
+{"event": "noise_sample", "timestamp": 1768131090.448, "peak": 0.0006113296840339899, "db": -64.27449031750486, "noiseFloor": 0.0005997048110599368}
+{"event": "noise_sample", "timestamp": 1768131091.465, "peak": 0.009053529240190983, "db": -40.86364182858616, "noiseFloor": 0.0014932326764688117}
+{"event": "noise_sample", "timestamp": 1768131112.047, "peak": 0.0013806066708639264, "db": -57.198600650065465, "noiseFloor": 0.0016156981960747145}
+{"event": "noise_sample", "timestamp": 1768131113.064, "peak": 0.0031392741948366165, "db": -50.06341499785722, "noiseFloor": 0.0029780055244057945}
+{"event": "noise_sample", "timestamp": 1768131114.081, "peak": 0.0035819527693092823, "db": -48.91760289884967, "noiseFloor": 0.0020238764413459303}
+{"event": "noise_sample", "timestamp": 1768131115.097, "peak": 0.0025323149748146534, "db": -51.92964553615559, "noiseFloor": 0.0027220394713717596}
+{"event": "play_example", "timestamp": 1768131115.338, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768131116.114, "peak": 0.000687955180183053, "db": -63.248797096720935, "noiseFloor": 0.0022630713259736385}
+{"event": "noise_sample", "timestamp": 1768131117.131, "peak": 0.003623620606958866, "db": -48.81714558485789, "noiseFloor": 0.003595426009220782}
+{"event": "record_start", "timestamp": 1768131117.937, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768131120.748, "size": 44732}
+{"event": "noise_sample", "timestamp": 1768131120.764, "peak": 0.0016707668546587229, "db": -55.541682980582685, "noiseFloor": 0.003330844752902669}
+{"event": "noise_sample", "timestamp": 1768131121.78, "peak": 0.0017544686561450362, "db": -55.11708772235248, "noiseFloor": 0.0025840567271386097}
+{"event": "noise_sample", "timestamp": 1768131122.797, "peak": 0.0012846054742112756, "db": -57.824604632353285, "noiseFloor": 0.0016095066315079934}
+{"event": "noise_sample", "timestamp": 1768131123.814, "peak": 0.006326490547508001, "db": -43.97674273017599, "noiseFloor": 0.002375746333948889}
+{"event": "noise_sample", "timestamp": 1768131124.83, "peak": 0.0056486851535737514, "db": -44.961052625918505, "noiseFloor": 0.00469712858030654}
+{"event": "noise_sample", "timestamp": 1768131125.847, "peak": 0.002045220695436001, "db": -53.785196426594524, "noiseFloor": 0.0025449375026756907}
+{"event": "noise_sample", "timestamp": 1768131126.864, "peak": 0.002529155695810914, "db": -51.94048868989954, "noiseFloor": 0.0024674517915217603}
+{"event": "noise_sample", "timestamp": 1768131127.88, "peak": 0.002116616815328598, "db": -53.48715515941351, "noiseFloor": 0.0021414509520903883}
+{"event": "noise_sample", "timestamp": 1768131128.897, "peak": 0.003257578006014228, "db": -49.74210351736717, "noiseFloor": 0.0025971779808376338}
+{"event": "noise_sample", "timestamp": 1768131129.914, "peak": 0.001847002888098359, "db": -54.670648509341355, "noiseFloor": 0.0025677391513007435}
+{"event": "play_example", "timestamp": 1768131130.852, "word": "green"}
+{"event": "noise_sample", "timestamp": 1768131131.664, "peak": 0.0006965943030081689, "db": -63.14040163350836, "noiseFloor": 0.0030261092892051623}
+{"event": "noise_sample", "timestamp": 1768131132.68, "peak": 0.0028338609263300896, "db": -50.9524293373072, "noiseFloor": 0.004030479982470808}
+{"event": "noise_sample", "timestamp": 1768131133.697, "peak": 0.002629013266414404, "db": -51.60414444739702, "noiseFloor": 0.0042712533125215685}
+{"event": "record_start", "timestamp": 1768131133.862, "word": "green"}
+{"event": "record_stop", "timestamp": 1768131136.964, "size": 49562}
+{"event": "noise_sample", "timestamp": 1768131136.98, "peak": 0.002303658053278923, "db": -52.75163971153329, "noiseFloor": 0.003566299329824526}
+{"event": "noise_sample", "timestamp": 1768131137.997, "peak": 0.006223367061465979, "db": -44.11949166127499, "noiseFloor": 0.003710615512104321}
+{"event": "noise_sample", "timestamp": 1768131139.013, "peak": 0.007237744517624378, "db": -42.80793501904162, "noiseFloor": 0.005890913204325932}
+{"event": "noise_sample", "timestamp": 1768131140.03, "peak": 0.0020431838929653168, "db": -53.79385087483026, "noiseFloor": 0.0037641979976073435}
+{"event": "noise_sample", "timestamp": 1768131141.047, "peak": 0.012896440923213959, "db": -37.790602539245505, "noiseFloor": 0.007515445994146063}
+{"event": "noise_sample", "timestamp": 1768131142.063, "peak": 0.01622779481112957, "db": -35.79480984552819, "noiseFloor": 0.009615321143643116}
+{"event": "noise_sample", "timestamp": 1768131143.08, "peak": 0.003417326370254159, "db": -49.32627084233451, "noiseFloor": 0.0030361433596023586}
+{"event": "play_example", "timestamp": 1768131143.811, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768131144.596, "peak": 0.0006950272363610566, "db": -63.15996352346262, "noiseFloor": 0.004027402378185928}
+{"event": "noise_sample", "timestamp": 1768131145.613, "peak": 0.002239806577563286, "db": -52.99578968620889, "noiseFloor": 0.002811399558528106}
+{"event": "noise_sample", "timestamp": 1768131146.63, "peak": 0.004918465856462717, "db": -46.1634067819362, "noiseFloor": 0.003945395637732095}
+{"event": "noise_sample", "timestamp": 1768131147.646, "peak": 0.0021396842785179615, "db": -53.393006086409315, "noiseFloor": 0.002539675906197544}
+{"event": "record_start", "timestamp": 1768131147.766, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768131150.57, "size": 44732}
+{"event": "noise_sample", "timestamp": 1768131150.585, "peak": 0.00145040696952492, "db": -56.770202440538014, "noiseFloor": 0.0030636032276943736}
+{"event": "noise_sample", "timestamp": 1768131151.596, "peak": 0.0027114315889775753, "db": -51.336026971938, "noiseFloor": 0.002180781473778145}
+{"event": "noise_sample", "timestamp": 1768131152.613, "peak": 0.0010891938582062721, "db": -59.25789632487586, "noiseFloor": 0.0036364616052284274}
+{"event": "noise_sample", "timestamp": 1768131153.63, "peak": 0.007216204889118671, "db": -42.833822888062876, "noiseFloor": 0.0033662622588336343}
+{"event": "noise_sample", "timestamp": 1768131154.646, "peak": 0.0011007256107404828, "db": -59.16641857229805, "noiseFloor": 0.0025304086235660543}
+{"event": "noise_sample", "timestamp": 1768131155.663, "peak": 0.0011313267750665545, "db": -58.92823868645124, "noiseFloor": 0.0018734569955272604}
+{"event": "noise_sample", "timestamp": 1768131156.68, "peak": 0.0021711864974349737, "db": -53.266057410891236, "noiseFloor": 0.002866283829160495}
+{"event": "noise_sample", "timestamp": 1768131161.362, "peak": 0.0008359896019101143, "db": -61.55598248617526, "noiseFloor": 0.0021009235176828013}
+{"event": "noise_sample", "timestamp": 1768131162.379, "peak": 0.013577708043158054, "db": -37.34347068095773, "noiseFloor": 0.016955778625972646}
+{"event": "noise_sample", "timestamp": 1768131163.396, "peak": 0.001963017974048853, "db": -54.14151447672634, "noiseFloor": 0.0033164550606709716}
+{"event": "noise_sample", "timestamp": 1768131164.412, "peak": 0.005035302136093378, "db": -45.95948930220192, "noiseFloor": 0.0016135401617935218}
+{"event": "noise_sample", "timestamp": 1768131165.429, "peak": 0.0007150724995881319, "db": -62.912998476569825, "noiseFloor": 0.0014669866447420586}
+{"event": "noise_sample", "timestamp": 1768131166.445, "peak": 0.0008616883424110711, "db": -61.29299564975259, "noiseFloor": 0.0009373635438679123}
+{"event": "noise_sample", "timestamp": 1768131167.462, "peak": 0.0005976057727821171, "db": -64.47170431905698, "noiseFloor": 0.001094256967434122}
+{"event": "noise_sample", "timestamp": 1768131168.479, "peak": 0.0022193652112036943, "db": -53.07542451723742, "noiseFloor": 0.001425345447498248}
+{"event": "play_user", "timestamp": 1768131168.575, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768131169.496, "peak": 0.006277570966631174, "db": -44.04416737957405, "noiseFloor": 0.001349545739336423}
+{"event": "noise_sample", "timestamp": 1768131170.512, "peak": 0.0013892707647755742, "db": -57.14426206598133, "noiseFloor": 0.0015567220198652826}
+{"event": "noise_sample", "timestamp": 1768131171.529, "peak": 0.0005088937468826771, "db": -65.86745771120508, "noiseFloor": 0.00085084218581397}
+{"event": "play_user", "timestamp": 1768131171.804, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768131172.546, "peak": 0.0005241382168605924, "db": -65.61108346244238, "noiseFloor": 0.0006482469185022002}
+{"event": "noise_sample", "timestamp": 1768131173.562, "peak": 0.0021134200505912304, "db": -53.500283532462674, "noiseFloor": 0.0014824856760355444}
+{"event": "noise_sample", "timestamp": 1768131174.579, "peak": 0.0006615646998398006, "db": -63.58855352357782, "noiseFloor": 0.005832042061537839}
+{"event": "record_start", "timestamp": 1768131175.103, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768131178.213, "size": 49562}
+{"event": "noise_sample", "timestamp": 1768131178.229, "peak": 0.0005663975025527179, "db": -64.93757340544641, "noiseFloor": 0.0023443175815104486}
+{"event": "noise_sample", "timestamp": 1768131179.245, "peak": 0.001443454879336059, "db": -56.81193574188807, "noiseFloor": 0.0019189869295870698}
+{"event": "play_user", "timestamp": 1768131179.75, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768131180.662, "peak": 0.000395402021240443, "db": -68.05922229926699, "noiseFloor": 0.001342792803551376}
+{"event": "noise_sample", "timestamp": 1768131181.679, "peak": 0.0013042372884228826, "db": -57.692867747579655, "noiseFloor": 0.0012919532744328263}
+{"event": "record_start", "timestamp": 1768131181.683, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768131184.687, "size": 48596}
+{"event": "noise_sample", "timestamp": 1768131184.703, "peak": 0.00045075773959979415, "db": -66.92113615238294, "noiseFloor": 0.0012498934976911745}
+{"event": "noise_sample", "timestamp": 1768131185.712, "peak": 0.0004125376872252673, "db": -67.69072740985288, "noiseFloor": 0.0009745786721426917}
+{"event": "noise_sample", "timestamp": 1768131186.728, "peak": 0.0016866493970155716, "db": -55.45950369221274, "noiseFloor": 0.0016718198770405619}
+{"event": "noise_sample", "timestamp": 1768131187.745, "peak": 0.000619340396951884, "db": -64.16141183752502, "noiseFloor": 0.0009284597093985013}
+{"event": "noise_sample", "timestamp": 1768131188.762, "peak": 0.0014743506908416748, "db": -56.62798404755214, "noiseFloor": 0.0012463404834858378}
+{"event": "record_start", "timestamp": 1768131189.375, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768131192.077, "size": 43766}
+{"event": "noise_sample", "timestamp": 1768131192.078, "peak": 0.0006655341130681336, "db": -63.53659358252217, "noiseFloor": 0.0009763944345603196}
+{"event": "noise_sample", "timestamp": 1768131193.095, "peak": 0.0004762870375998318, "db": -66.44262475756872, "noiseFloor": 0.00059462288902506}
+{"event": "noise_sample", "timestamp": 1768131194.111, "peak": 0.0011264964705333114, "db": -58.965403292834225, "noiseFloor": 0.0011138153154363144}
+{"event": "noise_sample", "timestamp": 1768131195.128, "peak": 0.0006376280798576772, "db": -63.908651314713225, "noiseFloor": 0.001019818495755018}
+{"event": "noise_sample", "timestamp": 1768131196.145, "peak": 0.0005682342452928424, "db": -64.90945193132015, "noiseFloor": 0.0007394825093008616}
+{"event": "noise_sample", "timestamp": 1768131197.161, "peak": 0.0009753594058565795, "db": -60.21670647128752, "noiseFloor": 0.0007693954714821945}
+{"event": "noise_sample", "timestamp": 1768131198.178, "peak": 0.0003604999219533056, "db": -68.86189649934887, "noiseFloor": 0.00048146189538338585}
+{"event": "noise_sample", "timestamp": 1768131199.195, "peak": 0.0006519170710816979, "db": -63.716152927761655, "noiseFloor": 0.0005801523451215164}
+{"event": "play_user", "timestamp": 1768131200.191, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768131201.145, "peak": 0.00026146633899770677, "db": -71.6516842796066, "noiseFloor": 0.0004399399056899953}
+{"event": "noise_sample", "timestamp": 1768131202.161, "peak": 0.0003598633629735559, "db": -68.8772473163632, "noiseFloor": 0.00036059753284057813}
+{"event": "noise_sample", "timestamp": 1768131203.178, "peak": 0.0002828198776114732, "db": -70.96980140007709, "noiseFloor": 0.00037212516321699266}
+{"event": "record_start", "timestamp": 1768131203.56, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768131206.464, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768131206.479, "peak": 0.00037261380930431187, "db": -68.5748210782465, "noiseFloor": 0.0003703323645375048}
+{"event": "noise_sample", "timestamp": 1768131207.494, "peak": 0.0007759778527542949, "db": -62.20301347596659, "noiseFloor": 0.0005075794997237463}
+{"event": "noise_sample", "timestamp": 1768131208.511, "peak": 0.00035591586492955685, "db": -68.97305305825418, "noiseFloor": 0.000567446747560291}
+{"event": "noise_sample", "timestamp": 1768131209.528, "peak": 0.0005056662485003471, "db": -65.92272066154857, "noiseFloor": 0.0006399320170300771}
+{"event": "noise_sample", "timestamp": 1768131210.545, "peak": 0.0003976417938247323, "db": -68.01015951398738, "noiseFloor": 0.00035549820331748773}
+{"event": "noise_sample", "timestamp": 1768131211.561, "peak": 0.00026026065461337566, "db": -71.69182964402737, "noiseFloor": 0.000353017371910386}
+{"event": "noise_sample", "timestamp": 1768131212.567, "peak": 0.00027247797697782516, "db": -71.29337187607847, "noiseFloor": 0.0003207204156140968}
+{"event": "noise_sample", "timestamp": 1768131213.579, "peak": 0.0011797811603173614, "db": -58.5639708654147, "noiseFloor": 0.0014402334803573322}
+{"event": "noise_sample", "timestamp": 1768131214.595, "peak": 0.00026338783209212124, "db": -71.5880858462023, "noiseFloor": 0.0003264461034785274}
+{"event": "noise_sample", "timestamp": 1768131215.611, "peak": 0.00037197477649897337, "db": -68.58973017003463, "noiseFloor": 0.0004223297744115958}
+{"event": "noise_sample", "timestamp": 1768131216.627, "peak": 0.0003561069897841662, "db": -68.96839003536633, "noiseFloor": 0.0004682589349161285}
+{"event": "play_example", "timestamp": 1768131217.42, "word": "cow"}
+{"event": "noise_sample", "timestamp": 1768131218.195, "peak": 0.00021638900216203183, "db": -73.29529631509094, "noiseFloor": 0.0006796197632057766}
+{"event": "noise_sample", "timestamp": 1768131219.211, "peak": 0.00048755909665487707, "db": -66.23945472564282, "noiseFloor": 0.0004727314538979224}
+{"event": "noise_sample", "timestamp": 1768131220.227, "peak": 0.0003651086881291121, "db": -68.7515566490505, "noiseFloor": 0.0004035568304147826}
+{"event": "record_start", "timestamp": 1768131220.509, "word": "cow"}
+{"event": "record_stop", "timestamp": 1768131223.211, "size": 43766}
+{"event": "noise_sample", "timestamp": 1768131223.228, "peak": 0.00027431201306171715, "db": -71.2351034547506, "noiseFloor": 0.0003668438056411838}
+{"event": "noise_sample", "timestamp": 1768131224.244, "peak": 0.000535255647264421, "db": -65.42877483890167, "noiseFloor": 0.00038600683808431266}
+{"event": "noise_sample", "timestamp": 1768131225.26, "peak": 0.0004400547768454999, "db": -67.1298652065916, "noiseFloor": 0.0004640216342277249}
+{"event": "noise_sample", "timestamp": 1768131226.277, "peak": 0.000470698403660208, "db": -66.54514549138824, "noiseFloor": 0.00044405538713198814}
+{"event": "noise_sample", "timestamp": 1768131227.294, "peak": 0.0005809347494505346, "db": -64.71745289591018, "noiseFloor": 0.00041499451448736777}
+{"event": "play_user", "timestamp": 1768131228.157, "word": "cow"}
+{"event": "noise_sample", "timestamp": 1768131229.044, "peak": 0.00019144221732858568, "db": -74.35924568530227, "noiseFloor": 0.00040269127743586643}
+{"event": "noise_sample", "timestamp": 1768131230.06, "peak": 0.0009470521472394466, "db": -60.47252213831221, "noiseFloor": 0.0007338263258242672}
+{"event": "noise_sample", "timestamp": 1768131231.077, "peak": 0.005038257222622633, "db": -45.95439327699648, "noiseFloor": 0.005413913364199079}
+{"event": "noise_sample", "timestamp": 1768131232.094, "peak": 0.001684010960161686, "db": -55.47310172558426, "noiseFloor": 0.003224857146917754}
+{"event": "noise_sample", "timestamp": 1768131233.11, "peak": 0.006617353763431311, "db": -43.58631294745054, "noiseFloor": 0.007574232457409764}
+{"event": "noise_sample", "timestamp": 1768131234.127, "peak": 0.006065642461180687, "db": -44.342463854501844, "noiseFloor": 0.007625378758945443}
+{"event": "noise_sample", "timestamp": 1768131235.144, "peak": 0.001287316670641303, "db": -57.806292132693564, "noiseFloor": 0.002971780720350715}
+{"event": "noise_sample", "timestamp": 1768131236.16, "peak": 0.00043637072667479515, "db": -67.20288782299468, "noiseFloor": 0.0006637239215055534}
+{"event": "noise_sample", "timestamp": 1768131237.177, "peak": 0.00036976399132981896, "db": -68.641507679015, "noiseFloor": 0.0005048556343945996}
+{"event": "noise_sample", "timestamp": 1768131238.194, "peak": 0.0004547787248156965, "db": -66.84399720823768, "noiseFloor": 0.00047351954684346563}
+{"event": "noise_sample", "timestamp": 1768131239.21, "peak": 0.00037738584796898067, "db": -68.46428779959656, "noiseFloor": 0.0005600165962419188}
+{"event": "noise_sample", "timestamp": 1768131240.227, "peak": 0.0006020619766786695, "db": -64.40717599729791, "noiseFloor": 0.0008568712686899625}
+{"event": "noise_sample", "timestamp": 1768131241.243, "peak": 0.0004765768244396895, "db": -66.43734161757895, "noiseFloor": 0.0007584992120584282}
+{"event": "noise_sample", "timestamp": 1768131242.26, "peak": 0.0005690534599125385, "db": -64.89693863503693, "noiseFloor": 0.0006002864763137432}
+{"event": "noise_sample", "timestamp": 1768131243.277, "peak": 0.0007316013798117638, "db": -62.714509682171844, "noiseFloor": 0.0005751144309948182}
+{"event": "noise_sample", "timestamp": 1768131338.741, "peak": 0.00043533119605854154, "db": -67.22360419920756, "noiseFloor": 0.0006721352564312906}
+{"event": "noise_sample", "timestamp": 1768131339.757, "peak": 0, "db": -80, "noiseFloor": 2.9416879348041303e-05}
+{"event": "noise_sample", "timestamp": 1768131340.773, "peak": 0, "db": -80, "noiseFloor": 1.287468232468297e-06}
+{"event": "noise_sample", "timestamp": 1768131342.107, "peak": 0, "db": -80, "noiseFloor": 0.014249999999999999}
+{"event": "noise_sample", "timestamp": 1768131343.123, "peak": 0.0008438124204985797, "db": -61.47508172617221, "noiseFloor": 0.0015553820559498174}
+{"event": "noise_sample", "timestamp": 1768131344.14, "peak": 0.0009004632593132555, "db": -60.91068005118177, "noiseFloor": 0.0009170093862074318}
+{"event": "noise_sample", "timestamp": 1768131345.146, "peak": 0.0008929153555072844, "db": -60.9837941677706, "noiseFloor": 0.0009649279012758723}
+{"event": "noise_sample", "timestamp": 1768131346.157, "peak": 0.0010858217719942331, "db": -59.2848290896326, "noiseFloor": 0.0009038258633844719}
+{"event": "noise_sample", "timestamp": 1768131347.174, "peak": 0.0007310276851058006, "db": -62.72132350705337, "noiseFloor": 0.0008181221026725521}
+{"event": "noise_sample", "timestamp": 1768131348.19, "peak": 0.0011000523809343576, "db": -59.17173269303316, "noiseFloor": 0.000796582670193172}
+{"event": "noise_sample", "timestamp": 1768131349.206, "peak": 0.0009474282851442695, "db": -60.46907307405473, "noiseFloor": 0.0009885410359337847}
+{"event": "noise_sample", "timestamp": 1768131350.223, "peak": 0.0009280333761125803, "db": -60.64872808767308, "noiseFloor": 0.0007936329367555895}
+{"event": "noise_sample", "timestamp": 1768131351.229, "peak": 0.0008548094774596393, "db": -61.36261342726732, "noiseFloor": 0.0009501403822537582}
+{"event": "noise_sample", "timestamp": 1768131352.246, "peak": 0.0008113912190310657, "db": -61.815393931820175, "noiseFloor": 0.0008163728947363683}
+{"event": "play_example", "timestamp": 1768131353.255, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768131353.256, "peak": 0.0007137577049434185, "db": -62.928983811101276, "noiseFloor": 0.0009333757126862201}
+{"event": "noise_sample", "timestamp": 1768131354.273, "peak": 0.0009051106171682477, "db": -60.865966813905914, "noiseFloor": 0.000818709155685797}
+{"event": "record_start", "timestamp": 1768131355.066, "word": "bike"}
+{"event": "record_stop", "timestamp": 1768131357.768, "size": 43766}
+{"event": "noise_sample", "timestamp": 1768131357.773, "peak": 0.00018981048197019845, "db": -74.43359616102818, "noiseFloor": 0.000966428598602911}
+{"event": "noise_sample", "timestamp": 1768131358.789, "peak": 0.00016705873713362962, "db": -75.5426161186019, "noiseFloor": 0.0002757386371724575}
+{"event": "noise_sample", "timestamp": 1768131359.806, "peak": 0.00022971151338424534, "db": -72.77634473920475, "noiseFloor": 0.0002820588437536834}
+{"event": "play_user", "timestamp": 1768131360.43, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768131361.039, "peak": 0.00010563241085037589, "db": -79.52405616372843, "noiseFloor": 0.00026989447102178724}
+{"event": "noise_sample", "timestamp": 1768131362.056, "peak": 0.00028477105661295354, "db": -70.91008306699919, "noiseFloor": 0.00026984515013575615}
+{"event": "noise_sample", "timestamp": 1768131363.073, "peak": 0.00015511614037677646, "db": -76.18686019951558, "noiseFloor": 0.0001974572720650124}
+{"event": "noise_sample", "timestamp": 1768131364.09, "peak": 0.00020760366169270128, "db": -73.65529981426445, "noiseFloor": 0.00024379612331492645}
+{"event": "noise_sample", "timestamp": 1768131365.106, "peak": 0.00038068799767643213, "db": -68.38861630795039, "noiseFloor": 0.0008001614639145002}
+{"event": "play_example", "timestamp": 1768131365.487, "word": "bird"}
+{"event": "noise_sample", "timestamp": 1768131366.189, "peak": 0.0001290474465349689, "db": -77.78501168861598, "noiseFloor": 0.000498935625354312}
+{"event": "noise_sample", "timestamp": 1768131367.206, "peak": 0.000300179555779323, "db": -70.4523777884621, "noiseFloor": 0.00032321679195317364}
+{"event": "record_start", "timestamp": 1768131367.395, "word": "bird"}
+{"event": "record_stop", "timestamp": 1768131369.907, "size": 39902}
+{"event": "noise_sample", "timestamp": 1768131369.924, "peak": 0.0003205587272532284, "db": -69.88184789790576, "noiseFloor": 0.0003486201764146645}
+{"event": "noise_sample", "timestamp": 1768131370.939, "peak": 0.0004090422880835831, "db": -67.76463581872959, "noiseFloor": 0.00042294065986057955}
+{"event": "noise_sample", "timestamp": 1768131371.956, "peak": 0.0007447746465913951, "db": -62.559502318108564, "noiseFloor": 0.000662987382780935}
+{"event": "play_user", "timestamp": 1768131372.051, "word": "bird"}
+{"event": "noise_sample", "timestamp": 1768131372.972, "peak": 0.0004232171340845525, "db": -67.46873516124658, "noiseFloor": 0.0004486659448152589}
+{"event": "noise_sample", "timestamp": 1768131373.989, "peak": 0.0007667038589715958, "db": -62.30744701697125, "noiseFloor": 0.0007234919429083296}
+{"event": "record_start", "timestamp": 1768131374.92, "word": "bird"}
+{"event": "record_stop", "timestamp": 1768131377.723, "size": 44732}
+{"event": "noise_sample", "timestamp": 1768131377.742, "peak": 0.00034731518826447427, "db": -69.18552448724161, "noiseFloor": 0.0006961946866334076}
+{"event": "noise_sample", "timestamp": 1768131378.755, "peak": 0.0008588206837885082, "db": -61.32195009172459, "noiseFloor": 0.0005968710152081698}
+{"event": "noise_sample", "timestamp": 1768131379.772, "peak": 0.000672790571115911, "db": -63.442402072532985, "noiseFloor": 0.0007221566104779735}
+{"event": "noise_sample", "timestamp": 1768131380.789, "peak": 0.0005166713381186128, "db": -65.73571259769848, "noiseFloor": 0.0008212098230591226}
+{"event": "play_user", "timestamp": 1768131381.238, "word": "bird"}
+{"event": "noise_sample", "timestamp": 1768131381.906, "peak": 0.00014934182399883866, "db": -76.51637097366898, "noiseFloor": 0.000744701411602683}
+{"event": "noise_sample", "timestamp": 1768131382.922, "peak": 0.0010128718568012118, "db": -59.8889099161778, "noiseFloor": 0.0008338015665222606}
+{"event": "record_start", "timestamp": 1768131383.4, "word": "bird"}
+{"event": "record_stop", "timestamp": 1768131386.506, "size": 49562}
+{"event": "noise_sample", "timestamp": 1768131386.523, "peak": 0.0005810708971694112, "db": -64.71541751153923, "noiseFloor": 0.0008189899131138982}
+{"event": "noise_sample", "timestamp": 1768131387.538, "peak": 0.0006073921686038375, "db": -64.33061623894002, "noiseFloor": 0.00080012292745654}
+{"event": "play_user", "timestamp": 1768131388.317, "word": "bird"}
+{"event": "noise_sample", "timestamp": 1768131389.122, "peak": 0.00023095849610399455, "db": -72.72932114089994, "noiseFloor": 0.0007380840017608469}
+{"event": "noise_sample", "timestamp": 1768131390.138, "peak": 0.0013353696558624506, "db": -57.48796993274449, "noiseFloor": 0.0012807649913139526}
+{"event": "noise_sample", "timestamp": 1768131391.155, "peak": 0.001988374860957265, "db": -54.03003472575388, "noiseFloor": 0.0016085725345828374}
+{"event": "noise_sample", "timestamp": 1768131392.172, "peak": 0.0015988970408216119, "db": -55.923590025171336, "noiseFloor": 0.0012021506683806292}
+{"event": "noise_sample", "timestamp": 1768131393.188, "peak": 0.001295515801757574, "db": -57.751145708765506, "noiseFloor": 0.001201205861015756}
+{"event": "noise_sample", "timestamp": 1768131394.205, "peak": 0.0021172871347516775, "db": -53.48440482749837, "noiseFloor": 0.0025000643995878955}
+{"event": "noise_sample", "timestamp": 1768131395.222, "peak": 0.002503755036741495, "db": -52.02816328076245, "noiseFloor": 0.0019369109840791966}
+{"event": "noise_sample", "timestamp": 1768131396.238, "peak": 0.0010686902096495032, "db": -59.42296338390765, "noiseFloor": 0.0013657043325701486}
+{"event": "noise_sample", "timestamp": 1768131397.255, "peak": 0.0009824009612202644, "db": -60.1542244254333, "noiseFloor": 0.0013830932590265471}
+{"event": "noise_sample", "timestamp": 1768131398.271, "peak": 0.0009754305938258767, "db": -60.2160725426276, "noiseFloor": 0.0013446069829207154}
+{"event": "play_example", "timestamp": 1768131398.293, "word": "boat"}
+{"event": "noise_sample", "timestamp": 1768131399.288, "peak": 0.0011424337280914187, "db": -58.84337967389722, "noiseFloor": 0.0014962597822581458}
+{"event": "noise_sample", "timestamp": 1768131400.305, "peak": 0.0020509068854153156, "db": -53.76108113752104, "noiseFloor": 0.0013343719642452201}
+{"event": "noise_sample", "timestamp": 1768131401.321, "peak": 0.0016640778630971909, "db": -55.576527133954954, "noiseFloor": 0.0014366866710801645}
+{"event": "record_start", "timestamp": 1768131401.907, "word": "boat"}
+{"event": "record_stop", "timestamp": 1768131404.513, "size": 41834}
+{"event": "noise_sample", "timestamp": 1768131404.528, "peak": 0.002197086112573743, "db": -53.16305842023616, "noiseFloor": 0.0016606469594940558}
+{"event": "noise_sample", "timestamp": 1768131405.538, "peak": 0.0015932935057207942, "db": -55.95408428091912, "noiseFloor": 0.0030288219885857316}
+{"event": "noise_sample", "timestamp": 1768131406.555, "peak": 0.0013607727596536279, "db": -57.32428786284398, "noiseFloor": 0.002378908408723273}
+{"event": "noise_sample", "timestamp": 1768131407.571, "peak": 0.006570460274815559, "db": -43.64808412231774, "noiseFloor": 0.0034123320577224216}
+{"event": "play_user", "timestamp": 1768131408.33, "word": "boat"}
+{"event": "noise_sample", "timestamp": 1768131408.938, "peak": 0.00036240677582100034, "db": -68.81607382066822, "noiseFloor": 0.003718230702817683}
+{"event": "noise_sample", "timestamp": 1768131409.955, "peak": 0.004070175811648369, "db": -47.807736619526764, "noiseFloor": 0.002076017057119625}
+{"event": "noise_sample", "timestamp": 1768131410.971, "peak": 0.0036202403716742992, "db": -48.825251856596154, "noiseFloor": 0.002675607275925166}
+{"event": "play_user", "timestamp": 1768131411.007, "word": "boat"}
+{"event": "noise_sample", "timestamp": 1768131411.988, "peak": 0.0036819372326135635, "db": -48.67847238704705, "noiseFloor": 0.00291015888934582}
+{"event": "noise_sample", "timestamp": 1768131413.005, "peak": 0.0016810736851766706, "db": -55.48826500111805, "noiseFloor": 0.002193425648298756}
+{"event": "noise_sample", "timestamp": 1768131414.021, "peak": 0.0011152277002111077, "db": -59.05272904067046, "noiseFloor": 0.002230137167559851}
+{"event": "noise_sample", "timestamp": 1768131415.038, "peak": 0.00465723592787981, "db": -46.637435217377146, "noiseFloor": 0.002990447928456362}
+{"event": "noise_sample", "timestamp": 1768131416.055, "peak": 0.005281723570078611, "db": -45.544486644675885, "noiseFloor": 0.00346845594496328}
+{"event": "noise_sample", "timestamp": 1768131417.071, "peak": 0.0011812786106020212, "db": -58.55295319460839, "noiseFloor": 0.0022403070181099562}
+{"event": "noise_sample", "timestamp": 1768131418.088, "peak": 0.0016209875466302037, "db": -55.80440643283302, "noiseFloor": 0.002151630093981029}
+{"event": "noise_sample", "timestamp": 1768131419.104, "peak": 0.0016879767645150423, "db": -55.45267071714986, "noiseFloor": 0.0013937573084970567}
+{"event": "noise_sample", "timestamp": 1768131420.121, "peak": 0.0012043857714161277, "db": -58.38468767746591, "noiseFloor": 0.0014937243167491411}
+{"event": "noise_sample", "timestamp": 1768131549.283, "peak": 0.0009021327714435756, "db": -60.894590808764406, "noiseFloor": 0.0012672265398795729}
+{"event": "noise_sample", "timestamp": 1768131550.3, "peak": 0, "db": -80, "noiseFloor": 5.7539882137020825e-05}
+{"event": "play_example", "timestamp": 1768131551.082, "word": "boat"}
+{"event": "noise_sample", "timestamp": 1768131551.65, "peak": 0, "db": -80, "noiseFloor": 5.163907051707894e-06}
+{"event": "noise_sample", "timestamp": 1768131552.666, "peak": 0, "db": -80, "noiseFloor": 2.2600515186651201e-07}
+{"event": "record_start", "timestamp": 1768131553.418, "word": "boat"}
+{"event": "record_stop", "timestamp": 1768131556.034, "size": 41834}
+{"event": "noise_sample", "timestamp": 1768131556.05, "peak": 0, "db": -80, "noiseFloor": 2.135030986291212e-08}
+{"event": "noise_sample", "timestamp": 1768131557.066, "peak": 0, "db": -80, "noiseFloor": 9.344242595088232e-10}
+{"event": "noise_sample", "timestamp": 1768131558.083, "peak": 0, "db": -80, "noiseFloor": 4.089630091389777e-11}
+{"event": "noise_sample", "timestamp": 1768131559.099, "peak": 0, "db": -80, "noiseFloor": 1.7898801442925104e-12}
+{"event": "noise_sample", "timestamp": 1768131560.116, "peak": 0, "db": -80, "noiseFloor": 7.83364475353779e-14}
+{"event": "play_user", "timestamp": 1768131560.173, "word": "boat"}
+{"event": "noise_sample", "timestamp": 1768131561.133, "peak": 0, "db": -80, "noiseFloor": 1.4415936062319342e-14}
+{"event": "noise_sample", "timestamp": 1768131562.149, "peak": 0, "db": -80, "noiseFloor": 6.309323127698132e-16}
+{"event": "record_start", "timestamp": 1768131563.026, "word": "boat"}
+{"event": "record_stop", "timestamp": 1768131565.929, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768131565.933, "peak": 0, "db": -80, "noiseFloor": 4.1623045176404046e-17}
+{"event": "noise_sample", "timestamp": 1768131566.95, "peak": 0, "db": -80, "noiseFloor": 1.8216870582766656e-18}
+{"event": "play_user", "timestamp": 1768131567.323, "word": "boat"}
+{"event": "noise_sample", "timestamp": 1768131567.999, "peak": 0, "db": -80, "noiseFloor": 5.599080282071284e-19}
+{"event": "noise_sample", "timestamp": 1768131569.016, "peak": 0, "db": -80, "noiseFloor": 2.4505107795148874e-20}
+{"event": "play_user", "timestamp": 1768131569.624, "word": "boat"}
+{"event": "noise_sample", "timestamp": 1768131570.283, "peak": 0, "db": -80, "noiseFloor": 3.673076832908473e-21}
+{"event": "play_user", "timestamp": 1768131570.578, "word": "boat"}
+{"event": "noise_sample", "timestamp": 1768131571.299, "peak": 0, "db": -80, "noiseFloor": 1.1883635687116822e-21}
+{"event": "record_start", "timestamp": 1768131572.24, "word": "boat"}
+{"event": "record_stop", "timestamp": 1768131575.143, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768131575.149, "peak": 0, "db": -80, "noiseFloor": 6.385498846358253e-23}
+{"event": "noise_sample", "timestamp": 1768131576.166, "peak": 0, "db": -80, "noiseFloor": 2.794697158689812e-24}
+{"event": "noise_sample", "timestamp": 1768131577.182, "peak": 0, "db": -80, "noiseFloor": 1.2231357951373305e-25}
+{"event": "play_user", "timestamp": 1768131578.112, "word": "boat"}
+{"event": "noise_sample", "timestamp": 1768131578.616, "peak": 0, "db": -80, "noiseFloor": 6.918255104331298e-27}
+{"event": "noise_sample", "timestamp": 1768131579.632, "peak": 0, "db": -80, "noiseFloor": 3.027864908971473e-28}
+{"event": "noise_sample", "timestamp": 1768131580.649, "peak": 0, "db": -80, "noiseFloor": 1.3251847133016326e-29}
+{"event": "record_start", "timestamp": 1768131580.986, "word": "boat"}
+{"event": "record_stop", "timestamp": 1768131584.29, "size": 53426}
+{"event": "noise_sample", "timestamp": 1768131584.304, "peak": 0, "db": -80, "noiseFloor": 4.513070610941532e-30}
+{"event": "noise_sample", "timestamp": 1768131585.315, "peak": 0, "db": -80, "noiseFloor": 1.9752044306699704e-31}
+{"event": "noise_sample", "timestamp": 1768131586.332, "peak": 0, "db": -80, "noiseFloor": 8.644740752514729e-33}
+{"event": "record_start", "timestamp": 1768131586.941, "word": "boat"}
+{"event": "record_stop", "timestamp": 1768131589.645, "size": 43766}
+{"event": "noise_sample", "timestamp": 1768131589.648, "peak": 0, "db": -80, "noiseFloor": 1.2957623875805804e-33}
+{"event": "noise_sample", "timestamp": 1768131590.665, "peak": 0, "db": -80, "noiseFloor": 5.671073709415573e-35}
+{"event": "play_user", "timestamp": 1768131591.317, "word": "boat"}
+{"event": "noise_sample", "timestamp": 1768131591.815, "peak": 0, "db": -80, "noiseFloor": 7.288019124366542e-36}
+{"event": "noise_sample", "timestamp": 1768131592.832, "peak": 0, "db": -80, "noiseFloor": 3.189696972689965e-37}
+{"event": "noise_sample", "timestamp": 1768131593.849, "peak": 0, "db": -80, "noiseFloor": 1.3960126344306008e-38}
+{"event": "noise_sample", "timestamp": 1768131594.865, "peak": 0, "db": -80, "noiseFloor": 6.109832037888985e-40}
+{"event": "noise_sample", "timestamp": 1768131595.882, "peak": 0, "db": -80, "noiseFloor": 2.674047971381052e-41}
+{"event": "noise_sample", "timestamp": 1768131596.899, "peak": 0, "db": -80, "noiseFloor": 1.170332098968421e-42}
+{"event": "noise_sample", "timestamp": 1768131597.915, "peak": 0, "db": -80, "noiseFloor": 5.122111632008011e-44}
+{"event": "play_example", "timestamp": 1768131598.746, "word": "book"}
+{"event": "noise_sample", "timestamp": 1768131599.315, "peak": 0, "db": -80, "noiseFloor": 3.3790928050856744e-45}
+{"event": "noise_sample", "timestamp": 1768131600.331, "peak": 0, "db": -80, "noiseFloor": 1.4789041997412509e-46}
+{"event": "noise_sample", "timestamp": 1768131601.348, "peak": 0, "db": -80, "noiseFloor": 6.472617824288653e-48}
+{"event": "noise_sample", "timestamp": 1768131602.365, "peak": 0, "db": -80, "noiseFloor": 2.8328259198012357e-49}
+{"event": "noise_sample", "timestamp": 1768131603.381, "peak": 0, "db": -80, "noiseFloor": 1.2398233465575663e-50}
+{"event": "record_start", "timestamp": 1768131603.864, "word": "book"}
+{"event": "record_stop", "timestamp": 1768131606.467, "size": 41834}
+{"event": "noise_sample", "timestamp": 1768131606.484, "peak": 0, "db": -80, "noiseFloor": 2.801201585396969e-51}
+{"event": "noise_sample", "timestamp": 1768131607.498, "peak": 0, "db": -80, "noiseFloor": 1.2259825426311101e-52}
+{"event": "play_user", "timestamp": 1768131608.091, "word": "book"}
+{"event": "noise_sample", "timestamp": 1768131608.515, "peak": 0, "db": -80, "noiseFloor": 1.8376283477438981e-53}
+{"event": "play_user", "timestamp": 1768131609.141, "word": "book"}
+{"event": "noise_sample", "timestamp": 1768131609.548, "peak": 0, "db": -80, "noiseFloor": 2.61670450896106e-54}
+{"event": "play_user", "timestamp": 1768131610.112, "word": "book"}
+{"event": "noise_sample", "timestamp": 1768131610.565, "peak": 0, "db": -80, "noiseFloor": 3.922185036188541e-55}
+{"event": "noise_sample", "timestamp": 1768131611.581, "peak": 0, "db": -80, "noiseFloor": 1.7165956239649498e-56}
+{"event": "noise_sample", "timestamp": 1768131612.598, "peak": 0, "db": -80, "noiseFloor": 7.512905457104922e-58}
+{"event": "record_start", "timestamp": 1768131612.868, "word": "book"}
+{"event": "record_stop", "timestamp": 1768131615.872, "size": 48596}
+{"event": "noise_sample", "timestamp": 1768131615.886, "peak": 0, "db": -80, "noiseFloor": 3.1412985481946946e-58}
+{"event": "noise_sample", "timestamp": 1768131616.898, "peak": 0, "db": -80, "noiseFloor": 1.3748304303966692e-59}
+{"event": "play_user", "timestamp": 1768131617.594, "word": "book"}
+{"event": "noise_sample", "timestamp": 1768131618.031, "peak": 0, "db": -80, "noiseFloor": 1.5945588722824833e-60}
+{"event": "noise_sample", "timestamp": 1768131619.048, "peak": 0, "db": -80, "noiseFloor": 6.978795638296906e-62}
+{"event": "noise_sample", "timestamp": 1768131620.064, "peak": 0, "db": -80, "noiseFloor": 3.054361266159877e-63}
+{"event": "noise_sample", "timestamp": 1768131621.081, "peak": 0, "db": -80, "noiseFloor": 1.336781190872417e-64}
+{"event": "noise_sample", "timestamp": 1768131622.098, "peak": 0, "db": -80, "noiseFloor": 5.850597871537897e-66}
+{"event": "noise_sample", "timestamp": 1768131623.114, "peak": 0, "db": -80, "noiseFloor": 2.5605907450047755e-67}
+{"event": "noise_sample", "timestamp": 1768131624.131, "peak": 0, "db": -80, "noiseFloor": 1.1206760586470864e-68}
+{"event": "noise_sample", "timestamp": 1768131625.147, "peak": 0, "db": -80, "noiseFloor": 4.90478547137928e-70}
+{"event": "noise_sample", "timestamp": 1768131626.164, "peak": 0, "db": -80, "noiseFloor": 2.1466435670353744e-71}
+{"event": "record_start", "timestamp": 1768131626.599, "word": "book"}
+{"event": "record_stop", "timestamp": 1768131629.302, "size": 43766}
+{"event": "noise_sample", "timestamp": 1768131629.317, "peak": 0, "db": -80, "noiseFloor": 5.373995297909674e-72}
+{"event": "noise_sample", "timestamp": 1768131630.33, "peak": 0, "db": -80, "noiseFloor": 2.3519993897494734e-73}
+{"event": "noise_sample", "timestamp": 1768131631.347, "peak": 0, "db": -80, "noiseFloor": 1.0293833214803226e-74}
+{"event": "play_user", "timestamp": 1768131631.42, "word": "book"}
+{"event": "noise_sample", "timestamp": 1768131632.364, "peak": 0, "db": -80, "noiseFloor": 1.709634654518549e-75}
+{"event": "record_start", "timestamp": 1768131632.925, "word": "book"}
+{"event": "record_stop", "timestamp": 1768131635.927, "size": 48596}
+{"event": "noise_sample", "timestamp": 1768131635.93, "peak": 0, "db": -80, "noiseFloor": 2.988862197946572e-76}
+{"event": "noise_sample", "timestamp": 1768131636.947, "peak": 0, "db": -80, "noiseFloor": 1.3081146662614296e-77}
+{"event": "play_user", "timestamp": 1768131637.528, "word": "book"}
+{"event": "noise_sample", "timestamp": 1768131638.164, "peak": 0, "db": -80, "noiseFloor": 2.172561104165176e-78}
+{"event": "noise_sample", "timestamp": 1768131639.18, "peak": 0, "db": -80, "noiseFloor": 9.508498068797202e-80}
+{"event": "noise_sample", "timestamp": 1768131640.197, "peak": 0, "db": -80, "noiseFloor": 4.161518649624424e-81}
+{"event": "noise_sample", "timestamp": 1768131641.214, "peak": 0, "db": -80, "noiseFloor": 1.8213431128521646e-82}
+{"event": "play_user", "timestamp": 1768131641.842, "word": "book"}
+{"event": "noise_sample", "timestamp": 1768131642.464, "peak": 0, "db": -80, "noiseFloor": 2.5935150280069765e-83}
+{"event": "noise_sample", "timestamp": 1768131643.48, "peak": 0, "db": -80, "noiseFloor": 1.1350858020942435e-84}
+{"event": "noise_sample", "timestamp": 1768131644.497, "peak": 0, "db": -80, "noiseFloor": 4.967851599865368e-86}
+{"event": "noise_sample", "timestamp": 1768131645.513, "peak": 0, "db": -80, "noiseFloor": 2.174245283726648e-87}
+{"event": "noise_sample", "timestamp": 1768131681.163, "peak": 0, "db": -80, "noiseFloor": 7.034412842864504e-88}
+{"event": "noise_sample", "timestamp": 1768131682.179, "peak": 0, "db": -80, "noiseFloor": 3.0787028637890054e-89}
+{"event": "noise_sample", "timestamp": 1768131683.196, "peak": 0, "db": -80, "noiseFloor": 1.347434609715471e-90}
+{"event": "noise_sample", "timestamp": 1768131684.212, "peak": 0, "db": -80, "noiseFloor": 5.8972239536771075e-92}
+{"event": "noise_sample", "timestamp": 1768131685.229, "peak": 0, "db": -80, "noiseFloor": 2.580997260205952e-93}
+{"event": "noise_sample", "timestamp": 1768131686.246, "peak": 0, "db": -80, "noiseFloor": 1.1296072371538386e-94}
+{"event": "noise_sample", "timestamp": 1768131687.262, "peak": 0, "db": -80, "noiseFloor": 4.94387394323893e-96}
+{"event": "noise_sample", "timestamp": 1768131688.279, "peak": 0, "db": -80, "noiseFloor": 2.1637511484275454e-97}
+{"event": "noise_sample", "timestamp": 1768131689.295, "peak": 0, "db": -80, "noiseFloor": 9.469940144255125e-99}
+{"event": "noise_sample", "timestamp": 1768131690.312, "peak": 0, "db": -80, "noiseFloor": 4.144643269210853e-100}
+{"event": "noise_sample", "timestamp": 1768131691.329, "peak": 0, "db": -80, "noiseFloor": 1.81395738170909e-101}
+{"event": "noise_sample", "timestamp": 1768131692.345, "peak": 0, "db": -80, "noiseFloor": 7.939021934892361e-103}
+{"event": "noise_sample", "timestamp": 1768131693.362, "peak": 0, "db": -80, "noiseFloor": 3.474616874588188e-104}
+{"event": "play_example", "timestamp": 1768131694.378, "word": "boy"}
+{"event": "noise_sample", "timestamp": 1768131694.379, "peak": 0, "db": -80, "noiseFloor": 1.5207115592050163e-105}
+{"event": "noise_sample", "timestamp": 1768131695.395, "peak": 0, "db": -80, "noiseFloor": 4.440310844729662e-106}
+{"event": "record_start", "timestamp": 1768131695.901, "word": "boy"}
+{"event": "record_stop", "timestamp": 1768131698.51, "size": 41834}
+{"event": "noise_sample", "timestamp": 1768131698.512, "peak": 0, "db": -80, "noiseFloor": 9.054096896734345e-107}
+{"event": "noise_sample", "timestamp": 1768131699.528, "peak": 0, "db": -80, "noiseFloor": 3.9626440283888975e-108}
+{"event": "noise_sample", "timestamp": 1768131700.545, "peak": 0, "db": -80, "noiseFloor": 1.7343030315248593e-109}
+{"event": "play_user", "timestamp": 1768131700.705, "word": "boy"}
+{"event": "noise_sample", "timestamp": 1768131701.562, "peak": 0, "db": -80, "noiseFloor": 6.217232219921197e-110}
+{"event": "play_user", "timestamp": 1768131701.816, "word": "boy"}
+{"event": "noise_sample", "timestamp": 1768131702.578, "peak": 0, "db": -80, "noiseFloor": 2.1173507158272288e-110}
+{"event": "play_user", "timestamp": 1768131702.797, "word": "boy"}
+{"event": "noise_sample", "timestamp": 1768131703.595, "peak": 0, "db": -80, "noiseFloor": 6.850339830442038e-111}
+{"event": "noise_sample", "timestamp": 1768131704.612, "peak": 0, "db": -80, "noiseFloor": 2.9981409003173623e-112}
+{"event": "noise_sample", "timestamp": 1768131705.628, "peak": 0, "db": -80, "noiseFloor": 1.3121756118157105e-113}
+{"event": "noise_sample", "timestamp": 1768131706.645, "peak": 0, "db": -80, "noiseFloor": 5.7429083338333895e-115}
+{"event": "noise_sample", "timestamp": 1768131707.661, "peak": 0, "db": -80, "noiseFloor": 2.5134590091318552e-116}
+{"event": "noise_sample", "timestamp": 1768131708.678, "peak": 0, "db": -80, "noiseFloor": 1.100048237470156e-117}
+{"event": "noise_sample", "timestamp": 1768131709.695, "peak": 0, "db": -80, "noiseFloor": 4.8145051117390833e-119}
+{"event": "noise_sample", "timestamp": 1768131710.711, "peak": 0, "db": -80, "noiseFloor": 2.1071311858349852e-120}
+{"event": "noise_sample", "timestamp": 1768131711.728, "peak": 0, "db": -80, "noiseFloor": 9.22213546620277e-122}
+{"event": "noise_sample", "timestamp": 1768131749.593, "peak": 0, "db": -80, "noiseFloor": 1.1258986910523785e-122}
+{"event": "noise_sample", "timestamp": 1768131750.61, "peak": 0, "db": -80, "noiseFloor": 4.927643005763258e-124}
+{"event": "noise_sample", "timestamp": 1768131752.277, "peak": 0, "db": -80, "noiseFloor": 5.715189815818586e-125}
+{"event": "noise_sample", "timestamp": 1768131753.293, "peak": 0, "db": -80, "noiseFloor": 2.501327636876853e-126}
+{"event": "noise_sample", "timestamp": 1768131757.91, "peak": 0, "db": -80, "noiseFloor": 1.924645931784487e-127}
+{"event": "noise_sample", "timestamp": 1768131758.914, "peak": 0, "db": -80, "noiseFloor": 8.866805119836615e-129}
+{"event": "noise_sample", "timestamp": 1768131759.927, "peak": 0, "db": -80, "noiseFloor": 3.880673330509816e-130}
+{"event": "noise_sample", "timestamp": 1768131760.944, "peak": 0, "db": -80, "noiseFloor": 1.6984274825708188e-131}
+{"event": "noise_sample", "timestamp": 1768131761.96, "peak": 0, "db": -80, "noiseFloor": 7.433390208015483e-133}
+{"event": "noise_sample", "timestamp": 1768131934.204, "peak": 0, "db": -80, "noiseFloor": 3.2716332690425076e-133}
+{"event": "noise_sample", "timestamp": 1768131935.221, "peak": 0, "db": -80, "noiseFloor": 1.4318731271062217e-134}
+{"event": "noise_sample", "timestamp": 1768131936.237, "peak": 0, "db": -80, "noiseFloor": 6.2667801783571856e-136}
+{"event": "noise_sample", "timestamp": 1768132223.761, "peak": 0, "db": -80, "noiseFloor": 2.2465524727699424e-136}
+{"event": "noise_sample", "timestamp": 1768132224.778, "peak": 0, "db": -80, "noiseFloor": 9.832330979244357e-138}
+{"event": "noise_sample", "timestamp": 1768132225.795, "peak": 0, "db": -80, "noiseFloor": 4.303248361976195e-139}
+{"event": "noise_sample", "timestamp": 1768132226.811, "peak": 0, "db": -80, "noiseFloor": 1.8833729767581486e-140}
+{"event": "noise_sample", "timestamp": 1768132227.828, "peak": 0, "db": -80, "noiseFloor": 8.242828373386997e-142}
+{"event": "noise_sample", "timestamp": 1768132228.845, "peak": 0, "db": -80, "noiseFloor": 3.607581739335889e-143}
+{"event": "noise_sample", "timestamp": 1768132229.861, "peak": 0, "db": -80, "noiseFloor": 1.5789053728219274e-144}
+{"event": "noise_sample", "timestamp": 1768132236.544, "peak": 0, "db": -80, "noiseFloor": 8.531774456690646e-145}
+{"event": "noise_sample", "timestamp": 1768132237.561, "peak": 0, "db": -80, "noiseFloor": 3.734042775106618e-146}
+{"event": "noise_sample", "timestamp": 1768132238.578, "peak": 0, "db": -80, "noiseFloor": 1.6342527005494993e-147}
+{"event": "noise_sample", "timestamp": 1768132239.594, "peak": 0, "db": -80, "noiseFloor": 7.152520873778889e-149}
+{"event": "noise_sample", "timestamp": 1768132240.116, "peak": 0, "db": -80, "noiseFloor": 0.014249999999999999}
+{"event": "noise_sample", "timestamp": 1768132241.128, "peak": 0.000923509243875742, "db": -60.69117506253362, "noiseFloor": 0.0021451923991399487}
+{"event": "noise_sample", "timestamp": 1768132242.131, "peak": 0.001062653842382133, "db": -59.472163662050036, "noiseFloor": 0.0022033104436487197}
+{"event": "noise_sample", "timestamp": 1768132243.144, "peak": 0.0008137896656990051, "db": -61.789756590917726, "noiseFloor": 0.0010784432530272212}
+{"event": "noise_sample", "timestamp": 1768132244.15, "peak": 0.0009081102325581014, "db": -60.837228613587236, "noiseFloor": 0.0009971390624340425}
+{"event": "noise_sample", "timestamp": 1768132245.161, "peak": 0.0012848940677940845, "db": -57.82265351932128, "noiseFloor": 0.002059334579619209}
+{"event": "noise_sample", "timestamp": 1768132246.177, "peak": 0.0010048644617199898, "db": -59.95785025734221, "noiseFloor": 0.0011647484749835438}
+{"event": "noise_sample", "timestamp": 1768132247.194, "peak": 0.0015418841503560543, "db": -56.23896511650773, "noiseFloor": 0.0011136252657890763}
+{"event": "noise_sample", "timestamp": 1768132248.211, "peak": 0.0011765327071771026, "db": -58.58791990186133, "noiseFloor": 0.0013448776457292292}
+{"event": "noise_sample", "timestamp": 1768132249.227, "peak": 0.0016262379940599203, "db": -55.776317933222344, "noiseFloor": 0.0015289201820230382}
+{"event": "noise_sample", "timestamp": 1768132250.244, "peak": 0.0009510088711977005, "db": -60.43630863718779, "noiseFloor": 0.0013116990574122327}
+{"event": "noise_sample", "timestamp": 1768132251.245, "peak": 0.0009621501667425036, "db": -60.33514281084335, "noiseFloor": 0.0011750264460270992}
+{"event": "noise_sample", "timestamp": 1768132252.25, "peak": 0.001202723360620439, "db": -58.39668507202357, "noiseFloor": 0.0011469266218085059}
+{"event": "noise_sample", "timestamp": 1768132253.26, "peak": 0.0015615832526236773, "db": -56.12869714585459, "noiseFloor": 0.0011963540093087406}
+{"event": "noise_sample", "timestamp": 1768132254.277, "peak": 0.002017159713432193, "db": -53.90519428248503, "noiseFloor": 0.001454258870892331}
+{"event": "noise_sample", "timestamp": 1768132255.294, "peak": 0.0018261648947373033, "db": -54.76920020261443, "noiseFloor": 0.001585775214613414}
+{"event": "noise_sample", "timestamp": 1768132256.31, "peak": 0.0019801848102360964, "db": -54.06588550466636, "noiseFloor": 0.0018117991174017964}
+{"event": "noise_sample", "timestamp": 1768132257.327, "peak": 0.002100981306284666, "db": -53.55155623520826, "noiseFloor": 0.0015914430901862074}
+{"event": "noise_sample", "timestamp": 1768132258.344, "peak": 0.0013549366267398, "db": -57.361620343774405, "noiseFloor": 0.0014019468130972274}
+{"event": "noise_sample", "timestamp": 1768132259.36, "peak": 0.003023663070052862, "db": -50.38933208728701, "noiseFloor": 0.0017981611940688653}
+{"event": "play_example", "timestamp": 1768132259.648, "word": "cake"}
+{"event": "noise_sample", "timestamp": 1768132260.377, "peak": 0.0006629598792642355, "db": -63.57025506512859, "noiseFloor": 0.001537732456110106}
+{"event": "noise_sample", "timestamp": 1768132261.394, "peak": 0.003024284727871418, "db": -50.38754647292522, "noiseFloor": 0.002677931923157096}
+{"event": "record_start", "timestamp": 1768132262.24, "word": "cake"}
+{"event": "noise_sample", "timestamp": 1768132264.844, "peak": 0.000836117600556463, "db": -61.55465268852049, "noiseFloor": 0.0020234136613091146}
+{"event": "record_stop", "timestamp": 1768132264.846, "size": 41834}
+{"event": "noise_sample", "timestamp": 1768132265.86, "peak": 0.0019624894484877586, "db": -54.14385339204514, "noiseFloor": 0.001418105795733697}
+{"event": "noise_sample", "timestamp": 1768132266.877, "peak": 0.0013803101610392332, "db": -57.20046629961638, "noiseFloor": 0.003292944967392812}
+{"event": "record_start", "timestamp": 1768132267.045, "word": "cake"}
+{"event": "record_stop", "timestamp": 1768132269.659, "size": 41834}
+{"event": "noise_sample", "timestamp": 1768132269.66, "peak": 0.001621642499230802, "db": -55.80089764767784, "noiseFloor": 0.0033977247315985673}
+{"event": "noise_sample", "timestamp": 1768132270.677, "peak": 0.0015817050589248538, "db": -56.01748992654298, "noiseFloor": 0.001927718597005481}
+{"event": "noise_sample", "timestamp": 1768132271.693, "peak": 0.001320942072197795, "db": -57.58232454515782, "noiseFloor": 0.0021263890707449327}
+{"event": "play_user", "timestamp": 1768132272.531, "word": "cake"}
+{"event": "noise_sample", "timestamp": 1768132272.944, "peak": 0.004545551259070635, "db": -46.8482688087751, "noiseFloor": 0.004113769564180964}
+{"event": "noise_sample", "timestamp": 1768132273.96, "peak": 0.006521329749375582, "db": -43.71327678495212, "noiseFloor": 0.004570934584455591}
+{"event": "play_user", "timestamp": 1768132274.026, "word": "cake"}
+{"event": "noise_sample", "timestamp": 1768132274.977, "peak": 0.0028397238347679377, "db": -50.93447786714496, "noiseFloor": 0.003169642252136051}
+{"event": "noise_sample", "timestamp": 1768132275.993, "peak": 0.0052705202251672745, "db": -45.56293031522191, "noiseFloor": 0.0077575880733644405}
+{"event": "record_start", "timestamp": 1768132276.219, "word": "cake"}
+{"event": "record_stop", "timestamp": 1768132279.027, "size": 44732}
+{"event": "noise_sample", "timestamp": 1768132279.047, "peak": 0.0030956799164414406, "db": -50.184879007002586, "noiseFloor": 0.005901998041927535}
+{"event": "noise_sample", "timestamp": 1768132280.06, "peak": 0.002737288596108556, "db": -51.25358823820561, "noiseFloor": 0.002996430980422745}
+{"event": "noise_sample", "timestamp": 1768132281.076, "peak": 0.0033864970318973064, "db": -49.404986013915945, "noiseFloor": 0.0056423434823098875}
+{"event": "noise_sample", "timestamp": 1768132282.093, "peak": 0.0026940435636788607, "db": -51.391907717083434, "noiseFloor": 0.00322645088910957}
+{"event": "play_user", "timestamp": 1768132282.362, "word": "cake"}
+{"event": "noise_sample", "timestamp": 1768132283.109, "peak": 0.0029703376349061728, "db": -50.543883642325575, "noiseFloor": 0.006552924141624624}
+{"event": "play_user", "timestamp": 1768132283.675, "word": "cake"}
+{"event": "noise_sample", "timestamp": 1768132284.126, "peak": 0.005716307088732719, "db": -44.85768896585203, "noiseFloor": 0.004976609637972734}
+{"event": "noise_sample", "timestamp": 1768132285.143, "peak": 0.0031570876017212868, "db": -50.01426734589764, "noiseFloor": 0.0032591089414903997}
+{"event": "play_user", "timestamp": 1768132285.43, "word": "cake"}
+{"event": "noise_sample", "timestamp": 1768132286.159, "peak": 0.0027681593783199787, "db": -51.15617817496848, "noiseFloor": 0.0036184393233225126}
+{"event": "noise_sample", "timestamp": 1768132287.176, "peak": 0.014424695633351803, "db": -36.81786683713661, "noiseFloor": 0.011269715967963874}
+{"event": "noise_sample", "timestamp": 1768132288.193, "peak": 0.007748378906399012, "db": -42.21578299670786, "noiseFloor": 0.009674255784212053}
+{"event": "play_user", "timestamp": 1768132288.364, "word": "cake"}
+{"event": "noise_sample", "timestamp": 1768132289.209, "peak": 0.0032865596003830433, "db": -49.66516975127017, "noiseFloor": 0.0050108963165958606}
+{"event": "noise_sample", "timestamp": 1768132290.226, "peak": 0.001937014632858336, "db": -54.25734196924581, "noiseFloor": 0.004854880676636666}
+{"event": "noise_sample", "timestamp": 1768132291.243, "peak": 0.0018948098877444863, "db": -54.448687152919355, "noiseFloor": 0.002783227767843737}
+{"event": "noise_sample", "timestamp": 1768132292.259, "peak": 0.012747988104820251, "db": -37.891167008787775, "noiseFloor": 0.005564490773984939}
+{"event": "noise_sample", "timestamp": 1768132293.276, "peak": 0.007522233296185732, "db": -42.47306402801733, "noiseFloor": 0.0049984918986614715}
+{"event": "noise_sample", "timestamp": 1768132294.292, "peak": 0.0012166162487119436, "db": -58.296927750905745, "noiseFloor": 0.00381338396614413}
+{"event": "record_start", "timestamp": 1768132294.681, "word": "cat"}
+{"event": "record_stop", "timestamp": 1768132298.193, "size": 56324}
+{"event": "noise_sample", "timestamp": 1768132298.211, "peak": 0.0010584195842966437, "db": -59.50684265696147, "noiseFloor": 0.004248524367986891}
+{"event": "noise_sample", "timestamp": 1768132299.226, "peak": 0.001473903888836503, "db": -56.63061670550742, "noiseFloor": 0.001651025133736812}
+{"event": "noise_sample", "timestamp": 1768132300.242, "peak": 0.0019121334189549088, "db": -54.36963616280545, "noiseFloor": 0.0017417905422607803}
+{"event": "play_example", "timestamp": 1768132300.411, "word": "cat"}
+{"event": "noise_sample", "timestamp": 1768132301.259, "peak": 0.0012287035351619124, "db": -58.21105784389741, "noiseFloor": 0.001393860597259531}
+{"event": "play_example", "timestamp": 1768132302.181, "word": "cat"}
+{"event": "noise_sample", "timestamp": 1768132302.793, "peak": 0.0008720032637938857, "db": -61.189637791141735, "noiseFloor": 0.0016033605178910554}
+{"event": "noise_sample", "timestamp": 1768132303.809, "peak": 0.0015338261146098375, "db": -56.28447744588765, "noiseFloor": 0.0042678924238709745}
+{"event": "noise_sample", "timestamp": 1768132304.826, "peak": 0.0013327040942385793, "db": -57.50532536138704, "noiseFloor": 0.0012142992984474057}
+{"event": "noise_sample", "timestamp": 1768132305.842, "peak": 0.004346481524407864, "db": -47.23724324181493, "noiseFloor": 0.005938868829725945}
+{"event": "noise_sample", "timestamp": 1768132306.859, "peak": 0.0043590618297457695, "db": -47.21213941649438, "noiseFloor": 0.004597965597957337}
+{"event": "noise_sample", "timestamp": 1768132307.875, "peak": 0.015530908480286598, "db": -36.176062789568405, "noiseFloor": 0.011118701013519227}
+{"event": "noise_sample", "timestamp": 1768132308.892, "peak": 0.011562738567590714, "db": -38.73878587205177, "noiseFloor": 0.024626107358356023}
+{"event": "noise_sample", "timestamp": 1768132309.909, "peak": 0.012814345769584179, "db": -37.84607123229843, "noiseFloor": 0.009889670962606251}
+{"event": "noise_sample", "timestamp": 1768132310.925, "peak": 0.006191825959831476, "db": -44.16362518651322, "noiseFloor": 0.005252745562288985}
+{"event": "noise_sample", "timestamp": 1768132311.942, "peak": 0.00113647838588804, "db": -58.88877638978447, "noiseFloor": 0.006288533794403911}
+{"event": "noise_sample", "timestamp": 1768132312.959, "peak": 0.0010839630849659443, "db": -59.29971015426585, "noiseFloor": 0.0017332155992920127}
+{"event": "noise_sample", "timestamp": 1768132313.975, "peak": 0.0019290398340672255, "db": -54.293176084375084, "noiseFloor": 0.0013888058590443995}
+{"event": "noise_sample", "timestamp": 1768132314.992, "peak": 0.09332636743783951, "db": -20.599912759593344, "noiseFloor": 0.05728074759790823}
+{"event": "noise_sample", "timestamp": 1768132316.008, "peak": 0.0007540758233517408, "db": -62.4516996606511, "noiseFloor": 0.014624524254656697}
+{"event": "noise_sample", "timestamp": 1768132317.025, "peak": 0.0005846722633577883, "db": -64.66175016896598, "noiseFloor": 0.0045820730385638265}
+{"event": "noise_sample", "timestamp": 1768132318.042, "peak": 0.0005374296451918781, "db": -65.39356762191451, "noiseFloor": 0.0010891566446158045}
+{"event": "noise_sample", "timestamp": 1768132319.058, "peak": 0.001624573371373117, "db": -55.785213392592325, "noiseFloor": 0.0018986240871247198}
+{"event": "noise_sample", "timestamp": 1768132320.075, "peak": 0.0011349042179062963, "db": -58.900815798316934, "noiseFloor": 0.0009957023331950382}
+{"event": "noise_sample", "timestamp": 1768132321.092, "peak": 0.0004917137557640672, "db": -66.16575284176783, "noiseFloor": 0.0009865367095816346}
+{"event": "noise_sample", "timestamp": 1768132322.108, "peak": 0.0009543758351355791, "db": -60.40561131131707, "noiseFloor": 0.001033747267336056}
+{"event": "noise_sample", "timestamp": 1768132323.125, "peak": 0.0005612918175756931, "db": -65.01622577622393, "noiseFloor": 0.0005386110886678229}
+{"event": "noise_sample", "timestamp": 1768132324.142, "peak": 0.0006999109173193574, "db": -63.0991446448174, "noiseFloor": 0.001041765096583216}
+{"event": "noise_sample", "timestamp": 1768132325.158, "peak": 0.0011454931227490306, "db": -58.82015027721952, "noiseFloor": 0.001325120769776499}
+{"event": "noise_sample", "timestamp": 1768132326.175, "peak": 0.0005987948388792574, "db": -64.45443903150685, "noiseFloor": 0.0005850774042702322}
+{"event": "play_user", "timestamp": 1768132326.585, "word": "cat"}
+{"event": "noise_sample", "timestamp": 1768132327.191, "peak": 0.0004828602832276374, "db": -66.32357030427055, "noiseFloor": 0.0004592547365071897}
+{"event": "noise_sample", "timestamp": 1768132328.208, "peak": 0.00039725747774355114, "db": -68.01855838274162, "noiseFloor": 0.000663253561244731}
+{"event": "play_user", "timestamp": 1768132329.087, "word": "cat"}
+{"event": "noise_sample", "timestamp": 1768132329.591, "peak": 0.0002815478073898703, "db": -71.00895700930712, "noiseFloor": 0.0005737924398357678}
+{"event": "noise_sample", "timestamp": 1768132330.608, "peak": 0.0007483781082555652, "db": -62.517578501550204, "noiseFloor": 0.0011831795949923919}
+{"event": "noise_sample", "timestamp": 1768132331.625, "peak": 0.0018983496120199561, "db": -54.43247604271814, "noiseFloor": 0.00432410286250324}
+{"event": "noise_sample", "timestamp": 1768132332.641, "peak": 0.000562954053748399, "db": -64.99054098460032, "noiseFloor": 0.0011966800937114976}
+{"event": "noise_sample", "timestamp": 1768132333.658, "peak": 0.0010282713919878006, "db": -59.757844934686084, "noiseFloor": 0.0021599567605625676}
+{"event": "noise_sample", "timestamp": 1768132334.675, "peak": 0.013756243512034416, "db": -37.23000289864518, "noiseFloor": 0.00813487483266827}
+{"event": "noise_sample", "timestamp": 1768132335.691, "peak": 0.000555108767002821, "db": -65.11243827336345, "noiseFloor": 0.0018699851061273224}
+{"event": "noise_sample", "timestamp": 1768132336.708, "peak": 0.00041109853191301227, "db": -67.72108148279321, "noiseFloor": 0.000672166025060601}
+{"event": "noise_sample", "timestamp": 1768132337.725, "peak": 0.000523669645190239, "db": -65.6188519899271, "noiseFloor": 0.0005377312755823315}
+{"event": "noise_sample", "timestamp": 1768132338.741, "peak": 0.00085215870058164, "db": -61.38959034953423, "noiseFloor": 0.0005790876361317784}
+{"event": "noise_sample", "timestamp": 1768132339.758, "peak": 0.00041746371425688267, "db": -67.58762534410373, "noiseFloor": 0.0009079474040873696}
+{"event": "noise_sample", "timestamp": 1768132452.394, "peak": 0.00042243278585374355, "db": -67.48484765404912, "noiseFloor": 0.0006004903718739784}
+{"event": "noise_sample", "timestamp": 1768132453.405, "peak": 0.0018581633921712637, "db": -54.61832200492687, "noiseFloor": 0.0018579778533941585}
+{"event": "noise_sample", "timestamp": 1768132454.422, "peak": 0.0011603670427575707, "db": -58.70809229424697, "noiseFloor": 0.0014763682252875202}
+{"event": "noise_sample", "timestamp": 1768132455.439, "peak": 0.0014335057931020856, "db": -56.87201095274986, "noiseFloor": 0.0014593865529704464}
+{"event": "noise_sample", "timestamp": 1768132456.455, "peak": 0.0014846405247226357, "db": -56.56757378253427, "noiseFloor": 0.0015118823572390853}
+{"event": "noise_sample", "timestamp": 1768132458.271, "peak": 0.0001902904623420909, "db": -74.41165957382913, "noiseFloor": 0.014259514523117103}
+{"event": "noise_sample", "timestamp": 1768132459.287, "peak": 0.0014313030987977982, "db": -56.88536776929545, "noiseFloor": 0.002553391810834742}
+{"event": "noise_sample", "timestamp": 1768132460.304, "peak": 0.0018889906350523233, "db": -54.47540390302634, "noiseFloor": 0.00153375116929846}
+{"event": "noise_sample", "timestamp": 1768132461.32, "peak": 0.0009784416761249304, "db": -60.18930114139769, "noiseFloor": 0.0015159067887783211}
+{"event": "noise_sample", "timestamp": 1768132462.337, "peak": 0.0009621215867809951, "db": -60.33540082262477, "noiseFloor": 0.0011202935983245857}
+{"event": "noise_sample", "timestamp": 1768132463.354, "peak": 0.002143838908523321, "db": -53.37615702667335, "noiseFloor": 0.0012008425680386792}
+{"event": "noise_sample", "timestamp": 1768132464.361, "peak": 0.0007832922274246812, "db": -62.12152365843215, "noiseFloor": 0.000960871671481773}
+{"event": "noise_sample", "timestamp": 1768132465.37, "peak": 0.0010820950847119093, "db": -59.31469151376944, "noiseFloor": 0.0011060588208960283}
+{"event": "noise_sample", "timestamp": 1768132466.387, "peak": 0.000992159591987729, "db": -60.0683692918969, "noiseFloor": 0.001153258824382867}
+{"event": "noise_sample", "timestamp": 1768132467.404, "peak": 0.0009400024428032339, "db": -60.53742035578079, "noiseFloor": 0.0014050249022200202}
+{"event": "record_start", "timestamp": 1768132467.855, "word": "bird"}
+{"event": "record_stop", "timestamp": 1768132470.371, "size": 39902}
+{"event": "noise_sample", "timestamp": 1768132470.405, "peak": 0.0008265884243883193, "db": -61.6542136181411, "noiseFloor": 0.0011338696978919751}
+{"event": "noise_sample", "timestamp": 1768132471.42, "peak": 0.0007572129834443331, "db": -62.41563896152116, "noiseFloor": 0.0009685552714380661}
+{"event": "play_user", "timestamp": 1768132472.159, "word": "bird"}
+{"event": "noise_sample", "timestamp": 1768132472.437, "peak": 0.0010656609665602446, "db": -59.44761882872902, "noiseFloor": 0.0009945988374193227}
+{"event": "play_user", "timestamp": 1768132472.955, "word": "bird"}
+{"event": "noise_sample", "timestamp": 1768132473.454, "peak": 0.0007677542744204402, "db": -62.29555513945513, "noiseFloor": 0.0010560610908155106}
+{"event": "play_user", "timestamp": 1768132474.189, "word": "bird"}
+{"event": "noise_sample", "timestamp": 1768132474.47, "peak": 0.0009759211679920554, "db": -60.21170523864903, "noiseFloor": 0.0008786136691460187}
+{"event": "play_user", "timestamp": 1768132474.767, "word": "bird"}
+{"event": "noise_sample", "timestamp": 1768132475.487, "peak": 0.0009115873253904283, "db": -60.804034436644656, "noiseFloor": 0.0010725707871839692}
+{"event": "noise_sample", "timestamp": 1768132476.503, "peak": 0.0009840892162173986, "db": -60.139310544492595, "noiseFloor": 0.0012420789533475177}
+{"event": "noise_sample", "timestamp": 1768132477.52, "peak": 0.0010025486117228866, "db": -59.97789120126461, "noiseFloor": 0.0009831947823252495}
+{"event": "noise_sample", "timestamp": 1768132478.537, "peak": 0.0009811829077079892, "db": -60.165000516951814, "noiseFloor": 0.0019112658800975843}
+{"event": "record_start", "timestamp": 1768132478.95, "word": "bike"}
+{"event": "record_stop", "timestamp": 1768132481.552, "size": 41834}
+{"event": "noise_sample", "timestamp": 1768132481.553, "peak": 0.0009932528482750058, "db": -60.058803617556805, "noiseFloor": 0.0015629126870199492}
+{"event": "noise_sample", "timestamp": 1768132482.57, "peak": 0.0011890631867572665, "db": -58.4959013276283, "noiseFloor": 0.001207160242572842}
+{"event": "play_user", "timestamp": 1768132483.071, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132483.586, "peak": 0.0009989700047299266, "db": -60.008951035797594, "noiseFloor": 0.0009177401888360016}
+{"event": "noise_sample", "timestamp": 1768132484.603, "peak": 0.0011340396013110876, "db": -58.90743558733517, "noiseFloor": 0.0011690604919838328}
+{"event": "play_example", "timestamp": 1768132485.223, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132485.87, "peak": 0.0004969668807461858, "db": -66.07345105786632, "noiseFloor": 0.0012046437006775935}
+{"event": "noise_sample", "timestamp": 1768132486.886, "peak": 0.0017095946241170168, "db": -55.34213712993526, "noiseFloor": 0.0010042917730564312}
+{"event": "noise_sample", "timestamp": 1768132487.903, "peak": 0.000942941929679364, "db": -60.5103010423131, "noiseFloor": 0.0009506906982264527}
+{"event": "record_start", "timestamp": 1768132488.514, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132491.12, "peak": 0.00027945981128141284, "db": -71.07361277119736, "noiseFloor": 0.0015410733958538907}
+{"event": "record_stop", "timestamp": 1768132491.122, "size": 41834}
+{"event": "noise_sample", "timestamp": 1768132492.139, "peak": 0.00023898549261502922, "db": -72.43256923362871, "noiseFloor": 0.0003562218671377742}
+{"event": "play_user", "timestamp": 1768132492.784, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132493.386, "peak": 0.00013614186900667846, "db": -77.3201658306567, "noiseFloor": 0.00029203187509763877}
+{"event": "play_user", "timestamp": 1768132494.079, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132494.67, "peak": 0.00013396867143455893, "db": -77.45993498999242, "noiseFloor": 0.0004514448594557309}
+{"event": "noise_sample", "timestamp": 1768132495.686, "peak": 0.0012064643669873476, "db": -58.36971000969648, "noiseFloor": 0.0007357848945878546}
+{"event": "play_user", "timestamp": 1768132495.881, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132496.703, "peak": 0.00013770232908427715, "db": -77.22117428129651, "noiseFloor": 0.0003840642245141565}
+{"event": "noise_sample", "timestamp": 1768132497.719, "peak": 0.0002006996946875006, "db": -73.94906576356715, "noiseFloor": 0.0003589502944389945}
+{"event": "noise_sample", "timestamp": 1768132498.736, "peak": 0.0001467243127990514, "db": -76.66995831760028, "noiseFloor": 0.0002187412144509622}
+{"event": "noise_sample", "timestamp": 1768132499.753, "peak": 0.0002415204799035564, "db": -72.34092074073433, "noiseFloor": 0.00031639441678454037}
+{"event": "noise_sample", "timestamp": 1768132500.769, "peak": 0.000460139533970505, "db": -66.74220903400237, "noiseFloor": 0.0009334125067359276}
+{"event": "noise_sample", "timestamp": 1768132501.786, "peak": 0.00020219401631038636, "db": -73.88463401959201, "noiseFloor": 0.0003855481108056896}
+{"event": "noise_sample", "timestamp": 1768132502.802, "peak": 0.0001899627095554024, "db": -74.42663288871054, "noiseFloor": 0.0002519231296007345}
+{"event": "noise_sample", "timestamp": 1768132503.819, "peak": 0.0004230273771099746, "db": -67.47263050861973, "noiseFloor": 0.00032911141873722506}
+{"event": "noise_sample", "timestamp": 1768132504.836, "peak": 0.00014963203284423798, "db": -76.49950847725245, "noiseFloor": 0.0002743655621498354}
+{"event": "noise_sample", "timestamp": 1768132505.219, "peak": 0.0002189738879678771, "db": -73.19215340982647, "noiseFloor": 0.014260948694398392}
+{"event": "noise_sample", "timestamp": 1768132506.236, "peak": 0.0027916429098695517, "db": -51.08280269656039, "noiseFloor": 0.0020595397226002565}
+{"event": "noise_sample", "timestamp": 1768132507.252, "peak": 0.0008175797993317246, "db": -61.74939695150485, "noiseFloor": 0.000979193985850733}
+{"event": "noise_sample", "timestamp": 1768132508.269, "peak": 0.0009465947514399886, "db": -60.47671815765988, "noiseFloor": 0.0009975957004103766}
+{"event": "noise_sample", "timestamp": 1768132509.286, "peak": 0.0007865668158046901, "db": -62.08528759678912, "noiseFloor": 0.0010203379900478905}
+{"event": "noise_sample", "timestamp": 1768132510.302, "peak": 0.0014377487823367119, "db": -56.84633983088603, "noiseFloor": 0.0008894454695525247}
+{"event": "noise_sample", "timestamp": 1768132511.319, "peak": 0.0009265876142308116, "db": -60.66227018684816, "noiseFloor": 0.0010987038379202858}
+{"event": "noise_sample", "timestamp": 1768132512.336, "peak": 0.0008868674631230533, "db": -61.042825559060816, "noiseFloor": 0.000978301966514095}
+{"event": "noise_sample", "timestamp": 1768132513.352, "peak": 0.0008484101272188127, "db": -61.427883121615, "noiseFloor": 0.001292417687526205}
+{"event": "noise_sample", "timestamp": 1768132514.369, "peak": 0.0009618743788450956, "db": -60.337632865621806, "noiseFloor": 0.0011166011085204561}
+{"event": "noise_sample", "timestamp": 1768132515.385, "peak": 0.0007905812817625701, "db": -62.04106944932876, "noiseFloor": 0.0010423987268594022}
+{"event": "noise_sample", "timestamp": 1768132516.402, "peak": 0.0008690165122970939, "db": -61.219439427726776, "noiseFloor": 0.0010120096771045724}
+{"event": "noise_sample", "timestamp": 1768132517.419, "peak": 0.0007177974912337959, "db": -62.87996127796092, "noiseFloor": 0.0008945372970011799}
+{"event": "noise_sample", "timestamp": 1768132518.435, "peak": 0.0006734536145813763, "db": -63.433846235645255, "noiseFloor": 0.001053770190864656}
+{"event": "noise_sample", "timestamp": 1768132519.452, "peak": 0.0007387956138700247, "db": -62.62951383143884, "noiseFloor": 0.001540918073654169}
+{"event": "noise_sample", "timestamp": 1768132520.469, "peak": 0.0006020155269652605, "db": -64.40784614865173, "noiseFloor": 0.0009378205121567146}
+{"event": "noise_sample", "timestamp": 1768132521.485, "peak": 0.0007933637243695557, "db": -62.01055322032528, "noiseFloor": 0.0010704930112271445}
+{"event": "noise_sample", "timestamp": 1768132522.502, "peak": 0.0007471908465959132, "db": -62.5313691407315, "noiseFloor": 0.0009017158063409598}
+{"event": "noise_sample", "timestamp": 1768132523.519, "peak": 0.0011013734620064497, "db": -59.16130784423857, "noiseFloor": 0.0012311080384250894}
+{"event": "noise_sample", "timestamp": 1768132524.535, "peak": 0.0010665649315342307, "db": -59.440253998878525, "noiseFloor": 0.0012413178610816756}
+{"event": "noise_sample", "timestamp": 1768132525.552, "peak": 0.0007358216680586338, "db": -62.66454854918612, "noiseFloor": 0.0009207813359425796}
+{"event": "noise_sample", "timestamp": 1768132526.568, "peak": 0.000705933547578752, "db": -63.02472357891197, "noiseFloor": 0.000872659413081485}
+{"event": "noise_sample", "timestamp": 1768132527.585, "peak": 0.0006768658058717847, "db": -63.389948503585856, "noiseFloor": 0.0008174070011680646}
+{"event": "noise_sample", "timestamp": 1768132528.602, "peak": 0.0008599733700975776, "db": -61.310299937889994, "noiseFloor": 0.0008724979214609645}
+{"event": "noise_sample", "timestamp": 1768132529.618, "peak": 0.0010255598463118076, "db": -59.78077982800653, "noiseFloor": 0.00120308329714689}
+{"event": "noise_sample", "timestamp": 1768132530.635, "peak": 0.0008956948295235634, "db": -60.95679865562068, "noiseFloor": 0.0010206272838532463}
+{"event": "noise_sample", "timestamp": 1768132531.651, "peak": 0.007308206055313349, "db": -42.72378432375187, "noiseFloor": 0.00956330851533984}
+{"event": "noise_sample", "timestamp": 1768132532.668, "peak": 0.0020837218035012484, "db": -53.62320527817181, "noiseFloor": 0.002613672642252048}
+{"event": "noise_sample", "timestamp": 1768132533.685, "peak": 0.0009016101248562336, "db": -60.899624398322786, "noiseFloor": 0.0015085276429145872}
+{"event": "noise_sample", "timestamp": 1768132534.701, "peak": 0.0006978369783610106, "db": -63.12492042052591, "noiseFloor": 0.00103012766223332}
+{"event": "noise_sample", "timestamp": 1768132535.718, "peak": 0.0008935170480981469, "db": -60.977943136824955, "noiseFloor": 0.0012132179755148477}
+{"event": "noise_sample", "timestamp": 1768132536.735, "peak": 0.002005802933126688, "db": -53.95423475891225, "noiseFloor": 0.0021741363167717834}
+{"event": "noise_sample", "timestamp": 1768132537.751, "peak": 0.0009494853438809514, "db": -60.45023469164625, "noiseFloor": 0.0027163239066370355}
+{"event": "play_example", "timestamp": 1768132538.558, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132539.202, "peak": 0.000523702590726316, "db": -65.61830555327217, "noiseFloor": 0.0028413277153482874}
+{"event": "noise_sample", "timestamp": 1768132540.218, "peak": 0.0011921223485842347, "db": -58.473583405535685, "noiseFloor": 0.0014349657638517929}
+{"event": "noise_sample", "timestamp": 1768132541.235, "peak": 0.000865447917021811, "db": -61.25518126011919, "noiseFloor": 0.0010819804637244325}
+{"event": "record_start", "timestamp": 1768132541.56, "word": "bike"}
+{"event": "record_stop", "timestamp": 1768132544.264, "size": 43766}
+{"event": "noise_sample", "timestamp": 1768132544.268, "peak": 0.00038836634485051036, "db": -68.21516824670196, "noiseFloor": 0.0015588568751793222}
+{"event": "noise_sample", "timestamp": 1768132545.284, "peak": 0.00040737263043411076, "db": -67.80016305363549, "noiseFloor": 0.0003977116678029491}
+{"event": "noise_sample", "timestamp": 1768132546.301, "peak": 0.00040203015669249, "db": -67.91482737642387, "noiseFloor": 0.0003765222614230328}
+{"event": "noise_sample", "timestamp": 1768132547.318, "peak": 0.0006315845530480146, "db": -63.99137000544857, "noiseFloor": 0.0005653389275646518}
+{"event": "noise_sample", "timestamp": 1768132548.334, "peak": 0.0003940794267691672, "db": -68.0883247446492, "noiseFloor": 0.0003804607631247378}
+{"event": "noise_sample", "timestamp": 1768132549.351, "peak": 0.0005411063320934772, "db": -65.33434767739473, "noiseFloor": 0.0006782548040362105}
+{"event": "noise_sample", "timestamp": 1768132550.368, "peak": 0.0004089422873221338, "db": -67.76675956435541, "noiseFloor": 0.0005813147698115426}
+{"event": "noise_sample", "timestamp": 1768132551.384, "peak": 0.0002592403907328844, "db": -71.72594665280175, "noiseFloor": 0.0003962004177121962}
+{"event": "noise_sample", "timestamp": 1768132552.401, "peak": 0.00038356674485839903, "db": -68.32318106186042, "noiseFloor": 0.0005704918436155372}
+{"event": "record_start", "timestamp": 1768132552.847, "word": "bike"}
+{"event": "record_stop", "timestamp": 1768132555.452, "size": 41834}
+{"event": "noise_sample", "timestamp": 1768132555.468, "peak": 0.00044444421655498445, "db": -67.04365481592946, "noiseFloor": 0.0005194024040134286}
+{"event": "noise_sample", "timestamp": 1768132556.484, "peak": 0.00027002362185157835, "db": -71.3719648360014, "noiseFloor": 0.00045154542507372457}
+{"event": "play_user", "timestamp": 1768132557.083, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132557.501, "peak": 0.00032389964326284826, "db": -69.7917906062714, "noiseFloor": 0.00047901187486407035}
+{"event": "play_user", "timestamp": 1768132557.809, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132558.517, "peak": 0.001133618876338005, "db": -58.91065862181071, "noiseFloor": 0.0005855880373259799}
+{"event": "play_user", "timestamp": 1768132558.675, "word": "bike"}
+{"event": "play_user", "timestamp": 1768132559.419, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132559.567, "peak": 0.0012057354906573892, "db": -58.37495911004314, "noiseFloor": 0.0005634298063623657}
+{"event": "play_user", "timestamp": 1768132559.953, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132560.584, "peak": 0.00027530777151696384, "db": -71.20363057930408, "noiseFloor": 0.0004504075004457998}
+{"event": "noise_sample", "timestamp": 1768132561.601, "peak": 0.0004197795351501554, "db": -67.539574754234, "noiseFloor": 0.00033722156084093106}
+{"event": "noise_sample", "timestamp": 1768132562.617, "peak": 0.0002776003675535321, "db": -71.13159926388506, "noiseFloor": 0.0003337839230818968}
+{"event": "noise_sample", "timestamp": 1768132563.634, "peak": 0.0002635213022585958, "db": -71.58368543981271, "noiseFloor": 0.0003201955348424578}
+{"event": "noise_sample", "timestamp": 1768132564.65, "peak": 0.00021897591068409383, "db": -73.19207317647607, "noiseFloor": 0.00031869637036466975}
+{"event": "noise_sample", "timestamp": 1768132565.667, "peak": 0.0002620480372570455, "db": -71.6323817764021, "noiseFloor": 0.00036001475165448705}
+{"event": "noise_sample", "timestamp": 1768132662.514, "peak": 0.00018852711946237832, "db": -74.49252336160865, "noiseFloor": 0.00030984884327259503}
+{"event": "noise_sample", "timestamp": 1768132663.531, "peak": 0.004879385698586702, "db": -46.232697021041034, "noiseFloor": 0.0022734858526365187}
+{"event": "noise_sample", "timestamp": 1768132664.314, "peak": 0, "db": -80, "noiseFloor": 0.014249999999999999}
+{"event": "noise_sample", "timestamp": 1768132665.331, "peak": 0.0010530417785048485, "db": -59.551087964434885, "noiseFloor": 0.004005533645013719}
+{"event": "noise_sample", "timestamp": 1768132666.347, "peak": 0.002915839897468686, "db": -50.70472651760781, "noiseFloor": 0.001963101300241405}
+{"event": "noise_sample", "timestamp": 1768132667.353, "peak": 0.0014348558615893126, "db": -56.86383447560957, "noiseFloor": 0.0015062204044232687}
+{"event": "noise_sample", "timestamp": 1768132668.364, "peak": 0.0018380031688138843, "db": -54.71307488405585, "noiseFloor": 0.0014894694061801997}
+{"event": "noise_sample", "timestamp": 1768132669.381, "peak": 0.0014880148228257895, "db": -56.54785485107992, "noiseFloor": 0.0015716579337439153}
+{"event": "noise_sample", "timestamp": 1768132670.397, "peak": 0.0008924877038225532, "db": -60.987955172635836, "noiseFloor": 0.0014485590913062463}
+{"event": "noise_sample", "timestamp": 1768132671.414, "peak": 0.0011432243045419455, "db": -58.83737102345562, "noiseFloor": 0.0012029767730512048}
+{"event": "play_example", "timestamp": 1768132671.646, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132672.43, "peak": 0.0007084680255502462, "db": -62.993594909472066, "noiseFloor": 0.001211269664804642}
+{"event": "noise_sample", "timestamp": 1768132673.447, "peak": 0.0012797332601621747, "db": -57.85761085253803, "noiseFloor": 0.0012784166584652358}
+{"event": "record_start", "timestamp": 1768132673.702, "word": "cup"}
+{"event": "record_stop", "timestamp": 1768132676.504, "size": 44732}
+{"event": "noise_sample", "timestamp": 1768132676.52, "peak": 0.00032626738538965583, "db": -69.72852674693526, "noiseFloor": 0.0011894585739845183}
+{"event": "noise_sample", "timestamp": 1768132677.53, "peak": 0.0001587406877661124, "db": -75.98623484770098, "noiseFloor": 0.00032439422476184616}
+{"event": "noise_sample", "timestamp": 1768132678.547, "peak": 0.0001634003419894725, "db": -75.73494077688169, "noiseFloor": 0.0014447391660531717}
+{"event": "play_user", "timestamp": 1768132679.363, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132679.88, "peak": 9.935749403666705e-05, "db": -80.05598741335231, "noiseFloor": 0.00032731766721513274}
+{"event": "noise_sample", "timestamp": 1768132680.897, "peak": 0.0005152652156539261, "db": -65.75938349502272, "noiseFloor": 0.0003542080301994742}
+{"event": "noise_sample", "timestamp": 1768132681.913, "peak": 0.00018795269716065377, "db": -74.51902875376963, "noiseFloor": 0.0002530299504045289}
+{"event": "noise_sample", "timestamp": 1768132682.93, "peak": 0.000359332247171551, "db": -68.89007613237597, "noiseFloor": 0.0002717400112722295}
+{"event": "record_start", "timestamp": 1768132683.432, "word": "cup"}
+{"event": "record_stop", "timestamp": 1768132686.747, "size": 53426}
+{"event": "noise_sample", "timestamp": 1768132686.766, "peak": 0.0002444111742079258, "db": -72.23757885026679, "noiseFloor": 0.0003540625434985791}
+{"event": "noise_sample", "timestamp": 1768132687.78, "peak": 0.0003753288765437901, "db": -68.51176042283967, "noiseFloor": 0.0003076523829113906}
+{"event": "play_user", "timestamp": 1768132688.166, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132688.796, "peak": 0.00019644838175736368, "db": -74.13503088672454, "noiseFloor": 0.0002485768093599513}
+{"event": "noise_sample", "timestamp": 1768132689.813, "peak": 0.0002136545954272151, "db": -73.40575523295084, "noiseFloor": 0.000204739906147653}
+{"event": "record_start", "timestamp": 1768132690.082, "word": "cup"}
+{"event": "record_stop", "timestamp": 1768132692.695, "size": 41834}
+{"event": "noise_sample", "timestamp": 1768132692.696, "peak": 0.00017127240425907075, "db": -75.32625211529049, "noiseFloor": 0.0001905621764580735}
+{"event": "noise_sample", "timestamp": 1768132693.713, "peak": 0.00021064434258732945, "db": -73.52900401022036, "noiseFloor": 0.00016990732287117246}
+{"event": "play_user", "timestamp": 1768132693.898, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132694.73, "peak": 0.00032893253955990076, "db": -69.65786323862932, "noiseFloor": 0.00025495424706577176}
+{"event": "record_start", "timestamp": 1768132695.604, "word": "cup"}
+{"event": "record_stop", "timestamp": 1768132698.512, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768132698.513, "peak": 0.00017304730135947466, "db": -75.2367033811766, "noiseFloor": 0.00024656402951051296}
+{"event": "noise_sample", "timestamp": 1768132699.53, "peak": 0.0001763891486916691, "db": -75.0705627160892, "noiseFloor": 0.0002515871519637522}
+{"event": "play_user", "timestamp": 1768132700.032, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132700.546, "peak": 0.0001591482141520828, "db": -75.96396460718032, "noiseFloor": 0.00018348553572707438}
+{"event": "noise_sample", "timestamp": 1768132701.563, "peak": 0.0002402234822511673, "db": -72.38769083677698, "noiseFloor": 0.0003180958616803347}
+{"event": "noise_sample", "timestamp": 1768132702.579, "peak": 0.0005082816351205111, "db": -65.87791163281622, "noiseFloor": 0.00038720546840152883}
+{"event": "noise_sample", "timestamp": 1768132703.596, "peak": 0.0004987773718312383, "db": -66.0418651500505, "noiseFloor": 0.00037859019391121493}
+{"event": "noise_sample", "timestamp": 1768132704.613, "peak": 0.000763422402087599, "db": -62.34470200274288, "noiseFloor": 0.00036122583120034397}
+{"event": "noise_sample", "timestamp": 1768132705.629, "peak": 0.00027190640685148537, "db": -71.31161118275054, "noiseFloor": 0.0002924630279132025}
+{"event": "noise_sample", "timestamp": 1768132706.646, "peak": 0.00022577840718440711, "db": -72.92635190270039, "noiseFloor": 0.00032998629040558087}
+{"event": "noise_sample", "timestamp": 1768132707.662, "peak": 0.00016604270786046982, "db": -75.59560385334441, "noiseFloor": 0.000222169783145388}
+{"event": "noise_sample", "timestamp": 1768132708.679, "peak": 0.000244360911892727, "db": -72.23936525721074, "noiseFloor": 0.00034411955511229623}
+{"event": "noise_sample", "timestamp": 1768132709.696, "peak": 0.00015316501958295703, "db": -76.29680818450505, "noiseFloor": 0.00024410047924053126}
+{"event": "noise_sample", "timestamp": 1768132710.712, "peak": 0.000222478891373612, "db": -73.05422376510757, "noiseFloor": 0.00020896694780480807}
+{"event": "noise_sample", "timestamp": 1768132711.729, "peak": 0.00015020975843071938, "db": -76.46603704637764, "noiseFloor": 0.00015081918951831096}
+{"event": "noise_sample", "timestamp": 1768132712.746, "peak": 0.00017086876323446631, "db": -75.34674648049857, "noiseFloor": 0.00017871866653313773}
+{"event": "noise_sample", "timestamp": 1768132713.762, "peak": 0.00018428305338602513, "db": -74.6902920106841, "noiseFloor": 0.00017624729324598553}
+{"event": "noise_sample", "timestamp": 1768132714.779, "peak": 0.0005172050441615283, "db": -65.72674496427699, "noiseFloor": 0.001040115028973406}
+{"event": "noise_sample", "timestamp": 1768132715.795, "peak": 0.00014840633957646787, "db": -76.57095093204676, "noiseFloor": 0.0002706100410418552}
+{"event": "noise_sample", "timestamp": 1768132716.812, "peak": 0.00016605661949142814, "db": -75.59487615002611, "noiseFloor": 0.00017854533557305129}
+{"event": "noise_sample", "timestamp": 1768132717.829, "peak": 0.00015906980843283236, "db": -75.96824483890731, "noiseFloor": 0.00017743263127319172}
+{"event": "noise_sample", "timestamp": 1768132718.846, "peak": 0.00016005226643756032, "db": -75.91476343203935, "noiseFloor": 0.00022684384169208708}
+{"event": "noise_sample", "timestamp": 1768132719.862, "peak": 0.00020125843002460897, "db": -73.92491838948827, "noiseFloor": 0.00033369507798046845}
+{"event": "record_start", "timestamp": 1768132720.648, "word": "cup"}
+{"event": "record_stop", "timestamp": 1768132723.352, "size": 43766}
+{"event": "noise_sample", "timestamp": 1768132723.368, "peak": 0.0002106083557009697, "db": -73.53048805115526, "noiseFloor": 0.000265411918507879}
+{"event": "noise_sample", "timestamp": 1768132724.379, "peak": 0.00016843629418872297, "db": -75.47128644347917, "noiseFloor": 0.0001620872235165164}
+{"event": "play_user", "timestamp": 1768132724.848, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132725.395, "peak": 0.00026129698380827904, "db": -71.65731206744974, "noiseFloor": 0.00015243089237303262}
+{"event": "noise_sample", "timestamp": 1768132726.412, "peak": 0.00012579784379340708, "db": -78.00653605486593, "noiseFloor": 0.0002739569158321447}
+{"event": "play_user", "timestamp": 1768132726.704, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132727.429, "peak": 0.00021956762066110969, "db": -73.1686340863534, "noiseFloor": 0.00017684155126394607}
+{"event": "noise_sample", "timestamp": 1768132728.445, "peak": 0.00026774482103064656, "db": -71.44557841885323, "noiseFloor": 0.0002004032643851454}
+{"event": "noise_sample", "timestamp": 1768132729.462, "peak": 0.00023504247656092048, "db": -72.57707291039262, "noiseFloor": 0.00029718500819308905}
+{"event": "noise_sample", "timestamp": 1768132730.468, "peak": 0.00015257314953487366, "db": -76.33043777255821, "noiseFloor": 0.0002106289739446643}
+{"event": "noise_sample", "timestamp": 1768132731.478, "peak": 0.00020384415984153748, "db": -73.81403453240198, "noiseFloor": 0.0002682396427721068}
+{"event": "noise_sample", "timestamp": 1768132732.495, "peak": 0.00017165258759632707, "db": -75.30699290735292, "noiseFloor": 0.0002081325853314294}
+{"event": "noise_sample", "timestamp": 1768132733.512, "peak": 0.00018021749565377831, "db": -74.88406099332575, "noiseFloor": 0.00023819638243443702}
+{"event": "noise_sample", "timestamp": 1768132734.528, "peak": 0.00017761896015144885, "db": -75.01021353582797, "noiseFloor": 0.00024884331662781295}
+{"event": "noise_sample", "timestamp": 1768132735.545, "peak": 0.00042565204785205424, "db": -67.41890545669932, "noiseFloor": 0.00031233533867198093}
+{"event": "noise_sample", "timestamp": 1768132736.562, "peak": 0.00016440289618913084, "db": -75.68181072036231, "noiseFloor": 0.0001727647566105728}
+{"event": "play_example", "timestamp": 1768132737.012, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768132738.045, "peak": 8.441924001090229e-05, "db": -81.47117123850478, "noiseFloor": 0.00015959525317308946}
+{"event": "record_start", "timestamp": 1768132738.831, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768132742.046, "peak": 0.00041071439045481384, "db": -67.72920160469324, "noiseFloor": 0.00018828828791994122}
+{"event": "record_stop", "timestamp": 1768132742.047, "size": 51494}
+{"event": "noise_sample", "timestamp": 1768132743.062, "peak": 0.00023378024343401194, "db": -72.62384386948281, "noiseFloor": 0.0003177647460102934}
+{"event": "play_user", "timestamp": 1768132743.347, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768132744.378, "peak": 0.00020904775010421872, "db": -73.59509004446036, "noiseFloor": 0.0003764936792355511}
+{"event": "play_user", "timestamp": 1768132745.29, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768132746.311, "peak": 0.00018831199849955738, "db": -74.50244015132503, "noiseFloor": 0.0003022770336888805}
+{"event": "noise_sample", "timestamp": 1768132747.328, "peak": 0.00045515308738686144, "db": -66.83685014047367, "noiseFloor": 0.00032167997721068196}
+{"event": "noise_sample", "timestamp": 1768132748.345, "peak": 0.00029416955658234656, "db": -70.62804548277556, "noiseFloor": 0.00037594990112710256}
+{"event": "noise_sample", "timestamp": 1768132749.361, "peak": 0.0007811899995431304, "db": -62.14486649997845, "noiseFloor": 0.0004905761296030513}
+{"event": "noise_sample", "timestamp": 1768132750.378, "peak": 0.0003069683152716607, "db": -70.25812898640554, "noiseFloor": 0.0004973467313591779}
+{"event": "play_example", "timestamp": 1768132750.609, "word": "red"}
+{"event": "noise_sample", "timestamp": 1768132751.379, "peak": 0.00017324453801847994, "db": -75.22680897511128, "noiseFloor": 0.000553436586180893}
+{"event": "noise_sample", "timestamp": 1768132752.394, "peak": 0.00040998688200488687, "db": -67.7446007760459, "noiseFloor": 0.0006948745971160623}
+{"event": "record_start", "timestamp": 1768132752.692, "word": "red"}
+{"event": "record_stop", "timestamp": 1768132755.595, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768132755.612, "peak": 0.0004471500578802079, "db": -66.99093417391067, "noiseFloor": 0.000595778463881824}
+{"event": "noise_sample", "timestamp": 1768132756.628, "peak": 0.0004063163651153445, "db": -67.82271370674971, "noiseFloor": 0.00036631020518459616}
+{"event": "play_user", "timestamp": 1768132756.7, "word": "red"}
+{"event": "noise_sample", "timestamp": 1768132757.644, "peak": 0.00021076443954370916, "db": -73.52405324041462, "noiseFloor": 0.00032892667895605593}
+{"event": "noise_sample", "timestamp": 1768132758.661, "peak": 0.001171648153103888, "db": -58.62405575453123, "noiseFloor": 0.0006511997687400336}
+{"event": "play_user", "timestamp": 1768132759.351, "word": "red"}
+{"event": "noise_sample", "timestamp": 1768132760.161, "peak": 0.00021237910550553352, "db": -73.4577642536961, "noiseFloor": 0.0008546573139405838}
+{"event": "noise_sample", "timestamp": 1768132761.177, "peak": 0.00035025650868192315, "db": -69.11227571279922, "noiseFloor": 0.0005453388024477004}
+{"event": "noise_sample", "timestamp": 1768132762.194, "peak": 0.0004934094031341374, "db": -66.13585156428053, "noiseFloor": 0.00037734697260637947}
+{"event": "noise_sample", "timestamp": 1768132763.211, "peak": 0.0004355546261649579, "db": -67.21914738239137, "noiseFloor": 0.0004351961563978576}
+{"event": "noise_sample", "timestamp": 1768132764.217, "peak": 0.0003180626081302762, "db": -69.94974768275031, "noiseFloor": 0.00044902553008091935}
+{"event": "noise_sample", "timestamp": 1768132765.227, "peak": 0.0005414796760305762, "db": -65.3283567919798, "noiseFloor": 0.0006419621208326325}
+{"event": "noise_sample", "timestamp": 1768132766.245, "peak": 0.00042669998947530985, "db": -67.39754735705397, "noiseFloor": 0.0006681174200460318}
+{"event": "noise_sample", "timestamp": 1768132767.261, "peak": 0.000577560334932059, "db": -64.76805280847897, "noiseFloor": 0.0005482603086501395}
+{"event": "noise_sample", "timestamp": 1768132768.277, "peak": 0.0005501944106072187, "db": -65.18967651792242, "noiseFloor": 0.0006630676503800879}
+{"event": "play_example", "timestamp": 1768132768.521, "word": "wait"}
+{"event": "noise_sample", "timestamp": 1768132769.294, "peak": 0.00040412836824543774, "db": -67.86961325395177, "noiseFloor": 0.000491892223896678}
+{"event": "record_start", "timestamp": 1768132770.212, "word": "wait"}
+{"event": "record_stop", "timestamp": 1768132772.721, "size": 39902}
+{"event": "noise_sample", "timestamp": 1768132772.734, "peak": 0.0004790847597178072, "db": -66.39175288739705, "noiseFloor": 0.00040330675755492464}
+{"event": "noise_sample", "timestamp": 1768132773.745, "peak": 0.00046940933680161834, "db": -66.5689655260611, "noiseFloor": 0.00036309753217520695}
+{"event": "play_user", "timestamp": 1768132774.306, "word": "wait"}
+{"event": "noise_sample", "timestamp": 1768132774.977, "peak": 0.0002156879345420748, "db": -73.32348296798675, "noiseFloor": 0.00038370384669702304}
+{"event": "noise_sample", "timestamp": 1768132775.994, "peak": 0.0002795053005684167, "db": -71.07219903384909, "noiseFloor": 0.0010574990544271736}
+{"event": "noise_sample", "timestamp": 1768132777.01, "peak": 0.0002962700091302395, "db": -70.56624618258014, "noiseFloor": 0.00039067130837839507}
+{"event": "noise_sample", "timestamp": 1768132778.027, "peak": 0.00035126006696373224, "db": -69.0874244042769, "noiseFloor": 0.0003418120315800353}
+{"event": "noise_sample", "timestamp": 1768132779.033, "peak": 0.00038012131699360907, "db": -68.40155549438346, "noiseFloor": 0.0004884650513437902}
+{"event": "noise_sample", "timestamp": 1768132780.051, "peak": 0.00042701794882304966, "db": -67.39107739828268, "noiseFloor": 0.0006281141209214094}
+{"event": "noise_sample", "timestamp": 1768132781.06, "peak": 0.0007346969796344638, "db": -62.67783491104175, "noiseFloor": 0.0004973785787511919}
+{"event": "noise_sample", "timestamp": 1768132782.077, "peak": 0.00048212186084128916, "db": -66.33686351730131, "noiseFloor": 0.0005250860046853385}
+{"event": "play_example", "timestamp": 1768132782.61, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132783.244, "peak": 0.00018118898151442409, "db": -74.83736432446256, "noiseFloor": 0.0004371514857203256}
+{"event": "record_start", "timestamp": 1768132784.115, "word": "bike"}
+{"event": "record_stop", "timestamp": 1768132786.719, "size": 41834}
+{"event": "noise_sample", "timestamp": 1768132786.733, "peak": 0.0007633107015863061, "db": -62.345972975679985, "noiseFloor": 0.0005424555725445096}
+{"event": "noise_sample", "timestamp": 1768132787.743, "peak": 0.0003785196167882532, "db": -68.43823216517373, "noiseFloor": 0.00040502502244361}
+{"event": "play_user", "timestamp": 1768132788.543, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132789.06, "peak": 0.0002949328627437353, "db": -70.6055366742198, "noiseFloor": 0.0005180369784924918}
+{"event": "play_user", "timestamp": 1768132789.802, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132790.327, "peak": 0.00021798360103275627, "db": -73.23152354523546, "noiseFloor": 0.0005408353335461027}
+{"event": "play_user", "timestamp": 1768132791.282, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768132791.793, "peak": 0.0001964563416549936, "db": -74.13467895004251, "noiseFloor": 0.0003885306948679138}
+{"event": "noise_sample", "timestamp": 1768132792.81, "peak": 0.0004071425355505198, "db": -67.80507046089268, "noiseFloor": 0.00033505005179528305}
+{"event": "noise_sample", "timestamp": 1768132793.826, "peak": 0.0004719326680060476, "db": -66.52239917983282, "noiseFloor": 0.000747177291455382}
+{"event": "noise_sample", "timestamp": 1768132794.843, "peak": 0.0003058870497625321, "db": -70.28877818411978, "noiseFloor": 0.0003899161464945876}
+{"event": "noise_sample", "timestamp": 1768132795.86, "peak": 0.00038100400706753135, "db": -68.38140913540278, "noiseFloor": 0.000564382792499372}
+{"event": "noise_sample", "timestamp": 1768132796.876, "peak": 0.0006838968838565052, "db": -63.30018750209062, "noiseFloor": 0.00090763756950806}
+{"event": "noise_sample", "timestamp": 1768132797.893, "peak": 0.0002592146920505911, "db": -71.72680773383208, "noiseFloor": 0.0005917110010904831}
+{"event": "play_example", "timestamp": 1768132798.868, "word": "bird"}
+{"event": "noise_sample", "timestamp": 1768132798.907, "peak": 0.00031461199978366494, "db": -70.04449433479867, "noiseFloor": 0.0004299655053490539}
+{"event": "noise_sample", "timestamp": 1768132799.91, "peak": 0.000369164947187528, "db": -68.65559085312537, "noiseFloor": 0.0006590069166855209}
+{"event": "noise_sample", "timestamp": 1768132800.926, "peak": 0.00047513662138953805, "db": -66.46362989658503, "noiseFloor": 0.00042484350283718064}
+{"event": "record_start", "timestamp": 1768132800.986, "word": "bird"}
+{"event": "record_stop", "timestamp": 1768132803.594, "size": 41834}
+{"event": "noise_sample", "timestamp": 1768132803.611, "peak": 0.00045390220475383103, "db": -66.86075415478842, "noiseFloor": 0.00043104044887205876}
+{"event": "noise_sample", "timestamp": 1768132804.626, "peak": 0.0003844335733447224, "db": -68.30357383101408, "noiseFloor": 0.0003869573530236302}
+{"event": "play_user", "timestamp": 1768132804.836, "word": "bird"}
+{"event": "noise_sample", "timestamp": 1768132805.643, "peak": 0.000249022850766778, "db": -72.07521598928325, "noiseFloor": 0.00042989159509622594}
+{"event": "play_user", "timestamp": 1768132806.49, "word": "bird"}
+{"event": "noise_sample", "timestamp": 1768132807.276, "peak": 0.00032805927912704647, "db": -69.68095347505604, "noiseFloor": 0.0005835434659164688}
+{"event": "noise_sample", "timestamp": 1768132808.293, "peak": 0.0011466577416285872, "db": -58.811323849530204, "noiseFloor": 0.0006066541547259718}
+{"event": "noise_sample", "timestamp": 1768132809.309, "peak": 0.03540733829140663, "db": -29.018134392712767, "noiseFloor": 0.11459647037541601}
+{"event": "noise_sample", "timestamp": 1768132810.326, "peak": 0.0004595070204231888, "db": -66.75415698010536, "noiseFloor": 0.006274897218723695}
+{"event": "noise_sample", "timestamp": 1768132811.342, "peak": 0.00037818841519765556, "db": -68.44583557501208, "noiseFloor": 0.0006214246281210254}
+{"event": "noise_sample", "timestamp": 1768132812.359, "peak": 0.0006167465471662581, "db": -64.19786546427449, "noiseFloor": 0.0006732712286615636}
+{"event": "noise_sample", "timestamp": 1768132813.376, "peak": 0.0004288855998311192, "db": -67.3531707058491, "noiseFloor": 0.0004267111965897029}
+{"event": "noise_sample", "timestamp": 1768132814.392, "peak": 0.0014837192138656974, "db": -56.57296558500258, "noiseFloor": 0.0005921924767368852}
+{"event": "noise_sample", "timestamp": 1768132815.409, "peak": 0.001300385338254273, "db": -57.718558715710785, "noiseFloor": 0.0007401164439023998}
+{"event": "noise_sample", "timestamp": 1768132816.426, "peak": 0.00043549531255848706, "db": -67.22033030295134, "noiseFloor": 0.0006743826437328355}
+{"event": "noise_sample", "timestamp": 1768132817.443, "peak": 0.0003630048013292253, "db": -68.80175261349272, "noiseFloor": 0.0005273927489097794}
+{"event": "noise_sample", "timestamp": 1768132818.448, "peak": 0.00039967853808775544, "db": -67.96578343661467, "noiseFloor": 0.0006828943479214195}
+{"event": "noise_sample", "timestamp": 1768132819.459, "peak": 0.000825906521640718, "db": -61.661382090710376, "noiseFloor": 0.0007311014686039224}
+{"event": "play_example", "timestamp": 1768132820.324, "word": "cake"}
+{"event": "noise_sample", "timestamp": 1768132821.015, "peak": 0.0002190099039580673, "db": -73.19072490529061, "noiseFloor": 0.0005007011982872156}
+{"event": "noise_sample", "timestamp": 1768132822.026, "peak": 0.000704251229763031, "db": -63.0454477195358, "noiseFloor": 0.00046190628517580945}
+{"event": "record_start", "timestamp": 1768132822.18, "word": "cake"}
+{"event": "record_stop", "timestamp": 1768132824.883, "size": 43766}
+{"event": "noise_sample", "timestamp": 1768132824.897, "peak": 0.0008552091312594712, "db": -61.35855341430105, "noiseFloor": 0.0005135412925561078}
+{"event": "noise_sample", "timestamp": 1768132825.909, "peak": 0.0009018645505420864, "db": -60.897173669767284, "noiseFloor": 0.0006765526198349773}
+{"event": "play_user", "timestamp": 1768132826.161, "word": "cake"}
+{"event": "noise_sample", "timestamp": 1768132826.925, "peak": 0.0009580722544342279, "db": -60.37203473452984, "noiseFloor": 0.0007709261860219099}
+{"event": "play_user", "timestamp": 1768132827.299, "word": "cake"}
+{"event": "noise_sample", "timestamp": 1768132827.942, "peak": 0.0007802310865372419, "db": -62.155535004026476, "noiseFloor": 0.0007049954706520381}
+{"event": "noise_sample", "timestamp": 1768132828.958, "peak": 0.0005675379070453346, "db": -64.92010251456256, "noiseFloor": 0.0007090640343545234}
+{"event": "record_start", "timestamp": 1768132828.987, "word": "cake"}
+{"event": "record_stop", "timestamp": 1768132831.893, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768132831.909, "peak": 0.001948147197254002, "db": -54.20756463970227, "noiseFloor": 0.0007639119881114583}
+{"event": "noise_sample", "timestamp": 1768132832.925, "peak": 0.0010056919418275356, "db": -59.95070059341338, "noiseFloor": 0.0011012735037927122}
+{"event": "play_user", "timestamp": 1768132833.074, "word": "cake"}
+{"event": "noise_sample", "timestamp": 1768132833.942, "peak": 0.001667068456299603, "db": -55.56093131978372, "noiseFloor": 0.0010687817549725862}
+{"event": "noise_sample", "timestamp": 1768132834.959, "peak": 0.0010201619006693363, "db": -59.8266179963758, "noiseFloor": 0.0009345437958240669}
+{"event": "noise_sample", "timestamp": 1768132835.975, "peak": 0.000491895480081439, "db": -66.16254336116174, "noiseFloor": 0.000801990257305014}
+{"event": "play_user", "timestamp": 1768132836.084, "word": "cake"}
+{"event": "noise_sample", "timestamp": 1768132836.992, "peak": 0.00400704937055707, "db": -47.94350613248693, "noiseFloor": 0.0013355997402559813}
+{"event": "noise_sample", "timestamp": 1768132837.998, "peak": 0.001417411956936121, "db": -56.970078159167834, "noiseFloor": 0.0014004724757621322}
+{"event": "noise_sample", "timestamp": 1768132839.014, "peak": 0.0005961731658317149, "db": -64.49255151519506, "noiseFloor": 0.0013478442869898888}
+{"event": "noise_sample", "timestamp": 1768132840.025, "peak": 0.0007913082954473794, "db": -62.03308562900756, "noiseFloor": 0.0010032015273450697}
+{"event": "noise_sample", "timestamp": 1768132841.031, "peak": 0.0010467871325090528, "db": -59.60283249012462, "noiseFloor": 0.0014946126061227765}
+{"event": "noise_sample", "timestamp": 1768132842.042, "peak": 0.002324713859707117, "db": -52.672609903203956, "noiseFloor": 0.002559950253385328}
+{"event": "noise_sample", "timestamp": 1768132843.058, "peak": 0.0008017754880711436, "db": -61.91894450319579, "noiseFloor": 0.0012496151488035293}
+{"event": "noise_sample", "timestamp": 1768132844.075, "peak": 0.0015180219197645783, "db": -56.374439146359244, "noiseFloor": 0.0013303387075646518}
+{"event": "noise_sample", "timestamp": 1768132845.081, "peak": 0.0008704645442776382, "db": -61.204978276990886, "noiseFloor": 0.0010558964882372188}
+{"event": "noise_sample", "timestamp": 1768132846.098, "peak": 0.0009523219196125865, "db": -60.424324387801946, "noiseFloor": 0.0010922193915908248}
+{"event": "noise_sample", "timestamp": 1768132847.108, "peak": 0.0013871098635718226, "db": -57.15778280083513, "noiseFloor": 0.0010973855084156453}
+{"event": "noise_sample", "timestamp": 1768132848.124, "peak": 0.002898632315918803, "db": -50.7561374058688, "noiseFloor": 0.001822018189976177}
+{"event": "noise_sample", "timestamp": 1768132849.141, "peak": 0.0013407965889200568, "db": -57.4527420717563, "noiseFloor": 0.0019792788744827285}
+{"event": "noise_sample", "timestamp": 1768132850.158, "peak": 0.002532790880650282, "db": -51.928013323247704, "noiseFloor": 0.0016027153242279073}
+{"event": "noise_sample", "timestamp": 1768132851.174, "peak": 0.0015667995903640985, "db": -56.09973101338763, "noiseFloor": 0.0017263285918129889}
+{"event": "noise_sample", "timestamp": 1768132852.191, "peak": 0.002272671088576317, "db": -52.86926825648513, "noiseFloor": 0.0019913995839475353}
+{"event": "noise_sample", "timestamp": 1768132853.208, "peak": 0.0014840553048998117, "db": -56.57099828619017, "noiseFloor": 0.0020062733648364296}
+{"event": "noise_sample", "timestamp": 1768132854.225, "peak": 0.0019415265414863825, "db": -54.23713336177367, "noiseFloor": 0.0017317422776423018}
+{"event": "noise_sample", "timestamp": 1768132855.241, "peak": 0.0019561746157705784, "db": -54.171847619998346, "noiseFloor": 0.0016493207037996333}
+{"event": "noise_sample", "timestamp": 1768132856.258, "peak": 0.0017792213475331664, "db": -54.995400385905896, "noiseFloor": 0.0020599927232671533}
+{"event": "noise_sample", "timestamp": 1768132857.274, "peak": 0.0017028155270963907, "db": -55.37664796738994, "noiseFloor": 0.001682396680183875}
+{"event": "noise_sample", "timestamp": 1768132858.291, "peak": 0.002291614655405283, "db": -52.797168179999446, "noiseFloor": 0.001922485333655057}
+{"event": "noise_sample", "timestamp": 1768132933.706, "peak": 0.002059929072856903, "db": -53.72295465860883, "noiseFloor": 0.0017966125947336223}
+{"event": "noise_sample", "timestamp": 1768132934.722, "peak": 0, "db": -80, "noiseFloor": 8.337612795765877e-05}
+{"event": "noise_sample", "timestamp": 1768132935.972, "peak": 2.6113668809557566e-06, "db": -111.66264216383735, "noiseFloor": 0.014250130568344047}
+{"event": "noise_sample", "timestamp": 1768132936.989, "peak": 0.0013736033579334617, "db": -57.24277312324753, "noiseFloor": 0.0022400700246735464}
+{"event": "noise_sample", "timestamp": 1768132937.994, "peak": 0.0013366768835112453, "db": -57.47947125143202, "noiseFloor": 0.0013026366033885278}
+{"event": "noise_sample", "timestamp": 1768132939.005, "peak": 0.001210767193697393, "db": -58.33878709935745, "noiseFloor": 0.0011209871683365619}
+{"event": "noise_sample", "timestamp": 1768132940.022, "peak": 0.0009620425989851356, "db": -60.336113941892926, "noiseFloor": 0.001071793873482677}
+{"event": "noise_sample", "timestamp": 1768132941.038, "peak": 0.000985102029517293, "db": -60.13037572382282, "noiseFloor": 0.0012222253899212136}
+{"event": "noise_sample", "timestamp": 1768132942.044, "peak": 0.0010187120642513037, "db": -59.8389710122655, "noiseFloor": 0.0011533151513324644}
+{"event": "noise_sample", "timestamp": 1768132943.055, "peak": 0.0009448507335036993, "db": -60.49273590888241, "noiseFloor": 0.00113980321766547}
+{"event": "noise_sample", "timestamp": 1768132944.072, "peak": 0.0009827242465689778, "db": -60.15136657100782, "noiseFloor": 0.0010235364816588086}
+{"event": "noise_sample", "timestamp": 1768132945.088, "peak": 0.0009810065384954214, "db": -60.166561959984755, "noiseFloor": 0.0008494506061241054}
+{"event": "play_example", "timestamp": 1768132945.85, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132946.622, "peak": 0.0007240667473524809, "db": -62.80442793929716, "noiseFloor": 0.0010853537526513304}
+{"event": "noise_sample", "timestamp": 1768132947.638, "peak": 0.0010939111234620214, "db": -59.22035923021582, "noiseFloor": 0.001604159781317789}
+{"event": "record_start", "timestamp": 1768132947.873, "word": "cup"}
+{"event": "record_stop", "timestamp": 1768132950.687, "size": 45698}
+{"event": "noise_sample", "timestamp": 1768132950.688, "peak": 0.0008275336003862321, "db": -61.64428727029376, "noiseFloor": 0.0012763792175475627}
+{"event": "noise_sample", "timestamp": 1768132951.705, "peak": 0.001068582059815526, "db": -59.42384242729068, "noiseFloor": 0.0018719017805730045}
+{"event": "play_user", "timestamp": 1768132951.89, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132952.721, "peak": 0.0008922210545279086, "db": -60.99055065086358, "noiseFloor": 0.0011842890229650184}
+{"event": "play_user", "timestamp": 1768132953.078, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132953.738, "peak": 0.0008716542506590486, "db": -61.19311495289716, "noiseFloor": 0.0017963132682562452}
+{"event": "play_user", "timestamp": 1768132953.953, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132954.754, "peak": 0.000586196721997112, "db": -64.63913228917467, "noiseFloor": 0.0010341901540270896}
+{"event": "play_user", "timestamp": 1768132954.846, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132955.771, "peak": 0.0008988603949546814, "db": -60.92615509545524, "noiseFloor": 0.0014436730506282925}
+{"event": "noise_sample", "timestamp": 1768132956.788, "peak": 0.0009478668216615915, "db": -60.46505356295483, "noiseFloor": 0.0009027654043004336}
+{"event": "record_start", "timestamp": 1768132957.419, "word": "cup"}
+{"event": "record_stop", "timestamp": 1768132959.922, "size": 39902}
+{"event": "noise_sample", "timestamp": 1768132959.938, "peak": 0.0006090303650125861, "db": -64.30722107579385, "noiseFloor": 0.0012042343463462956}
+{"event": "play_user", "timestamp": 1768132960.788, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132961.238, "peak": 0.0004009990661870688, "db": -67.93713277454276, "noiseFloor": 0.0008974333744648425}
+{"event": "play_user", "timestamp": 1768132962.117, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132962.571, "peak": 0.0005242183688096702, "db": -65.60975530560178, "noiseFloor": 0.003246055028446401}
+{"event": "play_user", "timestamp": 1768132963.413, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132963.871, "peak": 0.000566756643820554, "db": -64.93206760284872, "noiseFloor": 0.0008770916575466298}
+{"event": "noise_sample", "timestamp": 1768132964.888, "peak": 0.0013740470167249441, "db": -57.23996812930159, "noiseFloor": 0.00145855621822443}
+{"event": "play_user", "timestamp": 1768132964.935, "word": "cup"}
+{"event": "noise_sample", "timestamp": 1768132965.904, "peak": 0.0019825813360512257, "db": -54.05537973141896, "noiseFloor": 0.0014940430547531127}
+{"event": "noise_sample", "timestamp": 1768132966.921, "peak": 0.0009003517916426063, "db": -60.91175533749304, "noiseFloor": 0.001114142915027882}
+{"event": "noise_sample", "timestamp": 1768132967.937, "peak": 0.0008174102404154837, "db": -61.7511985160442, "noiseFloor": 0.0008315720586024585}
+{"event": "noise_sample", "timestamp": 1768132968.954, "peak": 0.0007323193713091314, "db": -62.70598955510557, "noiseFloor": 0.0008488923091616176}
+{"event": "noise_sample", "timestamp": 1768132969.971, "peak": 0.0006674007745459676, "db": -63.51226587328756, "noiseFloor": 0.0008110418771387263}
+{"event": "noise_sample", "timestamp": 1768132970.987, "peak": 0.0006898552528582513, "db": -63.224840489008365, "noiseFloor": 0.0007731424388351631}
+{"event": "noise_sample", "timestamp": 1768132972.004, "peak": 0.0007996163913048804, "db": -61.942366237544206, "noiseFloor": 0.0009283537718877432}
+{"event": "noise_sample", "timestamp": 1768132973.021, "peak": 0.0007153847836889327, "db": -62.909206031580275, "noiseFloor": 0.0008367922121431588}
+{"event": "noise_sample", "timestamp": 1768132974.037, "peak": 0.0010375024285167456, "db": -59.680217560940285, "noiseFloor": 0.0008292908560311337}
+{"event": "noise_sample", "timestamp": 1768132975.054, "peak": 0.0012699281796813011, "db": -57.924416794268026, "noiseFloor": 0.0021218847176876026}
+{"event": "noise_sample", "timestamp": 1768132976.071, "peak": 0.000977959600277245, "db": -60.193581712817696, "noiseFloor": 0.0010733951052877364}
+{"event": "noise_sample", "timestamp": 1768132977.087, "peak": 0.001047030440531671, "db": -59.60081383609358, "noiseFloor": 0.0013372576143160476}
+{"event": "noise_sample", "timestamp": 1768132978.104, "peak": 0.0012704123510047793, "db": -57.921105853327816, "noiseFloor": 0.0011464064406835192}
+{"event": "noise_sample", "timestamp": 1768132979.121, "peak": 0.0013682671124115586, "db": -57.27658223181529, "noiseFloor": 0.0009623333230654739}
+{"event": "noise_sample", "timestamp": 1768132980.137, "peak": 0.0016462248750030994, "db": -55.670216805289954, "noiseFloor": 0.0017438269387324405}
+{"event": "noise_sample", "timestamp": 1768132981.154, "peak": 0.0007647782331332564, "db": -62.32928962605756, "noiseFloor": 0.0009540192506411569}
+{"event": "noise_sample", "timestamp": 1768132982.17, "peak": 0.0010374136036261916, "db": -59.68096122785016, "noiseFloor": 0.0009351526070275843}
+{"event": "noise_sample", "timestamp": 1768132983.187, "peak": 0.0009251962183043361, "db": -60.67532302111776, "noiseFloor": 0.0009707506227453188}
+{"event": "noise_sample", "timestamp": 1768132984.193, "peak": 0.0010585751151666045, "db": -59.5055663911545, "noiseFloor": 0.0010148139919052954}
+{"event": "noise_sample", "timestamp": 1768132985.204, "peak": 0.000815589795820415, "db": -61.770564329938004, "noiseFloor": 0.0009020194839775319}
+{"event": "noise_sample", "timestamp": 1768132986.22, "peak": 0.0008364345994777977, "db": -61.5513602140865, "noiseFloor": 0.000867768049243045}
+{"event": "play_example", "timestamp": 1768132986.305, "word": "ear"}
+{"event": "noise_sample", "timestamp": 1768132987.237, "peak": 0.0008412426104769111, "db": -61.50157475237441, "noiseFloor": 0.0009419056273555397}
+{"event": "record_start", "timestamp": 1768132987.625, "word": "ear"}
+{"event": "record_stop", "timestamp": 1768132990.431, "size": 44732}
+{"event": "noise_sample", "timestamp": 1768132990.437, "peak": 0.000477012392366305, "db": -66.42940676442228, "noiseFloor": 0.0009074494762973827}
+{"event": "noise_sample", "timestamp": 1768132991.453, "peak": 0.0005291991401463747, "db": -65.52761740269104, "noiseFloor": 0.0004965697126971017}
+{"event": "play_user", "timestamp": 1768132991.563, "word": "ear"}
+{"event": "noise_sample", "timestamp": 1768132992.47, "peak": 0.0007662669522687793, "db": -62.312398087764926, "noiseFloor": 0.00046206394998459356}
+{"event": "noise_sample", "timestamp": 1768132993.487, "peak": 0.0005796623299829662, "db": -64.73649843667987, "noiseFloor": 0.0005510099842522705}
+{"event": "noise_sample", "timestamp": 1768132994.503, "peak": 0.00038771223626099527, "db": -68.22980984744564, "noiseFloor": 0.00046377220339028524}
+{"event": "noise_sample", "timestamp": 1768132995.52, "peak": 0.0005512747447937727, "db": -65.17263806254738, "noiseFloor": 0.0005295456081582449}
+{"event": "noise_sample", "timestamp": 1768132996.537, "peak": 0.0006300190580077469, "db": -64.01292625974064, "noiseFloor": 0.0006244521012214884}
+{"event": "play_example", "timestamp": 1768132997.346, "word": "hot"}
+{"event": "noise_sample", "timestamp": 1768132998.004, "peak": 0.00023570519988425076, "db": -72.55261672828938, "noiseFloor": 0.0005798057085761757}
+{"event": "noise_sample", "timestamp": 1768132999.02, "peak": 0.0003901381278410554, "db": -68.17563208826215, "noiseFloor": 0.00044815195250273135}
+{"event": "record_start", "timestamp": 1768132999.072, "word": "hot"}
+{"event": "record_stop", "timestamp": 1768133001.885, "size": 44732}
+{"event": "noise_sample", "timestamp": 1768133001.886, "peak": 0.0007715511601418257, "db": -62.25270542751541, "noiseFloor": 0.00045926246925064273}
+{"event": "noise_sample", "timestamp": 1768133002.903, "peak": 0.0005305868689902127, "db": -65.50487004356296, "noiseFloor": 0.0004308491634695683}
+{"event": "play_user", "timestamp": 1768133003.507, "word": "hot"}
+{"event": "noise_sample", "timestamp": 1768133003.97, "peak": 0.0004544579132925719, "db": -66.85012659960475, "noiseFloor": 0.000595460589413818}
+{"event": "play_user", "timestamp": 1768133004.697, "word": "hot"}
+{"event": "noise_sample", "timestamp": 1768133005.136, "peak": 0.0003238835488446057, "db": -69.79222221469341, "noiseFloor": 0.0005894617248524182}
+{"event": "record_start", "timestamp": 1768133005.913, "word": "hot"}
+{"event": "record_stop", "timestamp": 1768133008.82, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768133008.837, "peak": 0.00034985074307769537, "db": -69.1223439863188, "noiseFloor": 0.0005024250148105515}
+{"event": "noise_sample", "timestamp": 1768133009.853, "peak": 0.0005876175127923489, "db": -64.61810538780097, "noiseFloor": 0.0005708177026166422}
+{"event": "play_user", "timestamp": 1768133010.367, "word": "hot"}
+{"event": "noise_sample", "timestamp": 1768133010.919, "peak": 0.0005460701650008559, "db": -65.25503101715408, "noiseFloor": 0.0004977008307980737}
+{"event": "noise_sample", "timestamp": 1768133011.936, "peak": 0.000983585137873888, "db": -60.14376084283323, "noiseFloor": 0.0006434471613061665}
+{"event": "noise_sample", "timestamp": 1768133012.953, "peak": 0.0008323377696797252, "db": -61.59400795159641, "noiseFloor": 0.0009348362310720997}
+{"event": "noise_sample", "timestamp": 1768133013.969, "peak": 0.00034396551200188696, "db": -69.26970200311217, "noiseFloor": 0.0005606348116558681}
+{"event": "noise_sample", "timestamp": 1768133014.986, "peak": 0.001065801247023046, "db": -59.446475519115296, "noiseFloor": 0.000958070345400085}
+{"event": "noise_sample", "timestamp": 1768133016.003, "peak": 0.0005257701268419623, "db": -65.58408186464091, "noiseFloor": 0.0005476357546255473}
+{"event": "noise_sample", "timestamp": 1768133017.019, "peak": 0.0005846298299729824, "db": -64.66238058209815, "noiseFloor": 0.0006595972600827281}
+{"event": "noise_sample", "timestamp": 1768133018.036, "peak": 0.0005346782854758203, "db": -65.43814906493625, "noiseFloor": 0.0007181680108628119}
+{"event": "noise_sample", "timestamp": 1768133019.052, "peak": 0.00044525470002554357, "db": -67.02782975017995, "noiseFloor": 0.0005612794010525041}
+{"event": "noise_sample", "timestamp": 1768133020.069, "peak": 0.0007037020986899734, "db": -63.05222307500089, "noiseFloor": 0.000986059388804154}
+{"event": "noise_sample", "timestamp": 1768133021.086, "peak": 0.0014805333921685815, "db": -56.59163586044788, "noiseFloor": 0.0033048429500166306}
+{"event": "noise_sample", "timestamp": 1768133022.102, "peak": 0.008124410174787045, "db": -41.80416317223337, "noiseFloor": 0.0021319455930991667}
+{"event": "noise_sample", "timestamp": 1768133023.119, "peak": 0.000427970546297729, "db": -67.37172237770514, "noiseFloor": 0.0005420059054800769}
+{"event": "noise_sample", "timestamp": 1768133024.136, "peak": 0.0004092900489922613, "db": -67.759376283263, "noiseFloor": 0.0004002116963645789}
+{"event": "noise_sample", "timestamp": 1768133025.142, "peak": 0.00037042712210677564, "db": -68.625944448977, "noiseFloor": 0.000372524457770211}
+{"event": "noise_sample", "timestamp": 1768133026.152, "peak": 0.0004282249719835818, "db": -67.36656020750857, "noiseFloor": 0.0003840539595459612}
+{"event": "noise_sample", "timestamp": 1768133027.169, "peak": 0.000894043012522161, "db": -60.97283173478257, "noiseFloor": 0.0006895998131997709}
+{"event": "play_example", "timestamp": 1768133027.291, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768133028.319, "peak": 0.0002964134910143912, "db": -70.56204067378887, "noiseFloor": 0.000743238673803201}
+{"event": "record_start", "timestamp": 1768133029.103, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768133032.219, "peak": 0.0005196263082325459, "db": -65.68617738173438, "noiseFloor": 0.0006735619762277474}
+{"event": "record_stop", "timestamp": 1768133032.221, "size": 50528}
+{"event": "noise_sample", "timestamp": 1768133033.235, "peak": 0.0007370156818069518, "db": -62.650465427357105, "noiseFloor": 0.0007156295961405925}
+{"event": "play_user", "timestamp": 1768133033.338, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768133034.419, "peak": 0.0004966523265466094, "db": -66.0789505150707, "noiseFloor": 0.0007225680893890011}
+{"event": "noise_sample", "timestamp": 1768133035.435, "peak": 0.000667639949824661, "db": -63.509153683435684, "noiseFloor": 0.0011213162925593038}
+{"event": "noise_sample", "timestamp": 1768133036.452, "peak": 0.0005147817428223789, "db": -65.7675372824431, "noiseFloor": 0.0007384166275351197}
+{"event": "record_start", "timestamp": 1768133036.872, "word": "moon"}
+{"event": "record_stop", "timestamp": 1768133040.086, "size": 51494}
+{"event": "noise_sample", "timestamp": 1768133040.108, "peak": 0.0009680847870185971, "db": -60.2817320909857, "noiseFloor": 0.0007820307181161105}
+{"event": "noise_sample", "timestamp": 1768133041.118, "peak": 0.0016312116058543324, "db": -55.74979394542516, "noiseFloor": 0.001393444436913926}
+{"event": "play_user", "timestamp": 1768133041.274, "word": "moon"}
+{"event": "noise_sample", "timestamp": 1768133042.352, "peak": 0.0007102538947947323, "db": -62.97172752145716, "noiseFloor": 0.0015063713983610473}
+{"event": "noise_sample", "timestamp": 1768133043.368, "peak": 0.001063021132722497, "db": -59.469162033456165, "noiseFloor": 0.0012351411651186858}
+{"event": "noise_sample", "timestamp": 1768133044.385, "peak": 0.0012467543128877878, "db": -58.08438241510753, "noiseFloor": 0.0012507596852303878}
+{"event": "noise_sample", "timestamp": 1768133045.402, "peak": 0.0013039461337029934, "db": -57.6948069806517, "noiseFloor": 0.0012164591765164482}
+{"event": "play_example", "timestamp": 1768133046.358, "word": "red"}
+{"event": "noise_sample", "timestamp": 1768133047.118, "peak": 0.0006258356152102351, "db": -64.07079451094401, "noiseFloor": 0.0016382098792569848}
+{"event": "noise_sample", "timestamp": 1768133048.135, "peak": 0.0008978955447673798, "db": -60.93548366687048, "noiseFloor": 0.0013007754059583614}
+{"event": "noise_sample", "timestamp": 1768133049.151, "peak": 0.0006920320447534323, "db": -63.197475898802054, "noiseFloor": 0.0010875500343431094}
+{"event": "record_start", "timestamp": 1768133049.543, "word": "red"}
+{"event": "record_stop", "timestamp": 1768133052.452, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768133052.47, "peak": 0.0013217407977208495, "db": -57.5770740915112, "noiseFloor": 0.0010968269608585242}
+{"event": "noise_sample", "timestamp": 1768133053.485, "peak": 0.0013896455056965351, "db": -57.14191945613975, "noiseFloor": 0.00119359644270378}
+{"event": "play_user", "timestamp": 1768133053.866, "word": "red"}
+{"event": "noise_sample", "timestamp": 1768133054.735, "peak": 0.0004911613068543375, "db": -66.1755170751855, "noiseFloor": 0.0012358604757219127}
+{"event": "noise_sample", "timestamp": 1768133055.751, "peak": 0.0009559738100506365, "db": -60.391080110676576, "noiseFloor": 0.0011471801212888176}
+{"event": "noise_sample", "timestamp": 1768133056.758, "peak": 0.0014468692243099213, "db": -56.79141441876942, "noiseFloor": 0.001264196318391811}
+{"event": "noise_sample", "timestamp": 1768133057.768, "peak": 0.0009453053353354335, "db": -60.48855781853216, "noiseFloor": 0.0011664649952806605}
+{"event": "noise_sample", "timestamp": 1768133058.784, "peak": 0.0015449997736141086, "db": -56.2214315975098, "noiseFloor": 0.0016208514169339626}
+{"event": "play_example", "timestamp": 1768133058.802, "word": "sit"}
+{"event": "noise_sample", "timestamp": 1768133059.801, "peak": 0.001059852889738977, "db": -59.495088234485316, "noiseFloor": 0.0016716399436315671}
+{"event": "record_start", "timestamp": 1768133060.761, "word": "sit"}
+{"event": "record_stop", "timestamp": 1768133063.569, "size": 44732}
+{"event": "noise_sample", "timestamp": 1768133063.586, "peak": 0.0008002057438716292, "db": -61.935966711657294, "noiseFloor": 0.0013555778534093527}
+{"event": "noise_sample", "timestamp": 1768133064.601, "peak": 0.0008909873431548476, "db": -61.00256930505487, "noiseFloor": 0.0010113471636412387}
+{"event": "noise_sample", "timestamp": 1768133065.618, "peak": 0.0009803761495277286, "db": -60.1721452551004, "noiseFloor": 0.0016969488186843239}
+{"event": "noise_sample", "timestamp": 1768133066.634, "peak": 0.00276871002279222, "db": -51.15445054269653, "noiseFloor": 0.0015149332570560477}
+{"event": "play_user", "timestamp": 1768133067.088, "word": "sit"}
+{"event": "noise_sample", "timestamp": 1768133067.834, "peak": 0.0018278313800692558, "db": -54.76127742021851, "noiseFloor": 0.0016742600227209867}
+{"event": "noise_sample", "timestamp": 1768133068.851, "peak": 0.00108156178612262, "db": -59.31897331357508, "noiseFloor": 0.0015161994465658555}
+{"event": "noise_sample", "timestamp": 1768133069.867, "peak": 0.0007940713549032807, "db": -62.002809406158846, "noiseFloor": 0.00109923597975592}
+{"event": "noise_sample", "timestamp": 1768133070.884, "peak": 0.0017440840601921082, "db": -55.16865174130528, "noiseFloor": 0.0013064129994084283}
+{"event": "noise_sample", "timestamp": 1768133071.901, "peak": 0.0015025971224531531, "db": -56.463148943812, "noiseFloor": 0.001992903499064898}
+{"event": "noise_sample", "timestamp": 1768133072.917, "peak": 0.00121424556709826, "db": -58.313869467014584, "noiseFloor": 0.0014285555613529801}
+{"event": "noise_sample", "timestamp": 1768133073.934, "peak": 0.0016943062655627728, "db": -55.42016166261293, "noiseFloor": 0.0017120935369529479}
+{"event": "noise_sample", "timestamp": 1768133074.951, "peak": 0.0016143429093062878, "db": -55.84008419027586, "noiseFloor": 0.0016847601372842018}
+{"event": "noise_sample", "timestamp": 1768133075.967, "peak": 0.0020943020936101675, "db": -53.57921346245462, "noiseFloor": 0.0016329229509687172}
+{"event": "noise_sample", "timestamp": 1768133076.984, "peak": 0.0008984820451587439, "db": -60.92981194408608, "noiseFloor": 0.002147517836698568}
+{"event": "noise_sample", "timestamp": 1768133077.99, "peak": 0.0010238121030852199, "db": -59.79559481409687, "noiseFloor": 0.0012194091536180311}
+{"event": "noise_sample", "timestamp": 1768133079.006, "peak": 0.0006840497953817248, "db": -63.29824565354032, "noiseFloor": 0.0009104087052625356}
+{"event": "noise_sample", "timestamp": 1768133080.017, "peak": 0.0007852793205529451, "db": -62.09951678106932, "noiseFloor": 0.0009043031968781508}
+{"event": "noise_sample", "timestamp": 1768133081.034, "peak": 0.0007147567812353373, "db": -62.916834311869096, "noiseFloor": 0.0009790679055856233}
+{"event": "noise_sample", "timestamp": 1768133082.05, "peak": 0.000752439082134515, "db": -62.47057310043011, "noiseFloor": 0.0010085854594601715}
+{"event": "noise_sample", "timestamp": 1768133083.067, "peak": 0.0009661550866439939, "db": -60.29906310590007, "noiseFloor": 0.0011168330660397397}
+{"event": "noise_sample", "timestamp": 1768133084.084, "peak": 0.0006371061317622662, "db": -63.915764301507764, "noiseFloor": 0.0011009127595633219}
+{"event": "noise_sample", "timestamp": 1768133085.1, "peak": 0.0013152514584362507, "db": -57.619824159132094, "noiseFloor": 0.0013354912377908001}
+{"event": "noise_sample", "timestamp": 1768133086.117, "peak": 0.0017128287581726909, "db": -55.32572107808764, "noiseFloor": 0.001318238827472897}
+{"event": "play_example", "timestamp": 1768133086.453, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768133087.134, "peak": 0.0005844507832080126, "db": -64.66504110086001, "noiseFloor": 0.0010362511572408885}
+{"event": "record_start", "timestamp": 1768133088.062, "word": "bike"}
+{"event": "record_stop", "timestamp": 1768133090.764, "size": 43766}
+{"event": "noise_sample", "timestamp": 1768133090.767, "peak": 0.0009792371420189738, "db": -60.18224244588264, "noiseFloor": 0.0009385300878163771}
+{"event": "noise_sample", "timestamp": 1768133091.783, "peak": 0.000769851787481457, "db": -62.271857550436955, "noiseFloor": 0.0009711529589526785}
+{"event": "play_user", "timestamp": 1768133092.053, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768133092.8, "peak": 0.001571254339069128, "db": -56.075070199724465, "noiseFloor": 0.0010789389831699992}
+{"event": "noise_sample", "timestamp": 1768133093.817, "peak": 0.0015426923055201769, "db": -56.23441373201327, "noiseFloor": 0.0011096905679931887}
+{"event": "record_start", "timestamp": 1768133094.73, "word": "bike"}
+{"event": "record_stop", "timestamp": 1768133097.534, "size": 44732}
+{"event": "noise_sample", "timestamp": 1768133097.551, "peak": 0.0007772977114655077, "db": -62.188252219011694, "noiseFloor": 0.001146025822604714}
+{"event": "noise_sample", "timestamp": 1768133098.566, "peak": 0.0012290520826354623, "db": -58.20859425891992, "noiseFloor": 0.0009796905657075306}
+{"event": "play_user", "timestamp": 1768133098.668, "word": "bike"}
+{"event": "noise_sample", "timestamp": 1768133099.583, "peak": 0.0008078482351265848, "db": -61.85340438940364, "noiseFloor": 0.0009962205679290934}
+{"event": "noise_sample", "timestamp": 1768133100.6, "peak": 0.0007582378457300365, "db": -62.4038908508025, "noiseFloor": 0.0010059888630082612}
+{"event": "noise_sample", "timestamp": 1768133101.616, "peak": 0.000999599345959723, "db": -60.00348073410855, "noiseFloor": 0.00105023776407973}
+{"event": "noise_sample", "timestamp": 1768133102.633, "peak": 0.0010485176462680101, "db": -59.588485121572475, "noiseFloor": 0.0010782355552022684}
+{"event": "noise_sample", "timestamp": 1768133103.65, "peak": 0.0007906423415988684, "db": -62.04039862833692, "noiseFloor": 0.0010234629250832762}
+{"event": "noise_sample", "timestamp": 1768133104.666, "peak": 0.002749201375991106, "db": -51.21586894792073, "noiseFloor": 0.06713839871184371}
+{"event": "noise_sample", "timestamp": 1768133105.683, "peak": 0.0009678777423687279, "db": -60.283589944077875, "noiseFloor": 0.004343176900510076}
+{"event": "noise_sample", "timestamp": 1768133106.7, "peak": 0.0006267616990953684, "db": -64.0579510155994, "noiseFloor": 0.000980315474320261}
+{"event": "noise_sample", "timestamp": 1768133107.705, "peak": 0.0021706484258174896, "db": -53.26821024755746, "noiseFloor": 0.0012018236440017598}
+{"event": "noise_sample", "timestamp": 1768133108.717, "peak": 0.0015943957259878516, "db": -55.94807756992432, "noiseFloor": 0.0013695018024827404}
+{"event": "noise_sample", "timestamp": 1768133109.733, "peak": 0.0033810052555054426, "db": -49.419083083145196, "noiseFloor": 0.0015838646646382836}
+{"event": "noise_sample", "timestamp": 1768133110.75, "peak": 0.0008943175780586898, "db": -60.97016465971951, "noiseFloor": 0.0010711406759172913}
+{"event": "noise_sample", "timestamp": 1768133111.766, "peak": 0.0009597931639291346, "db": -60.3564469525943, "noiseFloor": 0.0009170838455405835}
+{"event": "play_example", "timestamp": 1768133112.03, "word": "chair"}
+{"event": "noise_sample", "timestamp": 1768133112.8, "peak": 0.0004769631486851722, "db": -66.43030348590342, "noiseFloor": 0.000887551960581897}
+{"event": "record_start", "timestamp": 1768133113.702, "word": "chair"}
+{"event": "record_stop", "timestamp": 1768133116.617, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768133116.634, "peak": 0.0007473023724742234, "db": -62.53007277958348, "noiseFloor": 0.0007710946969015711}
+{"event": "noise_sample", "timestamp": 1768133117.649, "peak": 0.0008090646588243544, "db": -61.840335381141294, "noiseFloor": 0.000778139542664334}
+{"event": "play_user", "timestamp": 1768133117.762, "word": "chair"}
+{"event": "noise_sample", "timestamp": 1768133118.666, "peak": 0.0008957334794104099, "db": -60.95642386121774, "noiseFloor": 0.0007481287083866187}
+{"event": "noise_sample", "timestamp": 1768133119.683, "peak": 0.0010986541165038943, "db": -59.182780254114434, "noiseFloor": 0.0012335335315689375}
+{"event": "noise_sample", "timestamp": 1768133120.699, "peak": 0.000702198245562613, "db": -63.070805199020526, "noiseFloor": 0.0007992529886604209}
+{"event": "noise_sample", "timestamp": 1768133121.716, "peak": 0.0011575727257877588, "db": -58.72903428842684, "noiseFloor": 0.0009716625648458525}
+{"event": "noise_sample", "timestamp": 1768133122.733, "peak": 0.0010467920219525695, "db": -59.60279191925182, "noiseFloor": 0.0016104786190045551}
+{"event": "noise_sample", "timestamp": 1768133123.749, "peak": 0.0026392892468720675, "db": -51.570260233213496, "noiseFloor": 0.0030588343178967964}
+{"event": "noise_sample", "timestamp": 1768133124.766, "peak": 0.0008183909812942147, "db": -61.74078330428884, "noiseFloor": 0.001154754296442346}
+{"event": "noise_sample", "timestamp": 1768133125.772, "peak": 0.0012651728466153145, "db": -57.95700275137164, "noiseFloor": 0.0014395282879433573}
+{"event": "noise_sample", "timestamp": 1768133126.789, "peak": 0.0010177991352975368, "db": -59.84675844861521, "noiseFloor": 0.0015771808571271011}
+{"event": "noise_sample", "timestamp": 1768133127.799, "peak": 0.0019524714443832636, "db": -54.18830618243157, "noiseFloor": 0.0014245485936229998}
+{"event": "noise_sample", "timestamp": 1768133128.816, "peak": 0.0009244093089364469, "db": -60.682713795243785, "noiseFloor": 0.0011101224380234255}
+{"event": "play_example", "timestamp": 1768133129.461, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768133130.282, "peak": 0.000640320242382586, "db": -63.87205537297787, "noiseFloor": 0.0009725104840979997}
+{"event": "noise_sample", "timestamp": 1768133131.299, "peak": 0.0009869487257674336, "db": -60.11410818662139, "noiseFloor": 0.0008007590334506748}
+{"event": "noise_sample", "timestamp": 1768133132.315, "peak": 0.0006093920092098415, "db": -64.302064897207, "noiseFloor": 0.0007641115244273251}
+{"event": "record_start", "timestamp": 1768133132.638, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768133135.446, "size": 44732}
+{"event": "noise_sample", "timestamp": 1768133135.448, "peak": 0.000721203105058521, "db": -62.838848242795294, "noiseFloor": 0.0007242273986743986}
+{"event": "noise_sample", "timestamp": 1768133136.465, "peak": 0.0011778060579672456, "db": -58.578524324915556, "noiseFloor": 0.000848182708249957}
+{"event": "play_user", "timestamp": 1768133137.233, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768133138.049, "peak": 0.0005649413797073066, "db": -64.95993227513083, "noiseFloor": 0.001064571956781895}
+{"event": "noise_sample", "timestamp": 1768133139.065, "peak": 0.0020500505343079567, "db": -53.764708666684, "noiseFloor": 0.00110266699523608}
+{"event": "play_user", "timestamp": 1768133139.884, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768133140.699, "peak": 0.0006010389770381153, "db": -64.42194726664428, "noiseFloor": 0.0008616246003121695}
+{"event": "record_start", "timestamp": 1768133141.501, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768133144.11, "size": 41834}
+{"event": "noise_sample", "timestamp": 1768133144.116, "peak": 0.0006515447166748345, "db": -63.72111545048786, "noiseFloor": 0.0009098134613195537}
+{"event": "noise_sample", "timestamp": 1768133145.132, "peak": 0.0006442261510528624, "db": -63.81923299711207, "noiseFloor": 0.0009661805142566416}
+{"event": "play_user", "timestamp": 1768133145.159, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768133146.149, "peak": 0.000874699151609093, "db": -61.16282589413339, "noiseFloor": 0.0008891720043157607}
+{"event": "noise_sample", "timestamp": 1768133147.165, "peak": 0.0007075808825902641, "db": -63.004478187312856, "noiseFloor": 0.0009301858257589318}
+{"event": "record_start", "timestamp": 1768133147.46, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768133150.366, "size": 46664}
+{"event": "noise_sample", "timestamp": 1768133150.382, "peak": 0.000721211195923388, "db": -62.83875080011289, "noiseFloor": 0.001069195108869904}
+{"event": "noise_sample", "timestamp": 1768133151.398, "peak": 0.0005785481189377606, "db": -64.75321028238409, "noiseFloor": 0.0008688923217502381}
+{"event": "play_user", "timestamp": 1768133151.669, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768133152.415, "peak": 0.00037771117058582604, "db": -68.45680341957099, "noiseFloor": 0.0006665955902513034}
+{"event": "noise_sample", "timestamp": 1768133153.431, "peak": 0.0008875930216163397, "db": -61.03572241824245, "noiseFloor": 0.0008982052042461775}
+{"event": "record_start", "timestamp": 1768133153.472, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768133156.175, "size": 43766}
+{"event": "noise_sample", "timestamp": 1768133156.188, "peak": 0.000656382879242301, "db": -63.65685510775869, "noiseFloor": 0.0008864103513925855}
+{"event": "noise_sample", "timestamp": 1768133157.198, "peak": 0.0010688209440559149, "db": -59.421900891554856, "noiseFloor": 0.000778875359918927}
+{"event": "play_user", "timestamp": 1768133157.602, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768133158.365, "peak": 0.0005065960576757789, "db": -65.90676388413156, "noiseFloor": 0.0007137084924625935}
+{"event": "noise_sample", "timestamp": 1768133159.381, "peak": 0.000905734661500901, "db": -60.85998023903825, "noiseFloor": 0.0007608931408834816}
+{"event": "play_user", "timestamp": 1768133159.563, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768133160.398, "peak": 0.0004967812565155327, "db": -66.07669596779853, "noiseFloor": 0.0006935740930334041}
+{"event": "noise_sample", "timestamp": 1768133161.415, "peak": 0.0007592823239974678, "db": -62.39193420656959, "noiseFloor": 0.0009858918166780672}
+{"event": "noise_sample", "timestamp": 1768133162.431, "peak": 0.0014544902369379997, "db": -56.74578379096042, "noiseFloor": 0.0012781673659913685}
+{"event": "play_example", "timestamp": 1768133163.447, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768133164.198, "peak": 0.0005350143765099347, "db": -65.4326909556485, "noiseFloor": 0.0008060186377235303}
+{"event": "noise_sample", "timestamp": 1768133165.215, "peak": 0.0009611053392291069, "db": -60.344580202117456, "noiseFloor": 0.0007376084574292778}
+{"event": "noise_sample", "timestamp": 1768133166.231, "peak": 0.0007752354722470045, "db": -62.21132727206948, "noiseFloor": 0.0006458194511078235}
+{"event": "record_start", "timestamp": 1768133166.274, "word": "dark"}
+{"event": "record_stop", "timestamp": 1768133168.782, "size": 39902}
+{"event": "noise_sample", "timestamp": 1768133168.799, "peak": 0.0005294125294312835, "db": -65.52411569218278, "noiseFloor": 0.0006398483877623729}
+{"event": "noise_sample", "timestamp": 1768133169.814, "peak": 0.0005851461319252849, "db": -64.65471323003266, "noiseFloor": 0.0006378083990377991}
+{"event": "play_user", "timestamp": 1768133170.071, "word": "dark"}
+{"event": "noise_sample", "timestamp": 1768133170.831, "peak": 0.0004845106741413474, "db": -66.29393301335321, "noiseFloor": 0.0007153761681110933}
+{"event": "noise_sample", "timestamp": 1768133171.847, "peak": 0.0007940712384879589, "db": -62.00281067955917, "noiseFloor": 0.0006718616119871069}
+{"event": "noise_sample", "timestamp": 1768133172.864, "peak": 0.0007401208858937025, "db": -62.613946800276324, "noiseFloor": 0.0008519446857215336}
+{"event": "noise_sample", "timestamp": 1768133173.881, "peak": 0.0009458137792535126, "db": -60.48388726358729, "noiseFloor": 0.0008986971984098399}
+{"event": "noise_sample", "timestamp": 1768133174.898, "peak": 0.0006364300497807562, "db": -63.92498645650335, "noiseFloor": 0.0007271508378181601}
+{"event": "noise_sample", "timestamp": 1768133175.914, "peak": 0.0011876425705850124, "db": -58.50628487361134, "noiseFloor": 0.0010062406575810988}
+{"event": "noise_sample", "timestamp": 1768133176.931, "peak": 0.00043668734724633396, "db": -67.19658782636388, "noiseFloor": 0.0005897232252040542}
+{"event": "noise_sample", "timestamp": 1768133177.947, "peak": 0.0006263518007472157, "db": -64.06363339304136, "noiseFloor": 0.0005455630162359447}
+{"event": "noise_sample", "timestamp": 1768133178.964, "peak": 0.0005482490523718297, "db": -65.22044220623417, "noiseFloor": 0.0005607397904108725}
+{"event": "noise_sample", "timestamp": 1768133179.981, "peak": 0.0005284532089717686, "db": -65.53986921102837, "noiseFloor": 0.000591942259572351}
+{"event": "noise_sample", "timestamp": 1768133180.997, "peak": 0.0005540354177355766, "db": -65.12924942617295, "noiseFloor": 0.0005992796156339451}
+{"event": "noise_sample", "timestamp": 1768133182.014, "peak": 0.0011567020555958152, "db": -58.735569852497285, "noiseFloor": 0.0006984787551273736}
+{"event": "noise_sample", "timestamp": 1768133183.03, "peak": 0.0003262187819927931, "db": -69.72982076284876, "noiseFloor": 0.0005623408304782457}
+{"event": "noise_sample", "timestamp": 1768133184.047, "peak": 0.000611563038546592, "db": -64.27117540438094, "noiseFloor": 0.0005762826815313932}
+{"event": "noise_sample", "timestamp": 1768133185.064, "peak": 0.0005344018572941422, "db": -65.44264082310546, "noiseFloor": 0.0005706445135287953}
+{"event": "noise_sample", "timestamp": 1768133186.08, "peak": 0.0006338739185594022, "db": -63.95994234770483, "noiseFloor": 0.0005861174328508532}
+{"event": "noise_sample", "timestamp": 1768133187.097, "peak": 0.00043557898607105017, "db": -67.21866160741267, "noiseFloor": 0.0005069699479729819}
+{"event": "noise_sample", "timestamp": 1768133188.114, "peak": 0.0005043673445470631, "db": -65.94506079495758, "noiseFloor": 0.000636725664799711}
+{"event": "noise_sample", "timestamp": 1768133189.13, "peak": 0.0005173066165298223, "db": -65.72503933558737, "noiseFloor": 0.0006164488614260182}
+{"event": "noise_sample", "timestamp": 1768133190.147, "peak": 0.0007513183518312871, "db": -62.48352005757938, "noiseFloor": 0.0006175265095076923}
+{"event": "noise_sample", "timestamp": 1768133191.154, "peak": 0.0006036749691702425, "db": -64.38393662792345, "noiseFloor": 0.0005523154924299812}
+{"event": "noise_sample", "timestamp": 1768133192.164, "peak": 0.0007424897630698979, "db": -62.58619059436727, "noiseFloor": 0.0006309495171601344}
+{"event": "noise_sample", "timestamp": 1768133193.18, "peak": 0.0003455939586274326, "db": -69.22867716169286, "noiseFloor": 0.0005419971591582292}
+{"event": "noise_sample", "timestamp": 1768134370.642, "peak": 0.000491214741487056, "db": -66.1745721675325, "noiseFloor": 0.0005487973911833388}
+{"event": "noise_sample", "timestamp": 1768134371.659, "peak": 0, "db": -80, "noiseFloor": 2.401883622156105e-05}
+{"event": "noise_sample", "timestamp": 1768134437.724, "peak": 0, "db": -80, "noiseFloor": 0.014249999999999999}
+{"event": "noise_sample", "timestamp": 1768134438.74, "peak": 0.003227399429306388, "db": -49.82294564259596, "noiseFloor": 0.0035337803877182796}
+{"event": "noise_sample", "timestamp": 1768134439.757, "peak": 0.002854166319593787, "db": -50.89041446060676, "noiseFloor": 0.0027986297544620804}
+{"event": "noise_sample", "timestamp": 1768134440.773, "peak": 0.0028275626245886087, "db": -50.971755351660555, "noiseFloor": 0.003794738591708659}
+{"event": "noise_sample", "timestamp": 1768134441.79, "peak": 0.0048737130127847195, "db": -46.24280095412768, "noiseFloor": 0.0034976579182535417}
+{"event": "noise_sample", "timestamp": 1768134454.586, "peak": 0, "db": -80, "noiseFloor": 0.014249999999999999}
+{"event": "noise_sample", "timestamp": 1768134455.59, "peak": 0.005273803137242794, "db": -45.55752171536761, "noiseFloor": 0.007020244494720555}
+{"event": "noise_sample", "timestamp": 1768134456.606, "peak": 0.005840345751494169, "db": -44.67122883336425, "noiseFloor": 0.0069207761898937405}
+{"event": "noise_sample", "timestamp": 1768134457.623, "peak": 0.00543225510045886, "db": -45.30039687278291, "noiseFloor": 0.0062540765478910805}
+{"event": "noise_sample", "timestamp": 1768134458.639, "peak": 0.004760840907692909, "db": -46.44632662073245, "noiseFloor": 0.0060658554796485355}
+{"event": "noise_sample", "timestamp": 1768134459.656, "peak": 0.0042561921291053295, "db": -47.41957551497948, "noiseFloor": 0.005461963454026482}
+{"event": "noise_sample", "timestamp": 1768134460.673, "peak": 0.0038395975716412067, "db": -48.314285833348436, "noiseFloor": 0.004422602091578426}
+{"event": "noise_sample", "timestamp": 1768134461.689, "peak": 0.007576136849820614, "db": -42.411043783091536, "noiseFloor": 0.265118856062322}
+{"event": "noise_sample", "timestamp": 1768134462.706, "peak": 0.001586593803949654, "db": -55.99068492152789, "noiseFloor": 0.014278088641972747}
+{"event": "noise_sample", "timestamp": 1768134463.723, "peak": 0.002763488795608282, "db": -51.17084583796662, "noiseFloor": 0.0035450685100550526}
+{"event": "noise_sample", "timestamp": 1768134464.739, "peak": 0.00420136284083128, "db": -47.53219620039401, "noiseFloor": 0.0035086381244074124}
+{"event": "noise_sample", "timestamp": 1768134465.756, "peak": 0.003603203222155571, "db": -48.866224855956524, "noiseFloor": 0.003341651011663971}

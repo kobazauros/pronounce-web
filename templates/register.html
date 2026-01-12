@@ -2,103 +2,185 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg border border-gray-100">
+<div class="flex items-start justify-center min-h-[calc(100vh-200px)] pt-6 pb-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-white p-5 rounded-xl shadow-lg border border-gray-100">
         <div>
-            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Create your account</h2>
-            <p class="mt-2 text-center text-sm text-gray-600">Join the pronunciation research program</p>
+            <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900">Create an Account</h2>
+            <p class="mt-2 text-center text-sm text-gray-600 text-balance">
+                Join our community to securely save your recordings, track your test results, and ensure your progress
+                is consistent.
+            </p>
         </div>
         <form class="mt-8 space-y-6" method="POST" id="registration-form">
             <div class="rounded-md shadow-sm space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="first_name" class="block text-xs font-bold text-gray-500 uppercase">First Name</label>
-                        <input id="first_name" name="first_name" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="John">
+                        <label for="first_name" class="block text-xs font-bold text-gray-500 uppercase">First
+                            Name</label>
+                        <input id="first_name" name="first_name" type="text" required
+                            class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="John">
                     </div>
                     <div>
                         <label for="last_name" class="block text-xs font-bold text-gray-500 uppercase">Last Name</label>
-                        <input id="last_name" name="last_name" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Doe">
+                        <input id="last_name" name="last_name" type="text" required
+                            class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="Doe">
                     </div>
                 </div>
                 <div>
                     <label for="username" class="block text-xs font-bold text-gray-500 uppercase">Username</label>
-                    <input id="username" name="username" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="kobazauros">
+                    <input id="username" name="username" type="text" required
+                        class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        placeholder="kobazauros">
                 </div>
                 <div id="student-id-container">
-                    <label for="student_id" class="block text-xs font-bold text-gray-500 uppercase">Student ID</label>
-                    <input id="student_id" name="student_id" type="text" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="6701202182">
+                    <label for="student_id" class="block text-xs font-bold text-gray-500 uppercase">Student ID
+                        (Mandatory for students)</label>
+                    <input id="student_id" name="student_id" type="text"
+                        class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        placeholder="6701202182" pattern="\d{10}" title="Student ID must be exactly 10 digits" required>
                 </div>
                 <div>
-                    <label for="invite_code" class="block text-xs font-bold text-indigo-500 uppercase">Instructor Invite Code (Teachers Only)</label>
-                    <input id="invite_code" name="invite_code" type="text" class="appearance-none relative block w-full px-3 py-2 border border-indigo-200 placeholder-gray-400 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="MCU-XXXX-XXX">
+                    <label for="invite_code" class="block text-xs font-bold text-indigo-500 uppercase">Instructor Invite
+                        Code (Optional)</label>
+                    <div class="relative">
+                        <input id="invite_code" name="invite_code" type="text"
+                            class="appearance-none relative block w-full px-3 py-2 border border-indigo-200 placeholder-gray-400 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="Enter 10-char code">
+                        <div id="invite-status"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none hidden">
+                            <!-- Icons injected by JS -->
+                        </div>
+                    </div>
+                    <p id="invite-msg" class="mt-1 text-xs text-indigo-600 hidden"></p>
                 </div>
                 <div>
                     <label for="password" class="block text-xs font-bold text-gray-500 uppercase">Password</label>
-                    <input id="password" name="password" type="password" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="********">
+                    <input id="password" name="password" type="password" required
+                        class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        placeholder="********">
                 </div>
             </div>
 
             <!-- Consent Section: Now wrapped in a conditional container -->
-            <div id="consent-section" class="bg-indigo-50 p-4 rounded-lg border border-indigo-100 transition-all duration-300">
+            <div id="consent-section"
+                class="bg-indigo-50 p-4 rounded-lg border border-indigo-100 transition-all duration-300">
                 <div class="flex items-start">
                     <div class="flex items-center h-5">
-                        <input id="consent" name="consent" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                        <input id="consent" name="consent" type="checkbox"
+                            class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                     </div>
                     <div class="ml-3 text-sm">
                         <label for="consent" class="font-medium text-indigo-900">Data Collection Consent</label>
-                        <p class="text-indigo-700 text-xs">I agree to have my voice recordings and acoustic analysis results stored and used for educational research purposes as part of this thesis project.</p>
+                        <p class="text-indigo-700 text-xs">I agree to have my voice recordings and acoustic analysis
+                            results stored and used for educational research purposes as part of this thesis project.
+                        </p>
                     </div>
                 </div>
             </div>
 
             <div>
-                <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition shadow-lg">
+                <button type="submit"
+                    class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition shadow-lg">
                     Sign Up
                 </button>
             </div>
             <div class="text-center">
-                <a href="{{ url_for('auth.login') }}" class="text-xs text-indigo-600 hover:text-indigo-500">Already have an account? Sign in</a>
+                <a href="{{ url_for('auth.login') }}" class="text-xs text-indigo-600 hover:text-indigo-500">Already have
+                    an account? Sign in</a>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    // Dynamically handle Teacher vs Student view
     const inviteInput = document.getElementById('invite_code');
+    const inviteStatus = document.getElementById('invite-status');
+    const inviteMsg = document.getElementById('invite-msg');
+
     const consentSection = document.getElementById('consent-section');
     const consentCheckbox = document.getElementById('consent');
     const studentIdContainer = document.getElementById('student-id-container');
     const studentIdInput = document.getElementById('student_id');
-    
-    // The correct code passed from the server config
-    const TEACHER_CODE = "{{ teacher_code }}";
 
-    inviteInput.addEventListener('input', function(e) {
-        if (e.target.value.trim() === TEACHER_CODE) {
-            // It's a teacher!
-            consentSection.classList.add('hidden');
-            consentCheckbox.required = false;
-            consentCheckbox.checked = true; // Auto-check for form validity but hidden
-            
-            // Teachers don't need Student IDs
-            studentIdContainer.classList.add('opacity-30');
-            studentIdInput.required = false;
-            studentIdInput.placeholder = "Not required for Teachers";
+    let debounceTimer;
+
+    // Debounce function
+    const debounce = (callback, time) => {
+        window.clearTimeout(debounceTimer);
+        debounceTimer = window.setTimeout(callback, time);
+    };
+
+    const setTeacherMode = (isTeacher) => {
+        if (isTeacher) {
+            // Teacher Mode: Invite code is valid
+            consentSection.classList.add('opacity-50', 'pointer-events-none'); // Visually disabled
+            consentCheckbox.checked = false; // Unchecked
+            consentCheckbox.required = false; // Not required
+
+            studentIdContainer.classList.add('opacity-50', 'pointer-events-none');
+            studentIdInput.value = ""; // Clear ID
+            studentIdInput.required = false; // Not required
+            studentIdInput.placeholder = "Not required for instructors";
         } else {
-            // It's a student (or wrong code)
-            consentSection.classList.remove('hidden');
-            consentCheckbox.required = true;
-            consentCheckbox.checked = false;
-            
-            studentIdContainer.classList.remove('opacity-30');
+            // Student Mode: No valid invite code
+            consentSection.classList.remove('opacity-50', 'pointer-events-none');
+            consentCheckbox.required = true; // Mandatory
+
+            studentIdContainer.classList.remove('opacity-50', 'pointer-events-none');
+            studentIdInput.required = true; // Mandatory
             studentIdInput.placeholder = "6701202182";
         }
+    };
+
+    const validateInvite = async (code) => {
+        if (!code || code.length < 5) {
+            inviteStatus.classList.add('hidden');
+            inviteMsg.classList.add('hidden');
+            setTeacherMode(false);
+            return;
+        }
+
+        inviteStatus.classList.remove('hidden');
+        inviteStatus.innerHTML = '<svg class="animate-spin h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+
+        try {
+            const response = await fetch('/auth/check-invite', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            });
+            const data = await response.json();
+
+            if (data.valid) {
+                // Valid Code
+                inviteStatus.innerHTML = '<svg class="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                inviteMsg.textContent = "Valid Instructor Code";
+                inviteMsg.className = "mt-1 text-xs text-green-600";
+                inviteMsg.classList.remove('hidden');
+                setTeacherMode(true);
+            } else {
+                // Invalid Code
+                inviteStatus.innerHTML = '<svg class="h-5 w-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                inviteMsg.textContent = "Invalid or expired code";
+                inviteMsg.className = "mt-1 text-xs text-red-600";
+                inviteMsg.classList.remove('hidden');
+                setTeacherMode(false);
+            }
+        } catch (error) {
+            console.error('Error checking invite:', error);
+            setTeacherMode(false);
+        }
+    };
+
+    inviteInput.addEventListener('input', (e) => {
+        debounce(() => validateInvite(e.target.value.trim()), 500);
     });
 
     // Initialize state on load
     window.addEventListener('load', () => {
-        consentCheckbox.required = true;
+        setTeacherMode(false);
     });
 </script>
 {% endblock %}

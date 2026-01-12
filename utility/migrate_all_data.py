@@ -133,7 +133,6 @@ def import_csv_data():
                     file_path=os.path.join(str(user.id), temp_filename).replace(
                         "\\", "/"
                     ),
-                    timestamp=datetime.now(timezone.utc),
                     file_size_bytes=0,
                 )  # type: ignore
                 db.session.add(sub)
@@ -159,20 +158,21 @@ def import_csv_data():
                 # Flag results with an extremely high perceptual distance (> 5.0 Bark)
                 outlier = d_bark > 5.0
 
-                res = AnalysisResult(
-                    submission_id=sub.id,
-                    f1_raw=sf("F1_student_raw"),
-                    f2_raw=sf("F2_student_raw"),
-                    f1_norm=sf("F1_student_norm"),
-                    f2_norm=sf("F2_student_norm"),
-                    f1_ref=sf("F1_ref"),
-                    f2_ref=sf("F2_ref"),
-                    distance_hz=sf("dist_hz"),
-                    distance_bark=d_bark,
-                    scaling_factor=s_factor,
-                    is_deep_voice_corrected=deep_voice,
-                    is_outlier=outlier,
-                )  # type: ignore
+                result_data = {
+                    "submission_id": sub.id,
+                    "f1_raw": sf("F1_student_raw"),
+                    "f2_raw": sf("F2_student_raw"),
+                    "f1_norm": sf("F1_student_norm"),
+                    "f2_norm": sf("F2_student_norm"),
+                    "f1_ref": sf("F1_ref"),
+                    "f2_ref": sf("F2_ref"),
+                    "distance_hz": sf("dist_hz"),
+                    "distance_bark": d_bark,
+                    "scaling_factor": s_factor,
+                    "is_deep_voice_corrected": deep_voice,
+                    "is_outlier": outlier,
+                }
+                res = AnalysisResult(**result_data)  # type: ignore
                 db.session.add(res)
 
         db.session.commit()
@@ -223,14 +223,13 @@ def link_and_move_files():
                     file_path=os.path.join(str(user.id), new_filename).replace(
                         "\\", "/"
                     ),
-                    timestamp=datetime.now(timezone.utc),
                     file_size_bytes=0,
                 )  # type: ignore
                 db.session.add(sub)
                 db.session.commit()
 
             # File operation
-            db_filename = os.path.basename(sub.file_path)
+            db_filename = os.path.basename(str(sub.file_path))
             dest_dir = os.path.join(app.config["UPLOAD_FOLDER"], str(user.id))
             os.makedirs(dest_dir, exist_ok=True)
 

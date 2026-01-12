@@ -32,5 +32,15 @@ To resolve Comparison Failure, we implemented **VTLN** to separate anatomical di
 
 
 
-**4. Conclusion**
+**4. Solution III: Vector-Based Articulatory Feedback**
+To make the analysis actionable, we convert the acoustic vector difference (Target - Student) into physiological instructions.
+
+*   **Logic:**
+    *   **F1 (First Formant):** Correlates inversely with **Jaw Opening / Tongue Height**.
+    *   **F2 (Second Formant):** Correlates with **Tongue Backness** and **Lip Rounding**.
+*   **Application:**
+    *   If a student's /æ/ (as in *cat*) has a lower F1 than the target, the system detects "Tongue/Jaw too High" and recommends: *"Open your mouth more."*
+    *   If a student's /u/ (as in *moon*) has a higher F2 than the target, the system detects "Tongue too Froward / Lips unrounded" and recommends: *"Round your lips more."*
+    
+**5. Conclusion**
 These modifications ensure that the assessment system is **robust** (capable of analyzing diverse voice types without crashing or generating artifacts) and **fair** (grading students on linguistic performance rather than biological traits).

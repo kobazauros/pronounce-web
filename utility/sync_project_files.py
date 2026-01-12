@@ -31,7 +31,9 @@ DOMAIN_NAME = f"{USERNAME}.pythonanywhere.com"
 REMOTE_BASE_PATH = f"/home/{USERNAME}/mysite"
 
 # 5. Local Base Path (The root directory of your project on this computer)
-LOCAL_BASE_PATH = os.getcwd()
+# 5. Local Base Path (The root directory of your project on this computer)
+# Gets the parent of the 'utility' directory
+LOCAL_BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # 6. Directories and files to IGNORE during synchronization
 #    Uses .gitignore-style patterns.

@@ -12,3 +12,5 @@ scipy>=1.11.0,<1.13.0
 matplotlib>=3.8.0
 pydub>=0.25.1
 static-ffmpeg>=2.5
+pytest>=8.0.0
+python-dotenv>=1.0.0

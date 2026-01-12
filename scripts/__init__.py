@@ -1,1 +1,5 @@
-# This file makes the 'scripts' directory a Python package.
+# Expose critical modules for easier import
+from . import audio_processing
+from . import parser
+
+__all__ = ["audio_processing", "parser"]

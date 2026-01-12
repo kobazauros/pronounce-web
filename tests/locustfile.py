@@ -1,0 +1,69 @@
+import random
+import uuid
+from locust import HttpUser, task, between
+
+
+class StudentUser(HttpUser):
+    wait_time = between(1, 5)  # Simulate think time between 1 and 5 seconds
+
+    def on_start(self):
+        """
+        Executed when a simulated user starts.
+        We register a unique user and log them in.
+        """
+        self.username = f"loadtest_{uuid.uuid4().hex[:8]}"
+        self.password = "password123"
+
+        # 1. Register
+        with self.client.post(
+            "/register",
+            data={
+                "first_name": "Load",
+                "last_name": "Test",
+                "student_id": f"ID_{self.username}",
+                "username": self.username,
+                "password": self.password,
+                "consent": "on",
+            },
+            catch_response=True,
+        ) as reg_res:
+            if reg_res.status_code != 200 and reg_res.status_code != 302:
+                reg_res.failure(f"Registration failed: {reg_res.text}")
+                return
+
+        # 2. Login
+        with self.client.post(
+            "/login",
+            data={"username": self.username, "password": self.password},
+            catch_response=True,
+        ) as login_res:
+            if login_res.status_code != 200:
+                login_res.failure(f"Login failed: {login_res.text}")
+
+    @task(3)
+    def view_dashboard(self):
+        """Frequent task: Viewing the dashboard layout."""
+        self.client.get("/")
+
+    @task(1)
+    def fetch_manifest(self):
+        """Occasional task: Fetching the list of words."""
+        self.client.get("/get_words_manifest")
+
+    @task(2)
+    def process_recording(self):
+        """
+        Core task: Uploading a recording for analysis.
+        We'll simulate a small WAV upload.
+        """
+        # Create a dummy WAV file in memory (minimal header)
+        # 44 bytes specific to WAV PCM
+        dummy_wav = (
+            b"RIFF\x24\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00"
+            b"\x44\xac\x00\x00\x88\x58\x01\x00\x02\x00\x10\x00data\x00\x00\x00\x00"
+        )
+
+        files = {"file": ("test_audio.wav", dummy_wav, "audio/wav")}
+        data = {"word": "bike", "testType": "pre"}
+
+        self.client.post("/upload", files=files, data=data)

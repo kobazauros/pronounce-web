@@ -18,8 +18,10 @@ from flask import (
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 
-from models import Submission, SystemConfig, User, Word, db
+from models import Submission, SystemConfig, User, Word, InviteCode, db
 from scripts import parser as word_parser
+from scripts.audio_processing import process_audio_data
+
 
 dashboards = Blueprint("dashboards", __name__)
 
@@ -44,9 +46,9 @@ def admin_dashboard():
         search_term = f"%{search_query}%"
         users_query = users_query.filter(
             db.or_(
-                User.username.ilike(search_term),
-                User.first_name.ilike(search_term),
-                User.last_name.ilike(search_term),
+                User.username.ilike(search_term),  # type: ignore
+                User.first_name.ilike(search_term),  # type: ignore
+                User.last_name.ilike(search_term),  # type: ignore
             )
         )
 
@@ -64,14 +66,16 @@ def admin_dashboard():
                 "id": u.id,
                 "name": f"{u.first_name} {u.last_name}",
                 "username": u.username,
-                "role": u.role.capitalize(),
+                "role": u.role,
                 "student_id": u.student_id or "N/A",
-                "initials": (u.first_name[0] + u.last_name[0]).upper()
-                if u.first_name and u.last_name
-                else u.username[0].upper(),
-                "joined_str": u.created_at.strftime("%Y-%m-%d")
-                if u.created_at
-                else "Unknown",
+                "initials": (
+                    (u.first_name[0] + u.last_name[0]).upper()
+                    if u.first_name and u.last_name
+                    else u.username[0].upper()
+                ),
+                "joined_str": (
+                    u.created_at.strftime("%Y-%m-%d") if u.created_at else "Unknown"
+                ),
             }
         )
 
@@ -123,13 +127,19 @@ def admin_dashboard():
     config_settings = {
         "registration_open": SystemConfig.get_bool("registration_open", True),
         "maintenance_mode": SystemConfig.get_bool("maintenance_mode", False),
+        "enable_logging": SystemConfig.get_bool("enable_logging", False),
     }
     # If the keys don't exist, set them to their default values
     if SystemConfig.get("registration_open") is None:
         SystemConfig.set("registration_open", True)
     if SystemConfig.get("maintenance_mode") is None:
         SystemConfig.set("maintenance_mode", False)
+    if SystemConfig.get("enable_logging") is None:
+        SystemConfig.set("enable_logging", False)
     db.session.commit()
+
+    # --- Invite Codes ---
+    invite_codes = InviteCode.query.order_by(InviteCode.created_at.desc()).all()
 
     return render_template(
         "dashboards/admin_view.html",
@@ -137,6 +147,7 @@ def admin_dashboard():
         users=user_data,
         pagination=users_pagination,
         words=words,
+        invite_codes=invite_codes,
         config=config_settings,
         search_query=search_query,
     )
@@ -156,6 +167,7 @@ def teacher_dashboard():
     total_pre_progress = 0
     total_post_progress = 0
     deep_voice_count = 0
+    outlier_count = 0
     active_today = 0
     today_date = datetime.now(timezone.utc).date()
 
@@ -194,23 +206,35 @@ def teacher_dashboard():
             # Check for analysis data (if available)
             if last_sub.analysis:
                 vtln_alpha = last_sub.analysis.scaling_factor
-                if vtln_alpha > 1.15:
-                    deep_voice_count += 1
+
+            # Check flags across ALL submissions for this student
+            # If they have at least one correction or outlier, we flag the student
+            has_deep_voice = any(
+                s.analysis and s.analysis.is_deep_voice_corrected for s in subs
+            )
+            has_outlier = any(s.analysis and s.analysis.is_outlier for s in subs)
+
+            if has_deep_voice:
+                deep_voice_count += 1
+            if has_outlier:
+                outlier_count += 1
 
         student_data.append(
             {
                 "id": s.id,
                 "name": f"{s.first_name} {s.last_name}",
                 "student_id": s.student_id,
-                "initials": (s.first_name[0] + s.last_name[0]).upper()
-                if s.first_name
-                else "??",
+                "initials": (
+                    (s.first_name[0] + s.last_name[0]).upper() if s.first_name else "??"
+                ),
                 "pre_completed_count": pre_count,
                 "post_completed_count": post_count,
                 "pre_progress_percent": pre_pct,
                 "post_progress_percent": post_pct,
                 "vtln_alpha": round(vtln_alpha, 2) if vtln_alpha else None,
                 "last_active_str": last_active_str,
+                "has_deep_voice": has_deep_voice if subs else False,
+                "has_outlier": has_outlier if subs else False,
             }
         )
 
@@ -223,6 +247,7 @@ def teacher_dashboard():
         "avg_pre_completion": avg_pre_completion,
         "avg_post_completion": avg_post_completion,
         "deep_voice_count": deep_voice_count,
+        "outlier_count": outlier_count,
         "active_today": active_today,
     }
 
@@ -251,6 +276,47 @@ def student_detail(user_id):
     )
 
 
+@dashboards.route("/teacher/research")
+@login_required
+def research_dashboard():
+    if current_user.role not in ["teacher", "admin"]:
+        flash("Access denied.", "danger")
+        return redirect(url_for("index"))
+
+    from models import AnalysisResult
+
+    # Fetch all analysis results with related data
+    results = (
+        db.session.query(AnalysisResult, Submission, User, Word)
+        .join(Submission, AnalysisResult.submission_id == Submission.id)
+        .join(User, Submission.user_id == User.id)
+        .join(Word, Submission.word_id == Word.id)
+        .filter(User.role == "student")  # type: ignore # Only analyze students
+        .all()
+    )
+
+    data = []
+    for res, sub, user, word in results:
+        # Flatten data for easier JS consumption
+        data.append(
+            {
+                "username": user.username,
+                "student_id": user.student_id,
+                "word": word.text,
+                "vowel": word.stressed_vowel,
+                "f1_s": res.f1_norm,  # Normalized Student
+                "f2_s": res.f2_norm,
+                "f1_r": res.f1_ref,  # Reference
+                "f2_r": res.f2_ref,
+                "dist_bark": res.distance_bark,
+                "alpha": res.scaling_factor,
+                "is_outlier": res.is_outlier,
+            }
+        )
+
+    return render_template("dashboards/research_view.html", analysis_data=data)
+
+
 @dashboards.route("/admin/user/<int:user_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_user(user_id):
@@ -269,15 +335,11 @@ def edit_user(user_id):
         user_to_edit.last_name = request.form.get("last_name", "").strip()
         new_role = request.form.get("role")
 
-        # 1. Validate and set Role, with a safeguard for the last admin
-        if new_role in ["student", "teacher", "admin"]:
-            if user_to_edit.role == "admin" and new_role != "admin":
-                admin_count = User.query.filter_by(role="admin").count()
-                if admin_count <= 1:
-                    flash("Cannot change the role of the last administrator.", "danger")
-                    return render_template(
-                        "dashboards/edit_user.html", user=user_to_edit
-                    )
+        # 1. Validate and set Role, with safeguards
+        if user_to_edit.role == "admin":
+            # Admins CANNOT change their own role or other admins' roles via this form
+            new_role = "admin"
+        elif new_role in ["student", "teacher", "admin"]:
             user_to_edit.role = new_role
 
         # 2. Handle Student ID based on the new role
@@ -286,7 +348,7 @@ def edit_user(user_id):
             # Validate Student ID uniqueness if it has changed
             if new_student_id and new_student_id != user_to_edit.student_id:
                 existing_user = User.query.filter(
-                    User.student_id == new_student_id, User.id != user_id
+                    db.and_(User.student_id == new_student_id, User.id != user_id)
                 ).first()
                 if existing_user:
                     flash(
@@ -338,7 +400,7 @@ def update_config():
     key = data.get("key")
     value = data.get("value")
 
-    if key not in ["registration_open", "maintenance_mode"]:
+    if key not in ["registration_open", "maintenance_mode", "enable_logging"]:
         return jsonify({"success": False, "error": "Invalid configuration key"}), 400
 
     try:
@@ -388,31 +450,38 @@ def generate_pronunciation():
 
     try:
         ipa, audio_bytes = word_parser.get_word_data(word_text)
-        
+
         if not ipa and not audio_bytes:
-            return jsonify({"error": f"Could not retrieve any data for '{word_text}'."}), 404
+            return (
+                jsonify({"error": f"Could not retrieve any data for '{word_text}'."}),
+                404,
+            )
 
         response_data = {"ipa": ipa}
 
         if audio_bytes:
-            audio_folder = os.path.join(current_app.static_folder, "audio")
+            processed_bytes = process_audio_data(audio_bytes)
+
+            audio_folder = os.path.join(current_app.static_folder or "static", "audio")
             if not os.path.exists(audio_folder):
                 os.makedirs(audio_folder)
-            
+
             filename = secure_filename(f"{word_text.lower()}.mp3")
             save_path = os.path.join(audio_folder, filename)
-            
+
             with open(save_path, "wb") as f:
-                f.write(audio_bytes)
-            
+                f.write(processed_bytes)
+
             db_audio_path = f"audio/{filename}"
-            session['generated_audio_path'] = db_audio_path
-            response_data["audio_path"] = url_for('static', filename=db_audio_path)
+            session["generated_audio_path"] = db_audio_path
+            response_data["audio_path"] = url_for("static", filename=db_audio_path)
 
         return jsonify(response_data)
 
     except Exception as e:
-        current_app.logger.error(f"Error generating pronunciation for '{word_text}': {e}")
+        current_app.logger.error(
+            f"Error generating pronunciation for '{word_text}': {e}"
+        )
         return jsonify({"error": "An internal server error occurred."}), 500
 
 
@@ -433,10 +502,10 @@ def add_word():
             return render_template("dashboards/manage_word.html", word=None)
 
         # Check for duplicate word
-        if Word.query.filter(Word.text.ilike(word_text)).first():
+        if Word.query.filter(Word.text.ilike(word_text)).first():  # type: ignore
             flash(f"The word '{word_text}' already exists in the wordlist.", "danger")
             return render_template("dashboards/manage_word.html", word=None)
-            
+
         # Determine the next sequence order
         max_sequence = db.session.query(db.func.max(Word.sequence_order)).scalar() or 0
         new_word = Word(text=word_text, ipa=ipa, sequence_order=max_sequence + 1)
@@ -444,25 +513,25 @@ def add_word():
         # Handle audio file
         audio_path = None
         if audio_file and audio_file.filename:
-            audio_folder = os.path.join(current_app.static_folder, "audio")
+            audio_folder = os.path.join(current_app.static_folder or "static", "audio")
             filename = secure_filename(f"{word_text.lower()}.mp3")
             audio_path = os.path.join(audio_folder, filename)
             audio_file.save(audio_path)
             new_word.audio_path = f"audio/{filename}"
-        elif session.get('generated_audio_path'):
-            new_word.audio_path = session.pop('generated_audio_path', None)
+        elif session.get("generated_audio_path"):
+            new_word.audio_path = session.pop("generated_audio_path", None)
 
         db.session.add(new_word)
         db.session.commit()
 
         flash(f"Successfully added the word '{word_text}'.", "success")
-        next_url = request.args.get('next')
+        next_url = request.args.get("next")
         if next_url:
             return redirect(next_url)
         return redirect(url_for("dashboards.admin_dashboard"))
 
     # For GET request
-    session.pop('generated_audio_path', None) # Clear session cache
+    session.pop("generated_audio_path", None)  # Clear session cache
     return render_template("dashboards/manage_word.html", word=None)
 
 
@@ -486,34 +555,34 @@ def edit_word(word_id):
 
         # Check if text is being changed to something that already exists
         if word_text.lower() != word.text.lower():
-            if Word.query.filter(Word.text.ilike(word_text)).first():
+            if Word.query.filter(Word.text.ilike(word_text)).first():  # type: ignore
                 flash(f"The word '{word_text}' already exists.", "danger")
                 return render_template("dashboards/manage_word.html", word=word)
 
         word.text = word_text
         word.ipa = ipa
-        
+
         # Handle audio file update
         if audio_file and audio_file.filename:
             # If a new file is uploaded, save it and update path
-            audio_folder = os.path.join(current_app.static_folder, "audio")
+            audio_folder = os.path.join(current_app.static_folder or "static", "audio")
             filename = secure_filename(f"{word_text.lower()}.mp3")
             audio_path = os.path.join(audio_folder, filename)
             audio_file.save(audio_path)
             word.audio_path = f"audio/{filename}"
-        elif session.get('generated_audio_path'):
+        elif session.get("generated_audio_path"):
             # If a file was generated, use that path
-            word.audio_path = session.pop('generated_audio_path', None)
-        
+            word.audio_path = session.pop("generated_audio_path", None)
+
         db.session.commit()
         flash(f"Successfully updated '{word_text}'.", "success")
-        next_url = request.args.get('next')
+        next_url = request.args.get("next")
         if next_url:
             return redirect(next_url)
         return redirect(url_for("dashboards.admin_dashboard"))
 
     # For GET request
-    session.pop('generated_audio_path', None) # Clear session cache
+    session.pop("generated_audio_path", None)  # Clear session cache
     return render_template("dashboards/manage_word.html", word=word)
 
 
@@ -526,7 +595,7 @@ def delete_word(word_id):
 
     word = Word.query.get_or_404(word_id)
     word_text = word.text
-    next_url = request.args.get('next')
+    next_url = request.args.get("next")
     redirect_url = next_url or url_for("dashboards.admin_dashboard")
 
     delete_word_flag = request.form.get("delete_word") == "on"
@@ -544,22 +613,24 @@ def delete_word(word_id):
                 # Delete associated analysis results (cascade should handle this)
                 # Delete physical submission file
                 if sub.file_path:
-                    full_path = os.path.join(current_app.config["UPLOAD_FOLDER"], sub.file_path)
+                    full_path = os.path.join(
+                        current_app.config["UPLOAD_FOLDER"], sub.file_path
+                    )
                     if os.path.exists(full_path):
                         os.remove(full_path)
                 db.session.delete(sub)
             flash(f"Deleted all student submissions for '{word_text}'.", "info")
 
-        # 2. Delete the word's own audio file
         if word.audio_path:
-            full_audio_path = os.path.join(current_app.static_folder, word.audio_path)
+            static_dir = current_app.static_folder or "static"
+            full_audio_path = os.path.join(static_dir, word.audio_path)
             if os.path.exists(full_audio_path):
                 os.remove(full_audio_path)
 
         # 3. Delete the word itself
         db.session.delete(word)
         db.session.commit()
-        
+
         flash(f"Successfully deleted the word '{word_text}'.", "success")
         return redirect(redirect_url)
 
@@ -582,11 +653,17 @@ def manage_all_words():
     for word in words:
         submission_count = word.submissions.count()
         last_submission = word.submissions.order_by(Submission.timestamp.desc()).first()
-        word_stats.append({
-            "word": word,
-            "submission_count": submission_count,
-            "last_submission_str": last_submission.timestamp.strftime("%Y-%m-%d") if last_submission else "Never"
-        })
+        word_stats.append(
+            {
+                "word": word,
+                "submission_count": submission_count,
+                "last_submission_str": (
+                    last_submission.timestamp.strftime("%Y-%m-%d")
+                    if last_submission
+                    else "Never"
+                ),
+            }
+        )
 
     return render_template("dashboards/manage_all_words.html", word_stats=word_stats)
 
@@ -606,16 +683,34 @@ def delete_user(user_id):
         flash("You cannot delete your own account.", "danger")
         return redirect(url_for("dashboards.admin_dashboard"))
 
+    # Enhance Safety: Admins cannot delete other admins via UI
+    if user_to_delete.role == "admin":
+        flash(
+            "Security Alert: Administrators cannot be deleted via the web panel. Usage of the command-line utility is required.",
+            "warning",
+        )
+        return redirect(url_for("dashboards.admin_dashboard"))
+
     # Path to the user's upload directory
     user_upload_dir = os.path.join(
         current_app.config["UPLOAD_FOLDER"], str(user_to_delete.id)
     )
 
     try:
-        # 1. Delete submission records from DB
+        # 1. Cascade Delete: Remove associated InviteCode if this user used one
+        invite_used = InviteCode.query.filter_by(
+            used_by_user_id=user_to_delete.id
+        ).first()
+        if invite_used:
+            db.session.delete(invite_used)
+            current_app.logger.info(
+                f"Cascade deleted invite code '{invite_used.code}' used by '{user_to_delete.username}'"
+            )
+
+        # 2. Delete submission records from DB
         Submission.query.filter_by(user_id=user_to_delete.id).delete()
 
-        # 2. Delete the user record from DB
+        # 3. Delete the user record from DB
         db.session.delete(user_to_delete)
         db.session.commit()
 
@@ -636,5 +731,100 @@ def delete_user(user_id):
             f"Error deleting user {user_id} by admin {current_user.username}: {e}"
         )
         flash(f"An error occurred while deleting the user: {e}", "danger")
+
+    return redirect(url_for("dashboards.admin_dashboard"))
+
+
+@dashboards.route("/api/submission/<int:submission_id>/analysis")
+@login_required
+def get_analysis_data(submission_id):
+    """Returns analysis data for a specific submission."""
+    # Ensure user has access (Teacher can view all, Student only their own)
+    submission = Submission.query.get_or_404(submission_id)
+    if current_user.role == "student" and submission.user_id != current_user.id:
+        return jsonify({"error": "Access denied"}), 403
+
+    if not submission.analysis:
+        return jsonify({"error": "No analysis data found"}), 404
+
+    res = submission.analysis
+
+    return jsonify(
+        {
+            "student": {
+                "f1": res.f1_norm,
+                "f2": res.f2_norm,
+                "color": "rgba(54, 162, 235, 1)",  # Blue
+            },
+            "reference": {
+                "f1": res.f1_ref,
+                "f2": res.f2_ref,
+                "color": "rgba(75, 192, 192, 1)",  # Green
+            },
+            "metrics": {
+                "distance_bark": (
+                    round(res.distance_bark, 2) if res.distance_bark else None
+                ),
+                "vowel_label": submission.target_word.stressed_vowel,
+                "is_outlier": res.is_outlier,
+            },
+        }
+    )
+
+
+@dashboards.route("/admin/invite/generate", methods=["POST"])
+@login_required
+def generate_invite():
+    """Generates a new random invite code."""
+    if current_user.role != "admin":
+        return jsonify({"error": "Access denied"}), 403
+
+    import uuid
+
+    code = uuid.uuid4().hex[:10].upper()
+
+    # Ensure uniqueness (simple retry)
+    while InviteCode.query.filter_by(code=code).first():
+        code = uuid.uuid4().hex[:10].upper()
+
+    new_invite = InviteCode(code=code, created_by=current_user.id)
+
+    try:
+        db.session.add(new_invite)
+        db.session.commit()
+        flash(f"Generated new invite code: {code}", "success")
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error generating invite code: {e}")
+        flash("Failed to generate invite code.", "danger")
+
+    return redirect(url_for("dashboards.admin_dashboard"))
+
+
+@dashboards.route("/admin/invite/<int:invite_id>/delete", methods=["POST"])
+@login_required
+def delete_invite(invite_id):
+    """Deletes an invite code."""
+    if current_user.role != "admin":
+        return jsonify({"error": "Access denied"}), 403
+
+    invite = InviteCode.query.get_or_404(invite_id)
+
+    # Security Check: Cannot delete used invites manually
+    if invite.is_used:
+        flash(
+            "Cannot delete a used invite code. Delete the teacher user instead.",
+            "warning",
+        )
+        return redirect(url_for("dashboards.admin_dashboard"))
+
+    try:
+        db.session.delete(invite)
+        db.session.commit()
+        flash("Invite code deleted.", "info")
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error deleting invite code: {e}")
+        flash("Failed to delete invite code.", "danger")
 
     return redirect(url_for("dashboards.admin_dashboard"))

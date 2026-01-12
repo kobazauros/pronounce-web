@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 
 # Initialize extensions (to be imported in app.py)
-db = SQLAlchemy()
+db: SQLAlchemy = SQLAlchemy()
 
 
 class User(UserMixin, db.Model):
@@ -44,12 +44,12 @@ class User(UserMixin, db.Model):
 
     def __init__(
         self,
-        username=None,
-        first_name=None,
-        last_name=None,
-        student_id=None,
-        role="student",
-        consented_at=None,
+        username: str | None = None,
+        first_name: str | None = None,
+        last_name: str | None = None,
+        student_id: str | None = None,
+        role: str = "student",
+        consented_at: datetime | None = None,
     ):
         self.username = username
         self.first_name = first_name
@@ -58,13 +58,13 @@ class User(UserMixin, db.Model):
         self.role = role
         self.consented_at = consented_at
 
-    def set_password(self, password):
+    def set_password(self, password: str) -> None:
         self.password_hash = generate_password_hash(password)
 
-    def check_password(self, password):
+    def check_password(self, password: str) -> bool:
         return check_password_hash(self.password_hash, password)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<User {self.username} ({self.role})>"
 
 
@@ -91,7 +91,23 @@ class Word(db.Model):
     # Relationships
     submissions = db.relationship("Submission", backref="target_word", lazy="dynamic")
 
-    def __repr__(self):
+    def __init__(
+        self,
+        text: str | None = None,
+        sequence_order: int | None = None,
+        ipa: str | None = None,
+        vowels: str | None = None,
+        stressed_vowel: str | None = None,
+        audio_path: str | None = None,
+    ):
+        self.text = text
+        self.sequence_order = sequence_order
+        self.ipa = ipa
+        self.vowels = vowels
+        self.stressed_vowel = stressed_vowel
+        self.audio_path = audio_path
+
+    def __repr__(self) -> str:
         return f"<Word {self.sequence_order}: {self.text}>"
 
 
@@ -127,11 +143,11 @@ class Submission(db.Model):
 
     def __init__(
         self,
-        user_id=None,
-        word_id=None,
-        test_type="pre",
-        file_path=None,
-        file_size_bytes=None,
+        user_id: int | None = None,
+        word_id: int | None = None,
+        test_type: str = "pre",
+        file_path: str | None = None,
+        file_size_bytes: int | None = None,
     ):
         self.user_id = user_id
         self.word_id = word_id
@@ -139,7 +155,7 @@ class Submission(db.Model):
         self.file_path = file_path
         self.file_size_bytes = file_size_bytes
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Submission {self.id}: User {self.user_id}>"
 
 
@@ -180,7 +196,10 @@ class AnalysisResult(db.Model):
 
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    def __repr__(self):
+    def __init__(self, submission_id: int | None = None) -> None:
+        self.submission_id = submission_id
+
+    def __repr__(self) -> str:
         return f"<Analysis Result for Sub #{self.submission_id}>"
 
 
@@ -191,21 +210,21 @@ class SystemConfig(db.Model):
     key = db.Column(db.String(50), unique=True, nullable=False)
     value = db.Column(db.String(100), nullable=False)
 
-    def __init__(self, key=None, value=None):
+    def __init__(self, key: str | None = None, value: str | None = None):
         self.key = key
         self.value = value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<SystemConfig {self.key}={self.value}>"
 
     @staticmethod
-    def get(key, default=None):
+    def get(key: str, default: str | None = None) -> str | None:
         """Helper to get a config value by key."""
         config = SystemConfig.query.filter_by(key=key).first()
         return config.value if config else default
 
     @staticmethod
-    def get_bool(key, default=False):
+    def get_bool(key: str, default: bool = False) -> bool:
         """Helper to get a config value as a boolean."""
         val = SystemConfig.get(key)
         if val is None:
@@ -213,12 +232,45 @@ class SystemConfig(db.Model):
         return val.lower() in ["true", "1", "t", "y", "yes"]
 
     @staticmethod
-    def set(key, value):
+    def set(key: str, value: str | int | bool) -> None:
         """Helper to set a config value. The value is converted to a string."""
         config = SystemConfig.query.filter_by(key=key).first()
+        # No commit here, let the caller handle the transaction
         if not config:
             config = SystemConfig(key=key, value=str(value))
-            db.session.add(config)  # type: ignore
+            db.session.add(config)
         else:
             config.value = str(value)
-        # No commit here, let the caller handle the transaction
+
+
+class InviteCode(db.Model):
+    """
+    Stores invite codes for teacher registration.
+    """
+
+    __tablename__ = "invite_codes"
+
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(20), unique=True, nullable=False, index=True)
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    # Tracking usage
+    is_used = db.Column(db.Boolean, default=False)
+    used_by_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    used_at = db.Column(db.DateTime, nullable=True)
+
+    # Relationships
+    creator = db.relationship(
+        "User", foreign_keys=[created_by], backref="created_invites"
+    )
+    used_by = db.relationship(
+        "User", foreign_keys=[used_by_user_id], backref="used_invite"
+    )
+
+    def __init__(self, code: str, created_by: int):
+        self.code = code
+        self.created_by = created_by
+
+    def __repr__(self):
+        return f"<InviteCode {self.code} (Used: {self.is_used})>"

@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+
+{% block title %}Research Dashboard{% endblock %}
+
+{% block head %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Chart.js Plugin for Annotations (optional, but good for F1/F2 lines) -->
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <a href="{{ url_for('dashboards.teacher_dashboard') }}"
+                class="text-indigo-600 hover:underline mb-2 inline-block">&larr; Back to Teacher Dashboard</a>
+            <h1 class="text-3xl font-bold text-gray-800">Acoustic Research Dashboard</h1>
+            <p class="text-gray-600">Deep dive into formant analysis, vowel spaces, and error distributions.</p>
+        </div>
+        <div class="text-right">
+            <span class="block text-2xl font-bold text-gray-800" id="total-samples">0</span>
+            <span class="text-sm text-gray-500">Total Samples</span>
+        </div>
+    </div>
+
+    <!-- Charts Row 1: Main Analysis (Vowel Space + Histogram) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+        <!-- Vowel Space (Takes 2/3 width) -->
+        <div class="lg:col-span-2 bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-bold text-gray-800 mb-1">Vowel Space (F1 vs F2)</h2>
+            <p class="text-xs text-gray-500 mb-2">Values are normalized using Cumulative VTLN (Alpha). Axes are
+                reversed.</p>
+
+            <div class="relative h-72 w-full mb-2">
+                <canvas id="vowelSpaceChart"></canvas>
+            </div>
+
+            <!-- Vowel Filters Row -->
+            <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-100">
+                <div class="flex gap-1 items-center border-r border-gray-200 pr-2 shrink-0">
+                    <button id="selectAllBtn"
+                        class="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold uppercase tracking-wide">All</button>
+                    <span class="text-gray-300 text-[10px]">/</span>
+                    <button id="deselectAllBtn"
+                        class="text-[10px] text-gray-500 hover:text-gray-700 font-medium uppercase tracking-wide">None</button>
+                </div>
+                <div id="vowelCheckboxes" class="flex gap-x-2 gap-y-1 flex-wrap items-center text-[10px]">
+                    <!-- Checkboxes injected by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Histogram (Takes 1/3 width) -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex flex-col">
+            <h2 class="text-lg font-bold text-gray-800 mb-1">Error Distribution (Bark)</h2>
+            <p class="text-[10px] text-gray-400 mb-2">Frequency of acoustic distances. Peaks near 0 indicate higher
+                accuracy.</p>
+            <div class="relative flex-grow w-full min-h-[200px]">
+                <canvas id="distributionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 2: Correlations (Side by Side) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <!-- F1 Correlation -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-bold text-gray-800 mb-1">F1 Correlation (Height)</h2>
+            <p class="text-[10px] text-gray-400 mb-2">Student Norm F1 vs Reference F1</p>
+            <div class="relative h-64 w-full">
+                <canvas id="correlationChartF1"></canvas>
+            </div>
+        </div>
+
+        <!-- F2 Correlation -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-bold text-gray-800 mb-1">F2 Correlation (Backness)</h2>
+            <p class="text-[10px] text-gray-400 mb-2">Student Norm F2 vs Reference F2</p>
+            <div class="relative h-64 w-full">
+                <canvas id="correlationChartF2"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+            <h2 class="text-lg font-semibold text-gray-700">Raw Data</h2>
+            <input type="text" id="tableSearch" placeholder="Search..."
+                class="px-3 py-1 border border-gray-300 rounded-md text-sm">
+        </div>
+        <div class="overflow-x-auto max-h-96">
+            <table class="min-w-full divide-y divide-gray-200" id="dataTable">
+                <thead class="bg-gray-50 sticky top-0">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Username</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Student ID</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Word</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Vowel</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">F1 (Norm)</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">F2 (Norm)</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Dist (Bark)</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Alpha</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Outlier</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                    <!-- JS handles population -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const rawData = {{ analysis_data | tojson }};
+    document.getElementById('total-samples').textContent = rawData.length;
+
+    // --- 1. Populate Table ---
+    const tableBody = document.querySelector('#dataTable tbody');
+    rawData.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="px-4 py-2 font-medium text-gray-900">${row.username}</td>
+            <td class="px-4 py-2 whitespace-nowrap">${row.student_id || '<span class="text-gray-400 italic">None</span>'}</td>
+            <td class="px-4 py-2 font-medium">${row.word}</td>
+            <td class="px-4 py-2">${row.vowel}</td>
+            <td class="px-4 py-2">${Math.round(row.f1_s)}</td>
+            <td class="px-4 py-2">${Math.round(row.f2_s)}</td>
+            <td class="px-4 py-2 ${row.dist_bark > 3 ? 'text-red-600 font-bold' : ''}">${row.dist_bark.toFixed(2)}</td>
+            <td class="px-4 py-2">${row.alpha.toFixed(2)}</td>
+            <td class="px-4 py-2">${row.is_outlier ? '<span class="text-red-500 font-bold">YES</span>' : '-'}</td>
+        `;
+        tableBody.appendChild(tr);
+    });
+
+    // --- Search Logic ---
+    document.getElementById('tableSearch').addEventListener('keyup', (e) => {
+        const term = e.target.value.toLowerCase();
+        const rows = tableBody.querySelectorAll('tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(term) ? '' : 'none';
+        });
+    });
+
+    // --- 2. Vowel Space Chart Logic ---
+    const validData = rawData.filter(d => d.f1_s && d.f2_s && d.f1_r && d.f2_r);
+
+    // Extract unique vowels and sort them
+    const uniqueVowels = [...new Set(validData.map(d => d.vowel))].sort();
+    const activeVowels = new Set(uniqueVowels); // Initially all active
+
+    // Init Logic for Checkboxes
+    const container = document.getElementById('vowelCheckboxes');
+
+    function renderCheckboxes() {
+        container.innerHTML = '';
+        uniqueVowels.forEach(v => {
+            const label = document.createElement('label');
+            label.className = 'inline-flex items-center text-[10px] text-gray-600 cursor-pointer';
+            label.innerHTML = `
+                <input type="checkbox" value="${v}" ${activeVowels.has(v) ? 'checked' : ''} class="form-checkbox h-3 w-3 text-indigo-600 rounded border-gray-300 mr-1 filter-cb">
+                ${v}
+           `;
+            container.appendChild(label);
+        });
+
+        // Add listeners
+        document.querySelectorAll('.filter-cb').forEach(cb => {
+            cb.addEventListener('change', (e) => {
+                const val = e.target.value;
+                if (e.target.checked) activeVowels.add(val);
+                else activeVowels.delete(val);
+                updateChart();
+            });
+        });
+    }
+
+    renderCheckboxes();
+
+    document.getElementById('selectAllBtn').addEventListener('click', () => {
+        uniqueVowels.forEach(v => activeVowels.add(v));
+        document.querySelectorAll('.filter-cb').forEach(cb => cb.checked = true);
+        updateChart();
+    });
+
+    document.getElementById('deselectAllBtn').addEventListener('click', () => {
+        activeVowels.clear();
+        document.querySelectorAll('.filter-cb').forEach(cb => cb.checked = false);
+        updateChart();
+    });
+
+    // Chart Instance
+    let vowelChart = null;
+
+    function updateChart() {
+        const filteredData = validData.filter(d => activeVowels.has(d.vowel));
+
+        const studentPoints = filteredData.map(d => ({ x: d.f2_s, y: d.f1_s, word: d.word, vowel: d.vowel }));
+        const refPoints = filteredData.map(d => ({ x: d.f2_r, y: d.f1_r, word: d.word, vowel: d.vowel }));
+
+        if (vowelChart) {
+            vowelChart.data.datasets[0].data = studentPoints;
+            vowelChart.data.datasets[1].data = refPoints;
+            vowelChart.update();
+            return;
+        }
+
+        const ctx = document.getElementById('vowelSpaceChart');
+        vowelChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: 'Student',
+                        data: studentPoints,
+                        backgroundColor: 'rgba(79, 70, 229, 0.6)', // Indigo
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        pointRadius: 4
+                    },
+                    {
+                        label: 'Reference',
+                        data: refPoints,
+                        backgroundColor: 'rgba(16, 185, 129, 0.4)', // Green
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        pointRadius: 6,
+                        pointStyle: 'rectRot'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'F2 (Backness) - Reversed' },
+                        reverse: true,
+                        suggestedMin: 800,
+                        suggestedMax: 3000
+                    },
+                    y: {
+                        title: { display: true, text: 'F1 (Height) - Reversed' },
+                        reverse: true,
+                        suggestedMin: 200,
+                        suggestedMax: 1000
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const p = context.raw;
+                                return `/${p.vowel}/ in "${p.word}"`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Initial Draw
+    updateChart();
+
+    // --- 3. Error Histogram ---
+    // Bin the distances (0-0.5, 0.5-1.0, etc.)
+    const bins = Array(12).fill(0); // 0 to 6 Bark in 0.5 steps
+    const labels = [];
+    for (let i = 0; i < 12; i++) labels.push((i * 0.5).toFixed(1));
+
+    validData.forEach(d => {
+        const dist = d.dist_bark;
+        if (dist < 6) {
+            const idx = Math.floor(dist / 0.5);
+            bins[idx]++;
+        } else {
+            bins[11]++; // Overflow
+        }
+    });
+
+    new Chart(document.getElementById('distributionChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Count',
+                data: bins,
+                backgroundColor: 'rgba(99, 102, 241, 0.5)',
+                borderColor: 'rgba(99, 102, 241, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { title: { display: true, text: 'Bark Distance Interval' } },
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // --- Helper: Simple Linear Regression ---
+    function calculateTrendLine(dataPoints, xKey, yKey) {
+        if (!dataPoints || dataPoints.length < 2) return [];
+
+        let n = dataPoints.length;
+        let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+
+        dataPoints.forEach(p => {
+            let x = p[xKey];
+            let y = p[yKey];
+            sumX += x;
+            sumY += y;
+            sumXY += (x * y);
+            sumXX += (x * x);
+        });
+
+        // Avoid division by zero
+        if (n * sumXX - sumX * sumX === 0) return [];
+
+        let slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+        let intercept = (sumY - slope * sumX) / n;
+
+        // Calculate start and end points for the line
+        // We use the min and max X from data to draw the line across the range
+        let xValues = dataPoints.map(p => p[xKey]);
+        let minX = Math.min(...xValues);
+        let maxX = Math.max(...xValues);
+
+        return [
+            { x: minX, y: slope * minX + intercept },
+            { x: maxX, y: slope * maxX + intercept }
+        ];
+    }
+
+    // --- 4. Correlation Charts (F1 & F2) ---
+    function createCorrelationChart(canvasId, label, xKey, yKey, color) {
+        const points = validData.map(d => ({ x: d[xKey], y: d[yKey], word: d.word, vowel: d.vowel }));
+        const trend = calculateTrendLine(validData, xKey, yKey);
+
+        new Chart(document.getElementById(canvasId), {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: label,
+                        data: points,
+                        backgroundColor: color,
+                        order: 2
+                    },
+                    {
+                        label: 'Linear Trend',
+                        data: trend,
+                        type: 'line',
+                        borderColor: 'rgba(75, 85, 99, 0.8)', // Gray-600
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false,
+                        tension: 0,
+                        order: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Reference (Hz)' } },
+                    y: { title: { display: true, text: 'Student Norm (Hz)' } }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                if (context.dataset.type === 'line') return `Trend Line`;
+                                const p = context.raw;
+                                return `/${p.vowel}/ in "${p.word}"`;
+                            }
+                        }
+                    },
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                scaleID: 'x',
+                                value: 0,
+                                endValue: 4000,
+                                borderColor: 'rgb(200, 200, 200)',
+                                borderWidth: 1,
+                                borderDash: [5, 5],
+                                label: { display: false }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createCorrelationChart('correlationChartF1', 'F1 Correlation', 'f1_r', 'f1_s', 'rgba(245, 158, 11, 0.6)'); // Amber
+    createCorrelationChart('correlationChartF2', 'F2 Correlation', 'f2_r', 'f2_s', 'rgba(59, 130, 246, 0.6)'); // Blue
+
+</script>
+{% endblock %}

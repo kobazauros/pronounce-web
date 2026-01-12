@@ -8,7 +8,7 @@ const Config = {
     MAX_RECORDING_MS: 5000,
     AUDIO_EXT: 'mp3',
     TARGET_RATE: 16000,
-    TRIM_THRESHOLD_FACTOR: 3.5, 
+    TRIM_THRESHOLD_FACTOR: 3.5,
     WORDS_LIMIT: 20,
     COLORS: {
         MODEL: '#0ea5e9', // Sky Blue
@@ -19,8 +19,8 @@ const Config = {
 };
 
 let WORDS = [];
-let audioContext = null; 
-let autoCheckInterval = null; 
+let audioContext = null;
+let autoCheckInterval = null;
 let sampleBuf = null;
 let userBuf = null;
 let sampleWS = null;
@@ -32,8 +32,12 @@ let selectedWord = null;
 let isAppBusy = false;
 let isMonitoring = false;
 let monitorStarted = false;
-let measuredNoiseFloor = 0.015; 
+let microphoneStream = null;
+let measuredNoiseFloor = 0.015;
 let userProgress = { pre: [], post: [] };
+let lockedStage = null; // Fix: Global lock state
+let isLoggingEnabled = false;
+let lastLogTime = 0;
 
 const UI = {
     wordList: document.getElementById('word-list'),
@@ -55,16 +59,31 @@ const UI = {
     noiseLevel: document.getElementById('noise-level-display'),
     noiseIcon: document.getElementById('noise-indicator-icon'),
     progressFill: document.getElementById('progress-bar-fill'),
-    progressPercent: document.getElementById('progress-percent')
+    progressPercent: document.getElementById('progress-percent'),
+    loggingToggle: document.getElementById('logging-toggle')
 };
 
 // ======= Helpers =======
 
 const say = txt => { if (UI.msgBox) UI.msgBox.textContent = txt ?? 'Ready'; };
 
+const logEvent = async (event, data = {}) => {
+    if (!isLoggingEnabled && event !== 'system_init') return; // system_init might force log? No.
+    try {
+        await fetch('/api/log_event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ event, timestamp: Date.now() / 1000, ...data })
+        });
+    } catch (e) {
+        // Silent fail
+    }
+};
+
 const getAC = async () => {
     if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: Config.TARGET_RATE });
+        // Use native sample rate for better compatibility/latency
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
     if (audioContext.state === 'suspended') await audioContext.resume();
     return audioContext;
@@ -90,22 +109,89 @@ function bufferToWav(buffer) {
     return new Blob([arrayBuffer], { type: 'audio/wav' });
 }
 
-function trimSilence(buffer, threshold = 0.015) {
+function trimSilence(buffer) {
     const pcm = buffer.getChannelData(0);
-    let start = 0, end = pcm.length - 1;
-    while (start < pcm.length && Math.abs(pcm[start]) < threshold) start++;
-    while (end > start && Math.abs(pcm[end]) < threshold) end--;
-    const padding = Math.floor(buffer.sampleRate * 0.03);
-    start = Math.max(0, start - padding);
-    end = Math.min(pcm.length - 1, end + padding);
-    const trimmed = audioContext.createBuffer(1, Math.max(1, end - start), buffer.sampleRate);
-    trimmed.copyToChannel(pcm.subarray(start, end), 0);
+    const sr = buffer.sampleRate;
+    const frameSize = Math.floor(sr * 0.02); // 20ms frames
+    const nFrames = Math.floor(pcm.length / frameSize);
+
+    // Calculate Noise Floor from the buffer content (Robustness fix)
+    let rmsValues = [];
+    for (let i = 0; i < nFrames; i++) {
+        let sumSq = 0;
+        for (let j = 0; j < frameSize; j++) {
+            const val = pcm[i * frameSize + j];
+            sumSq += val * val;
+        }
+        rmsValues.push(Math.sqrt(sumSq / frameSize));
+    }
+    // Calculate Local Floor (Backup)
+    rmsValues.sort((a, b) => a - b);
+    const floorIndex = Math.floor(rmsValues.length * 0.1);
+    const localFloor = rmsValues[floorIndex] || 0.01;
+
+    // Determine Effective Floor: Prefer Live Monitor, Fallback to Local
+    // If Monitor is Dead (<0.0001), use Local.
+    let effectiveFloor = localFloor;
+    if (typeof measuredNoiseFloor !== 'undefined' && measuredNoiseFloor > 0.0001) {
+        // Trust live monitor but sanity check against local (e.g. don't go below local/2)
+        effectiveFloor = measuredNoiseFloor;
+    }
+
+    // Thresholds (Hybrid)
+    // Optimization found 3.0 (Live) vs 4.0 (Local). Using conservative (higher) to be safe.
+    const volThresh = Math.max(0.015, effectiveFloor * 4.0);
+    const sensitiveThresh = Math.max(0.005, effectiveFloor * 2.5);
+    const zcrThresh = 0.1;
+
+    let startFrame = 0;
+    let endFrame = nFrames - 1;
+
+    // Helper: Is frame speech?
+    const isSpeech = (idx) => {
+        let sumSq = 0;
+        let crosses = 0;
+        const offset = idx * frameSize;
+
+        for (let i = 0; i < frameSize; i++) {
+            const val = pcm[offset + i];
+            sumSq += val * val;
+            if (i > 0 && (val > 0) !== (pcm[offset + i - 1] > 0)) crosses++;
+        }
+
+        const rms = Math.sqrt(sumSq / frameSize);
+        const zcr = crosses / frameSize;
+
+        // Keep if LOUD or (QUIET but HISSY)
+        return (rms > volThresh) || (rms > sensitiveThresh && zcr > zcrThresh);
+    };
+
+    // Scan Forward
+    while (startFrame < nFrames && !isSpeech(startFrame)) startFrame++;
+
+    // Scan Backward
+    while (endFrame > startFrame && !isSpeech(endFrame)) endFrame--;
+
+    // Start/End in samples
+    // Add 10ms padding (tighter cut)
+    const padding = Math.floor(sr * 0.01);
+    let startSample = Math.max(0, startFrame * frameSize - padding);
+    let endSample = Math.min(pcm.length, (endFrame + 1) * frameSize + padding);
+
+    // Ensure valid duration
+    if (endSample <= startSample) {
+        startSample = 0;
+        endSample = pcm.length;
+    }
+
+    const trimmed = audioContext.createBuffer(1, Math.max(1, endSample - startSample), sr);
+    trimmed.copyToChannel(pcm.subarray(startSample, endSample), 0);
     return trimmed;
 }
 
 function clearStage() {
-    if (sampleWS) { try { sampleWS.destroy(); } catch(e){} sampleWS = null; }
-    if (userWS) { try { userWS.destroy(); } catch(e){} userWS = null; }
+    if (sampleWS) { try { sampleWS.destroy(); } catch (e) { } sampleWS = null; }
+    if (userWS) { try { userWS.destroy(); } catch (e) { } userWS = null; }
     if (UI.mainStage) {
         UI.mainStage.innerHTML = '';
         UI.mainStage.style.backgroundColor = Config.COLORS.STAGE_BG;
@@ -118,10 +204,11 @@ function makeWS(container, colour) {
     const containerHeight = container.offsetHeight || 180;
     return WaveSurfer.create({
         container: container,
-        height: containerHeight, 
+        height: containerHeight,
         waveColor: colour,
         progressColor: colour,
-        cursorWidth: 0,
+        cursorColor: colour, // Match cursor to wave color
+        cursorWidth: 2,      // Enable cursor
         interact: false,
         barWidth: 2,
         barGap: 2,
@@ -129,6 +216,82 @@ function makeWS(container, colour) {
         normalize: true,
         fillParent: true
     });
+}
+
+// ... (keep intervening code if any, but replacing chunks) ...
+
+if (UI.playBtn) UI.playBtn.onclick = async () => {
+    if (!selectedWord) return;
+    if (isAppBusy) return; // Prevent double clicks
+    isAppBusy = true;
+
+    // Stop any existing playback
+    if (sampleWS) sampleWS.stop();
+    if (userWS) userWS.stop();
+
+    try {
+        // If we already have the sample buffer and visualization, just play it
+        if (sampleBuf && sampleWS) {
+            sampleWS.play();
+            sampleWS.once('finish', () => { isAppBusy = false; });
+            return;
+        }
+
+        const res = await fetch(`/static/audio/${selectedWord}.${Config.AUDIO_EXT}`);
+        const ctx = await getAC();
+        const raw = await ctx.decodeAudioData(await res.arrayBuffer());
+        sampleBuf = trimSilence(raw, 0.005);
+
+        // Re-render stage if needed
+        if (userBuf) {
+            renderComparison();
+        } else {
+            clearStage();
+            sampleWS = makeWS(UI.mainStage, Config.COLORS.MODEL);
+            sampleWS.load(URL.createObjectURL(bufferToWav(sampleBuf)));
+        }
+
+        // Wait for ready then play
+        if (sampleWS) {
+            sampleWS.once('ready', () => {
+                sampleWS.play();
+                sampleWS.once('finish', () => { isAppBusy = false; });
+            });
+            // If already ready (sync load case), play immediately
+            if (sampleWS.isReady) { // Note: V7 property might differ, relying on event is safer or check duration
+                sampleWS.play();
+                sampleWS.once('finish', () => { isAppBusy = false; });
+            }
+        }
+
+    } catch (e) {
+        console.error("Play Sample Error", e);
+        isAppBusy = false;
+    }
+};
+
+// ...
+
+if (UI.playUserBtn) UI.playUserBtn.onclick = async () => {
+    if (!userBuf) return;
+    if (isAppBusy) return;
+
+    // Stop any existing playback
+    if (sampleWS) sampleWS.stop();
+    if (userWS) userWS.stop();
+
+    if (!userWS) renderComparison();
+
+    if (userWS) {
+        userWS.play();
+    }
+};
+
+if (UI.loggingToggle) {
+    UI.loggingToggle.onchange = (e) => {
+        isLoggingEnabled = e.target.checked;
+        logEvent('logging_toggled', { enabled: isLoggingEnabled });
+    };
 }
 
 // ======= Data Management =======
@@ -154,7 +317,29 @@ async function fetchUserProgress() {
     try {
         const res = await fetch('/get_progress');
         if (res.ok) {
-            userProgress = await res.json();
+            const data = await res.json();
+            // Backend now returns { progress: ..., stage: ... }
+            if (data.progress) {
+                userProgress = data.progress;
+
+                // Enforce Stage Locking (Strict Flow)
+                if (data.stage && UI.testTypeInput) {
+                    lockedStage = data.stage; // Fix: Store lock state
+                    UI.testTypeInput.value = data.stage;
+                    UI.testTypeInput.disabled = true;
+
+                    // Visual feedback for locked stage
+                    UI.testTypeInput.title = "Stage locked by curriculum progress";
+                    if (data.stage === 'post') {
+                        UI.testTypeInput.classList.add('bg-slate-100', 'text-slate-500');
+                    }
+                } else {
+                    lockedStage = null; // Unlock if no stage forced
+                }
+            } else {
+                // Fallback for types (should not happen if backend is updated)
+                userProgress = data;
+            }
             refreshProgressUI();
         }
     } catch (e) { console.warn("Sync failed", e); }
@@ -172,16 +357,16 @@ function buildWordList() {
     sorted.forEach((item) => {
         const w = (typeof item === 'object') ? item.word : item;
         const ipa = (typeof item === 'object') ? item.ipa : null;
-        
+
         const a = document.createElement('a');
         a.href = '#';
         // Added Tailwind classes for better touch targets (py-2.5) and visual feedback
         a.className = 'word-link group flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all border border-transparent hover:border-slate-200';
         a.dataset.word = w;
         if (ipa) a.dataset.ipa = ipa;
-        
+
         a.innerHTML = `<span>${w}</span><i class="status-icon far fa-circle"></i>`;
-        
+
         a.onclick = async (e) => {
             e.preventDefault();
             await getAC();
@@ -190,18 +375,24 @@ function buildWordList() {
             a.classList.add('active-selection', 'bg-slate-100', 'border-slate-200', 'text-slate-900');
             selectedWord = w;
             resetStageData();
-            
+
             UI.sampleTitle.textContent = w;
             UI.playBtn.disabled = false;
-            
-            // Show transcription if available, otherwise clear
-            if (ipa || a.dataset.ipa) {
-                UI.phonetic.textContent = ipa || a.dataset.ipa;
+
+            // Enforce "Listen Before Record"
+            UI.recStartBtn.disabled = true;
+            UI.recStartBtn.style.opacity = '0.5';
+            UI.recStartBtn.style.cursor = 'not-allowed';
+
+            if (ipa) {
+                // Ensure no double slashes if data already has them
+                const cleanIpa = ipa.replace(/\//g, '');
+                UI.phonetic.textContent = `/${cleanIpa}/`;
                 UI.phonetic.style.opacity = '1';
             } else {
-                UI.phonetic.textContent = '/ ... /';
-                UI.phonetic.style.opacity = '0.3';
+                UI.phonetic.style.opacity = '0';
             }
+            if (UI.submitBtn) UI.submitBtn.disabled = true;
         };
         UI.wordList.appendChild(a);
     });
@@ -211,13 +402,13 @@ function refreshProgressUI() {
     const type = UI.testTypeInput?.value || 'pre';
     const done = userProgress[type] || [];
     const total = WORDS.length;
-    
+
     document.querySelectorAll('.word-link').forEach(el => {
         const isDone = done.includes(el.dataset.word);
         // Toggle visual state for completed items
         el.classList.toggle('opacity-50', isDone && !el.classList.contains('active-selection'));
         el.classList.toggle('word-submitted', isDone);
-        
+
         const icon = el.querySelector('.status-icon');
         if (icon) {
             if (isDone) {
@@ -227,7 +418,7 @@ function refreshProgressUI() {
             }
         }
     });
-    
+
     const percent = total > 0 ? Math.round((done.length / total) * 100) : 0;
     if (UI.progressFill) UI.progressFill.style.width = `${percent}%`;
     if (UI.progressPercent) UI.progressPercent.textContent = `${percent}%`;
@@ -242,53 +433,144 @@ function resetStageData() {
     UI.recStartBtn.disabled = false;
     UI.recStopBtn.style.opacity = '0';
     UI.recStopBtn.style.pointerEvents = 'none';
-    if (UI.testTypeInput) UI.testTypeInput.disabled = false;
+    UI.recStopBtn.style.pointerEvents = 'none';
+
+    // Fix: Respect locked stage
+    if (UI.testTypeInput) {
+        if (lockedStage) {
+            UI.testTypeInput.value = lockedStage;
+            UI.testTypeInput.disabled = true;
+        } else {
+            UI.testTypeInput.disabled = false;
+        }
+    }
     if (UI.submitMsg) UI.submitMsg.textContent = '';
     say('');
 }
 
 async function startNoiseMonitor() {
-    if (isMonitoring || isAppBusy) return;
+    if (isMonitoring) return;
+
+    if (!UI.noiseIcon) UI.noiseIcon = document.getElementById('noise-indicator-icon');
+    if (!UI.noiseLevel) UI.noiseLevel = document.getElementById('noise-level-display');
+
     try {
-        const ctx = await getAC();
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const source = ctx.createMediaStreamSource(stream);
+        if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const ctx = audioContext;
+
+        if (!microphoneStream) {
+            microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        }
+
+        // Try to resume if suspended
+        if (ctx.state === 'suspended') {
+            ctx.resume().catch(() => { });
+        }
+
+        const source = ctx.createMediaStreamSource(microphoneStream);
         const analyzer = ctx.createAnalyser();
         analyzer.fftSize = 2048;
         source.connect(analyzer);
+
         const buffer = new Float32Array(analyzer.fftSize);
-        isMonitoring = true; 
+        isMonitoring = true;
         monitorStarted = true;
+
         const loop = () => {
             if (!isMonitoring) return;
             requestAnimationFrame(loop);
+
+            // If strictly suspended, notify user
+            if (ctx.state === 'suspended') {
+                if (UI.noiseLevel && UI.noiseLevel.textContent !== "CLICK PAGE") {
+                    UI.noiseLevel.textContent = "CLICK PAGE";
+                    UI.noiseLevel.className = "text-[9px] font-bold text-amber-500 uppercase tracking-widest";
+                }
+                return;
+            }
+
+            // Check Active States (Recording / Playback)
+            const isRec = (mediaRecorder && mediaRecorder.state === 'recording') || !!recorderNode;
+            const isPlaying = (sampleWS && sampleWS.isPlaying()) || (userWS && userWS.isPlaying());
+
+            if (isRec || isPlaying) {
+                if (UI.noiseLevel) {
+                    const status = isRec ? "RECORDING" : "PLAYBACK";
+                    if (UI.noiseLevel.textContent !== status) {
+                        UI.noiseLevel.textContent = status;
+                        UI.noiseLevel.className = "text-[9px] font-bold text-sky-500 uppercase tracking-widest transition-colors";
+                    }
+                }
+                if (UI.noiseIcon) {
+                    UI.noiseIcon.style.backgroundColor = isRec ? "#f43f5e" : "#0ea5e9";
+                    UI.noiseIcon.style.transform = "scale(1)";
+                }
+                return; // Skip noise processing
+            }
+
             analyzer.getFloatTimeDomainData(buffer);
             let peak = 0;
             for (let i = 0; i < buffer.length; i++) peak = Math.max(peak, Math.abs(buffer[i]));
+
             measuredNoiseFloor = (measuredNoiseFloor * 0.95) + (peak * 0.05);
-            if (UI.noiseIcon) UI.noiseIcon.style.backgroundColor = peak < 0.02 ? "#22c55e" : "#f59e0b";
-            
+
             const isQuiet = peak < 0.02;
-            if (UI.noiseIcon) UI.noiseIcon.style.backgroundColor = isQuiet ? "#22c55e" : "#f59e0b";
+            if (UI.noiseIcon) {
+                UI.noiseIcon.style.backgroundColor = isQuiet ? "#22c55e" : "#f59e0b";
+                UI.noiseIcon.style.transform = isQuiet ? "scale(1)" : `scale(${1 + peak * 5})`;
+            }
             if (UI.noiseLevel) {
                 UI.noiseLevel.textContent = isQuiet ? "QUIET" : "NOISY";
-                // Toggle visibility/urgency colors
-                UI.noiseLevel.classList.remove('text-slate-300');
-                UI.noiseLevel.classList.toggle('text-slate-400', isQuiet);
-                UI.noiseLevel.classList.toggle('text-amber-500', !isQuiet);
+                UI.noiseLevel.className = isQuiet
+                    ? "text-[9px] font-bold text-slate-400 uppercase tracking-widest transition-colors"
+                    : "text-[9px] font-bold text-amber-500 uppercase tracking-widest transition-colors";
+            }
+            if (isLoggingEnabled && Date.now() - lastLogTime > 1000) {
+                const db = 20 * Math.log10(peak || 0.0001);
+                logEvent('noise_sample', { peak, db, noiseFloor: measuredNoiseFloor });
+                lastLogTime = Date.now();
             }
         };
         loop();
-    } catch (err) { 
+
+    } catch (err) {
         console.warn("Monitor Error", err);
         if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-            if (UI.statusText) { UI.statusText.textContent = 'MIC BLOCKED'; UI.statusDot.style.backgroundColor = '#ef4444'; }
-            alert("Microphone access is blocked. Please allow access in your browser settings to use this app.");
+            if (UI.statusText) {
+                UI.statusText.textContent = 'MIC BLOCKED';
+                UI.statusDot.style.backgroundColor = '#ef4444';
+            }
+            if (UI.noiseLevel) UI.noiseLevel.textContent = "BLOCKED";
+            alert("Microphone access is blocked. Please allow access to use this app.");
         }
     }
 }
 
 // ======= Interactions =======
+
+// ======= Visual Feedback Helpers =======
+
+function showProcessing() {
+    if (!UI.mainStage) return;
+    // Check if exists
+    if (document.querySelector('.processing-overlay')) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'processing-overlay';
+    overlay.innerHTML = `
+        <div class="processing-spinner"></div>
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Analysing...</span>
+    `;
+    UI.mainStage.appendChild(overlay);
+}
+
+function hideProcessing() {
+    const overlay = document.querySelector('.processing-overlay');
+    if (overlay) {
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.remove(), 300);
+    }
+}
 
 function renderComparison() {
     if (!userBuf) return;
@@ -297,40 +579,55 @@ function renderComparison() {
     UI.mainStage.style.position = 'relative';
 
     const sDiv = document.createElement('div'), uDiv = document.createElement('div');
-    
-    Object.assign(sDiv.style, { 
+
+    Object.assign(sDiv.style, {
         position: 'absolute', top: '0', left: '0', zIndex: '1',
-        opacity: '0.6', width: '100%', height: '100%' 
+        opacity: '0.6', width: '100%', height: '100%'
     });
-    Object.assign(uDiv.style, { 
+    Object.assign(uDiv.style, {
         position: 'absolute', top: '0', left: '0', zIndex: '2',
-        opacity: '0.9', mixBlendMode: 'screen', width: '100%', height: '100%' 
+        opacity: '0.9', mixBlendMode: 'screen', width: '100%', height: '100%'
     });
 
     UI.mainStage.append(sDiv, uDiv);
-    
+
     if (sampleBuf) {
-        const modelCompare = makeWS(sDiv, Config.COLORS.MODEL);
-        modelCompare.load(URL.createObjectURL(bufferToWav(sampleBuf)));
+        sampleWS = makeWS(sDiv, Config.COLORS.MODEL);
+        sampleWS.load(URL.createObjectURL(bufferToWav(sampleBuf)));
     }
     userWS = makeWS(uDiv, Config.COLORS.USER);
     userWS.load(URL.createObjectURL(bufferToWav(userBuf)));
 }
 
-UI.playBtn.onclick = async () => {
+if (UI.playBtn) UI.playBtn.onclick = async () => {
     if (!selectedWord) return;
-    isAppBusy = true; 
+    logEvent('play_example', { word: selectedWord });
+    if (isAppBusy) return;
+
+    // Stop any existing playback
+    if (sampleWS) sampleWS.stop();
+    if (userWS) userWS.stop();
+
     try {
+        // If we already have the sample buffer and visualization, just play it
+        if (sampleBuf && sampleWS) {
+            sampleWS.play();
+            // Unlock Recording when playback starts/happens
+            UI.recStartBtn.disabled = false;
+            UI.recStartBtn.style.opacity = '1';
+            UI.recStartBtn.style.cursor = 'pointer';
+
+            // Do NOT set isAppBusy for playback duration
+            return;
+        }
+
+        isAppBusy = true; // Block strictly during fetch/decode
         const res = await fetch(`/static/audio/${selectedWord}.${Config.AUDIO_EXT}`);
         const ctx = await getAC();
         const raw = await ctx.decodeAudioData(await res.arrayBuffer());
-        sampleBuf = trimSilence(raw, 0.005); 
-        const src = ctx.createBufferSource();
-        src.buffer = sampleBuf; 
-        src.connect(ctx.destination);
-        src.onended = () => { isAppBusy = false; };
-        src.start();
+        sampleBuf = raw;
 
+        // Re-render stage if needed
         if (userBuf) {
             renderComparison();
         } else {
@@ -338,81 +635,224 @@ UI.playBtn.onclick = async () => {
             sampleWS = makeWS(UI.mainStage, Config.COLORS.MODEL);
             sampleWS.load(URL.createObjectURL(bufferToWav(sampleBuf)));
         }
-    } catch (e) { isAppBusy = false; }
+
+        // Wait for ready then play
+        if (sampleWS) {
+            if (sampleWS.isReady) {
+                isAppBusy = false;
+                sampleWS.play();
+                // Unlock Recording
+                UI.recStartBtn.disabled = false;
+                UI.recStartBtn.style.opacity = '1';
+                UI.recStartBtn.style.cursor = 'pointer';
+            } else {
+                sampleWS.once('ready', () => {
+                    isAppBusy = false;
+                    sampleWS.play();
+                    // Unlock Recording
+                    UI.recStartBtn.disabled = false;
+                    UI.recStartBtn.style.opacity = '1';
+                    UI.recStartBtn.style.cursor = 'pointer';
+                });
+            }
+        } else {
+            isAppBusy = false;
+        }
+
+    } catch (e) {
+        console.error("Play Sample Error", e);
+        isAppBusy = false;
+    }
 };
 
-UI.recStartBtn.onclick = async () => {
+// Global State Updates
+let rawChunks = [];
+let recorderNode = null;
+let recordingSource = null;
+let workletLoaded = false;
+
+// Helper: Securely load worklet
+async function loadRecorderWorklet(ctx) {
+    if (workletLoaded) return;
+    try {
+        await ctx.audioWorklet.addModule('/static/js/recorder-worklet.js');
+        workletLoaded = true;
+    } catch (e) { console.error("Worklet Load Failed", e); }
+}
+
+async function stopRecording() {
+    if (!recorderNode) return;
+
+    // Stop & Disconnect Source (Crucial fix for distortion/slow-down)
+    if (recordingSource) {
+        recordingSource.disconnect();
+        recordingSource = null;
+    }
+
+    // Stop & Disconnect Recorder
+    recorderNode.disconnect();
+    recorderNode = null;
+
+    // Stop auto-check
+    if (autoCheckInterval) clearInterval(autoCheckInterval);
+
+    // UI Updates
+    isAppBusy = true; // Busy processing
+    say('PROCESSING...');
+    UI.recStartBtn.disabled = true;
+    UI.recStopBtn.style.opacity = '0';
+    UI.recStopBtn.style.pointerEvents = 'none';
+    if (UI.testTypeInput) UI.testTypeInput.disabled = false;
+
+    // UX: Show "Processing..." Overlay
+    showProcessing();
+
+    // UX: Show "Processing..." Overlay
+    showProcessing();
+
+    // Compile Audio
+    const ctx = audioContext;
+    if (rawChunks.length === 0) { say('EMPTY'); isAppBusy = false; UI.recStartBtn.disabled = false; return; }
+
+    // Flatten chunks
+    const totalLen = rawChunks.reduce((acc, c) => acc + c.length, 0);
+    const result = new Float32Array(totalLen);
+    let offset = 0;
+    for (const chunk of rawChunks) {
+        result.set(chunk, offset);
+        offset += chunk.length;
+    }
+
+    // Create Wav Blob
+    const buffer = ctx.createBuffer(1, totalLen, ctx.sampleRate);
+    buffer.copyToChannel(result, 0);
+    const wavBlob = bufferToWav(buffer);
+    lastRecordingBlob = wavBlob;
+
+    logEvent('record_stop', { size: wavBlob.size });
+
+    // Upload to Server for Robust Trimming
+    try {
+        const formData = new FormData();
+        formData.append('file', wavBlob, 'recording.wav');
+        formData.append('word', selectedWord);
+
+        const res = await fetch('/api/process_audio', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!res.ok) throw new Error('Processing Failed');
+
+        const processedBlob = await res.blob();
+
+        // Decode for visualization
+        const ab = await processedBlob.arrayBuffer();
+        userBuf = await ctx.decodeAudioData(ab);
+
+        // Update UI
+        say('READY');
+        UI.submitBtn.disabled = false;
+        UI.playUserBtn.disabled = false;
+        UI.recStartBtn.disabled = false;
+
+        renderComparison();
+
+    } catch (e) {
+        console.error(e);
+        say('ERROR');
+        UI.recStartBtn.disabled = false;
+    } finally {
+        isAppBusy = false;
+        hideProcessing();
+    }
+}
+
+if (UI.recStartBtn) UI.recStartBtn.onclick = async () => {
     if (!selectedWord) return;
+    logEvent('record_start', { word: selectedWord });
     const ctx = await getAC();
-    isAppBusy = true; 
+    await loadRecorderWorklet(ctx);
+
+    isAppBusy = true;
     UI.recStartBtn.disabled = true;
     UI.recStopBtn.style.opacity = '1';
     UI.recStopBtn.style.pointerEvents = 'auto';
     if (UI.testTypeInput) UI.testTypeInput.disabled = true;
-    
-    if (sampleWS) sampleWS.setOptions({ waveColor: Config.COLORS.GHOST });
+
+    // Clear previous
+    if (userWS) { try { userWS.destroy(); } catch (e) { } userWS = null; }
+
     say('RECORDING...');
 
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        chunks = [];
-        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-        mediaRecorder.onstop = async () => {
-            if (autoCheckInterval) clearInterval(autoCheckInterval);
-            const rawBlob = new Blob(chunks, { type: 'audio/webm' });
-            stream.getTracks().forEach(t => t.stop());
-            isAppBusy = false; 
-            UI.recStartBtn.disabled = false;
-            UI.recStopBtn.style.opacity = '0';
-            UI.recStopBtn.style.pointerEvents = 'none';
-            if (UI.testTypeInput) UI.testTypeInput.disabled = false;
+        let stream = microphoneStream;
+        if (!stream) {
+            stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            microphoneStream = stream;
+        }
 
-            const decoded = await ctx.decodeAudioData(await rawBlob.arrayBuffer());
-            const thresh = Math.max(0.018, measuredNoiseFloor * Config.TRIM_THRESHOLD_FACTOR);
-            userBuf = trimSilence(decoded, thresh); 
-            lastRecordingBlob = bufferToWav(userBuf); 
-            
-            if (lastRecordingBlob.size < 1000) { say('TOO LOW'); return; }
-            
-            UI.submitBtn.disabled = false;
-            UI.playUserBtn.disabled = false;
-            say('READY');
-            
-            renderComparison();
+        // Setup Worklet Node
+        const source = ctx.createMediaStreamSource(stream);
+        recordingSource = source; // Track globally for cleanup
+        recorderNode = new AudioWorkletNode(ctx, 'recorder-processor');
+
+        rawChunks = [];
+        recorderNode.port.onmessage = (e) => {
+            if (e.data) rawChunks.push(e.data);
         };
-        mediaRecorder.start();
+
+        // Connect Source -> Recorder
+        source.connect(recorderNode);
+
         const startTime = Date.now();
         let silenceStart = null;
+
+        // Auto-Stop Monitor (Reuse Analyzer)
         const analyzer = ctx.createAnalyser();
-        ctx.createMediaStreamSource(stream).connect(analyzer);
+        source.connect(analyzer);
+
         const dataArr = new Float32Array(analyzer.fftSize);
         autoCheckInterval = setInterval(() => {
             const elapsed = Date.now() - startTime;
-            if (elapsed > Config.MAX_RECORDING_MS) { mediaRecorder.stop(); return; }
+            if (elapsed > Config.MAX_RECORDING_MS) { stopRecording(); return; }
+
             analyzer.getFloatTimeDomainData(dataArr);
             let peak = 0;
             for (let i = 0; i < dataArr.length; i++) peak = Math.max(peak, Math.abs(dataArr[i]));
+
             if (peak < Math.max(0.012, measuredNoiseFloor * 2.5) && elapsed > 1000) {
                 if (!silenceStart) silenceStart = Date.now();
-                if (Date.now() - silenceStart > Config.AUTO_STOP_SILENCE_MS) mediaRecorder.stop();
+                if (Date.now() - silenceStart > Config.AUTO_STOP_SILENCE_MS) stopRecording();
             } else silenceStart = null;
         }, 100);
-    } catch (e) { isAppBusy = false; }
+
+    } catch (e) {
+        console.error(e);
+        isAppBusy = false;
+        UI.recStartBtn.disabled = false;
+    }
 };
 
-UI.recStopBtn.onclick = () => { if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop(); };
-UI.playUserBtn.onclick = async () => {
+if (UI.recStopBtn) UI.recStopBtn.onclick = () => { if (recorderNode) stopRecording(); };
+if (UI.playUserBtn) UI.playUserBtn.onclick = async () => {
     if (!userBuf) return;
+    logEvent('play_user', { word: selectedWord });
+    if (isAppBusy) return; // Respect recording/uploading busy state
+
+    // Stop any existing playback
+    if (sampleWS) sampleWS.stop();
+    if (userWS) userWS.stop();
+
     if (!userWS) renderComparison();
-    const ctx = await getAC();
-    const src = ctx.createBufferSource();
-    src.buffer = userBuf;
-    src.connect(ctx.destination);
-    src.start();
+
+    if (userWS) {
+        userWS.play();
+        // strictly no isAppBusy manipulation here
+    }
 };
 
-UI.submitBtn.onclick = async (e) => {
+if (UI.submitBtn) UI.submitBtn.onclick = async (e) => {
     e.preventDefault();
     if (!lastRecordingBlob) return;
     if (UI.submitMsg) UI.submitMsg.textContent = 'SAVING...';
@@ -424,21 +864,98 @@ UI.submitBtn.onclick = async (e) => {
     fd.append('testType', UI.testTypeInput?.value || 'pre');
     try {
         const res = await fetch('/upload', { method: 'POST', body: fd });
-        if (res.ok) { 
-            if (UI.submitMsg) UI.submitMsg.textContent = '✅ SAVED'; 
-            await fetchUserProgress(); 
+        const data = await res.json();
+
+        if (res.ok) {
+            let msg = '✅ SAVED';
+            if (data.analysis && data.analysis.distance_bark !== null) {
+                const d = data.analysis.distance_bark;
+                let colorClass = 'text-slate-600'; // Default
+                let verdict = 'OK';
+
+                // Traffic Light Logic
+                if (d < 1.5) {
+                    colorClass = 'score-success';
+                    verdict = 'Excellent!';
+                } else if (d < 3.0) {
+                    colorClass = 'score-warning';
+                    verdict = 'Good';
+                } else {
+                    colorClass = 'score-danger';
+                    verdict = 'Try Again';
+                }
+
+                // Render HTML inside message box (safely)
+                let recHtml = '';
+                if (data.analysis.recommendation) {
+                    recHtml = `<div class="text-sm font-medium text-slate-500 normal-case tracking-normal mt-0.5">💡 ${data.analysis.recommendation}</div>`;
+                }
+                UI.submitMsg.innerHTML = `<div>✅ <span class="${colorClass}">Score: ${d} Bark (${verdict})</span></div>${recHtml}`;
+            } else {
+                if (UI.submitMsg) UI.submitMsg.textContent = msg;
+            }
+
+            await fetchUserProgress();
             if (UI.testTypeInput) UI.testTypeInput.disabled = false;
-        } else { 
-            if (UI.submitMsg) UI.submitMsg.textContent = '⚠️ ERROR'; 
-            UI.submitBtn.disabled = false; 
+        } else {
+            if (UI.submitMsg) UI.submitMsg.textContent = '⚠️ ERROR';
+            UI.submitBtn.disabled = false;
             if (UI.testTypeInput) UI.testTypeInput.disabled = false;
         }
-    } catch (e) { 
-        if (UI.submitMsg) UI.submitMsg.textContent = '⚠️ TIMEOUT'; 
-        UI.submitBtn.disabled = false; 
+    } catch (e) {
+        if (UI.submitMsg) UI.submitMsg.textContent = '⚠️ TIMEOUT';
+        UI.submitBtn.disabled = false;
         if (UI.testTypeInput) UI.testTypeInput.disabled = false;
     }
 };
 
 if (UI.testTypeInput) UI.testTypeInput.onchange = refreshProgressUI;
-window.onload = loadManifest;
+
+// Global unlock for AudioContext
+const unlockAudio = () => {
+    if (audioContext && audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+};
+const handleFocus = () => {
+    if (audioContext && audioContext.state === 'suspended') audioContext.resume();
+    if (!monitorStarted) startNoiseMonitor();
+};
+const handleBlur = () => {
+    // Optional: suspend to save battery, but user requested 'stopped if I leave this page'
+    // 'leave this page' usually means simple blur or unload. 
+    // Suspending context stops processing.
+    if (audioContext && audioContext.state === 'running') audioContext.suspend();
+};
+
+document.addEventListener('click', unlockAudio);
+document.addEventListener('keydown', unlockAudio);
+document.addEventListener('touchstart', unlockAudio);
+
+window.addEventListener('focus', handleFocus);
+window.addEventListener('blur', handleBlur);
+
+// Init Logging & Manifest
+window.onload = () => {
+    loadManifest();
+
+    // Logging Setup
+    isLoggingEnabled = localStorage.getItem('loggingEnabled') === 'true';
+    if (UI.loggingToggle) {
+        UI.loggingToggle.checked = isLoggingEnabled;
+        UI.loggingToggle.onchange = (e) => {
+            isLoggingEnabled = e.target.checked;
+            localStorage.setItem('loggingEnabled', isLoggingEnabled);
+        };
+
+        // Auto-enable for test_noise
+        if (window.CURRENT_USER === 'test_noise') {
+            if (!isLoggingEnabled) {
+                isLoggingEnabled = true;
+                UI.loggingToggle.checked = true;
+                localStorage.setItem('loggingEnabled', true);
+            }
+            logEvent('system_init', { user: 'test_noise', msg: 'Auto-enabled logging' });
+        }
+    }
+};
