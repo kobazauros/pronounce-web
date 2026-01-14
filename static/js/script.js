@@ -18,6 +18,28 @@ const Config = {
     }
 };
 
+function updateSettingsMeter(peak) {
+    if (!UI.settingsMeter) return;
+
+    // Log scale for natural movement
+    // Peak is 0.0 to 1.0
+    // Visual boost: * 5 to make normal speech fill ~50%
+    const percent = Math.min(100, Math.max(0, peak * 400)); // amplified for visibility
+
+    UI.settingsMeter.style.width = `${percent}%`;
+
+    // Color coding
+    if (percent > 95) UI.settingsMeter.className = 'h-full bg-red-500 transition-all duration-75';
+    else if (percent > 60) UI.settingsMeter.className = 'h-full bg-green-500 transition-all duration-75';
+    else UI.settingsMeter.className = 'h-full bg-sky-500 transition-all duration-75';
+
+    if (UI.settingsNoiseLabel) {
+        if (percent > 95) UI.settingsNoiseLabel.innerText = "CLIPPING!";
+        else if (percent > 10) UI.settingsNoiseLabel.innerText = "GOOD";
+        else UI.settingsNoiseLabel.innerText = "LOW";
+    }
+}
+
 let WORDS = [];
 let audioContext = null;
 let autoCheckInterval = null;
@@ -36,7 +58,7 @@ let microphoneStream = null;
 let measuredNoiseFloor = 0.015;
 let userProgress = { pre: [], post: [] };
 let lockedStage = null; // Fix: Global lock state
-let isLoggingEnabled = false;
+let isLoggingEnabled = window.ENABLE_LOGGING || false;
 let lastLogTime = 0;
 
 const UI = {
@@ -60,7 +82,28 @@ const UI = {
     noiseIcon: document.getElementById('noise-indicator-icon'),
     progressFill: document.getElementById('progress-bar-fill'),
     progressPercent: document.getElementById('progress-percent'),
-    loggingToggle: document.getElementById('logging-toggle')
+    // loggingToggle removed
+    // Settings UI
+    openSettingsBtn: document.getElementById('open-settings-btn'),
+    closeSettingsBtn: document.getElementById('close-settings-btn'),
+    settingsModal: document.getElementById('audio-settings-modal'),
+    inputSelect: document.getElementById('audio-input-select'),
+    modeFidelityBtn: document.getElementById('mode-fidelity'),
+    modeReductionBtn: document.getElementById('mode-reduction'),
+    modeValue: document.getElementById('audio-mode-value'),
+    settingsMeter: document.getElementById('settings-meter-bar'),
+    settingsNoiseLabel: document.getElementById('settings-noise-label')
+};
+
+// ======= Audio Config State =======
+const AudioState = {
+    selectedDeviceId: 'default',
+    mode: 'fidelity', // 'fidelity' | 'reduction'
+    knownDevices: [], // Track devices for auto-switching logic
+    constraints: {
+        fidelity: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 },
+        reduction: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 }
+    }
 };
 
 // ======= Helpers =======
@@ -287,12 +330,7 @@ if (UI.playUserBtn) UI.playUserBtn.onclick = async () => {
     }
 };
 
-if (UI.loggingToggle) {
-    UI.loggingToggle.onchange = (e) => {
-        isLoggingEnabled = e.target.checked;
-        logEvent('logging_toggled', { enabled: isLoggingEnabled });
-    };
-}
+// Logging toggle listener removed (controlled by server config)
 
 // ======= Data Management =======
 
@@ -459,7 +497,26 @@ async function startNoiseMonitor() {
         const ctx = audioContext;
 
         if (!microphoneStream) {
-            microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const constraints = {
+                audio: {
+                    deviceId: AudioState.selectedDeviceId !== 'default' ? { exact: AudioState.selectedDeviceId } : undefined,
+                    ...AudioState.constraints[AudioState.mode]
+                }
+            };
+            console.log("Using Constraints:", constraints);
+            microphoneStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+            // VERIFICATION: Check what the browser actually gave us
+            const track = microphoneStream.getAudioTracks()[0];
+            if (track) {
+                const settings = track.getSettings();
+                console.log("Actual Applied Settings:", {
+                    echoCancellation: settings.echoCancellation,
+                    noiseSuppression: settings.noiseSuppression,
+                    autoGainControl: settings.autoGainControl,
+                    deviceId: settings.deviceId
+                });
+            }
         }
 
         // Try to resume if suspended
@@ -501,16 +558,30 @@ async function startNoiseMonitor() {
                         UI.noiseLevel.className = "text-[9px] font-bold text-sky-500 uppercase tracking-widest transition-colors";
                     }
                 }
+                // Settings Meter should still update if modal is open!
+                if (!UI.settingsModal.classList.contains('hidden')) {
+                    // Get data even if playing/recording to show input activity
+                    analyzer.getFloatTimeDomainData(buffer);
+                    let peak = 0;
+                    for (let i = 0; i < buffer.length; i++) peak = Math.max(peak, Math.abs(buffer[i]));
+                    updateSettingsMeter(peak);
+                }
+
                 if (UI.noiseIcon) {
                     UI.noiseIcon.style.backgroundColor = isRec ? "#f43f5e" : "#0ea5e9";
                     UI.noiseIcon.style.transform = "scale(1)";
                 }
-                return; // Skip noise processing
+                return; // Skip main dashboard noise icon update
             }
 
             analyzer.getFloatTimeDomainData(buffer);
             let peak = 0;
             for (let i = 0; i < buffer.length; i++) peak = Math.max(peak, Math.abs(buffer[i]));
+
+            // Update Settings Meter if open
+            if (UI.settingsModal && !UI.settingsModal.classList.contains('hidden')) {
+                updateSettingsMeter(peak);
+            }
 
             measuredNoiseFloor = (measuredNoiseFloor * 0.95) + (peak * 0.05);
 
@@ -547,6 +618,144 @@ async function startNoiseMonitor() {
 }
 
 // ======= Interactions =======
+
+// ======= Audio Device Auto-Switching =======
+async function handleDeviceChange() {
+    try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const inputs = devices.filter(d => d.kind === 'audioinput');
+        const currentIds = inputs.map(d => d.deviceId);
+
+        // 1. Detect New Devices (Plugged In)
+        // Find devices present now but not in knownDevices
+        const newDevice = inputs.find(d => !AudioState.knownDevices.includes(d.deviceId));
+
+        if (newDevice) {
+            console.log("[AutoSwitch] New Device Detected:", newDevice.label);
+            AudioState.selectedDeviceId = newDevice.deviceId;
+
+            // Optional: Visual Feedback via the header
+            const header = document.getElementById('sample-word-placeholder');
+            const originalText = header ? header.innerText : "";
+            if (header) {
+                header.innerText = `Detected: ${newDevice.label.slice(0, 20)}...`;
+                setTimeout(() => header.innerText = originalText, 3000);
+            }
+        }
+
+        // 2. Detect Removed Device (Unplugged)
+        // Check if currently selected device is gone
+        if (!currentIds.includes(AudioState.selectedDeviceId)) {
+            console.log("[AutoSwitch] Selected Device Unplugged. Falling back.");
+            if (inputs.length > 0) {
+                AudioState.selectedDeviceId = inputs[0].deviceId;
+            }
+        }
+
+        // 3. Sync State & Restart
+        AudioState.knownDevices = currentIds;
+        initAudioSettings(); // Re-populate UI
+        restartAudioStream(); // Re-connect audio
+
+    } catch (e) {
+        console.error("Device Auto-Switch Failed:", e);
+    }
+}
+
+navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
+
+// ======= Audio Settings Logic =======
+async function initAudioSettings() {
+    try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const inputs = devices.filter(d => d.kind === 'audioinput');
+
+        // INITIALIZE TRACKING (First Run)
+        if (AudioState.knownDevices.length === 0) {
+            AudioState.knownDevices = inputs.map(d => d.deviceId);
+        }
+
+        // Populate Select
+        if (UI.inputSelect) {
+            UI.inputSelect.innerHTML = '';
+            inputs.forEach(device => {
+                const opt = document.createElement('option');
+                opt.value = device.deviceId;
+                opt.text = device.label || `Microphone ${UI.inputSelect.length + 1}`;
+                if (device.deviceId === AudioState.selectedDeviceId) opt.selected = true;
+                UI.inputSelect.appendChild(opt);
+            });
+            // Enforce selection if empty (e.g. initial load)
+            if (AudioState.selectedDeviceId === 'default' && inputs.length > 0) {
+                // Try to find default or pick first
+                AudioState.selectedDeviceId = inputs[0].deviceId;
+                UI.inputSelect.value = inputs[0].deviceId;
+            }
+        }
+    } catch (e) { console.warn("Device Enumeration Failed", e); }
+}
+
+async function restartAudioStream() {
+    // 1. Stop existing tracks
+    if (microphoneStream) {
+        microphoneStream.getTracks().forEach(track => track.stop());
+        microphoneStream = null;
+    }
+    // 2. Disconnect nodes
+    if (recordingSource) { recordingSource.disconnect(); recordingSource = null; }
+
+    // 3. Restart Monitoring (will fetch new stream)
+    isMonitoring = false; // Force restart
+    await startNoiseMonitor();
+}
+
+// Event Listeners for Settings
+if (UI.openSettingsBtn) {
+    UI.openSettingsBtn.onclick = async () => {
+        UI.settingsModal.classList.remove('hidden');
+        await getAC(); // Request permissions first
+        await initAudioSettings();
+        await startNoiseMonitor(); // Ensure meter is running
+    };
+}
+
+if (UI.closeSettingsBtn) {
+    UI.closeSettingsBtn.onclick = () => {
+        UI.settingsModal.classList.add('hidden');
+    };
+}
+
+if (UI.inputSelect) {
+    UI.inputSelect.onchange = async (e) => {
+        AudioState.selectedDeviceId = e.target.value;
+        await restartAudioStream();
+    };
+}
+
+// Mode Selection Logic
+const setMode = async (mode) => {
+    AudioState.mode = mode;
+    UI.modeValue.value = mode;
+
+    if (mode === 'fidelity') {
+        UI.modeFidelityBtn.classList.add('active', 'bg-sky-50', 'text-sky-700', 'border-sky-200');
+        UI.modeFidelityBtn.classList.remove('bg-white', 'text-slate-500', 'border-slate-200');
+
+        UI.modeReductionBtn.classList.remove('active', 'bg-sky-50', 'text-sky-700', 'border-sky-200');
+        UI.modeReductionBtn.classList.add('bg-white', 'text-slate-500', 'border-slate-200');
+    } else {
+        UI.modeReductionBtn.classList.add('active', 'bg-sky-50', 'text-sky-700', 'border-sky-200');
+        UI.modeReductionBtn.classList.remove('bg-white', 'text-slate-500', 'border-slate-200');
+
+        UI.modeFidelityBtn.classList.remove('active', 'bg-sky-50', 'text-sky-700', 'border-sky-200');
+        UI.modeFidelityBtn.classList.add('bg-white', 'text-slate-500', 'border-slate-200');
+    }
+    await restartAudioStream();
+};
+
+if (UI.modeFidelityBtn) UI.modeFidelityBtn.onclick = () => setMode('fidelity');
+if (UI.modeReductionBtn) UI.modeReductionBtn.onclick = () => setMode('reduction');
+
 
 // ======= Visual Feedback Helpers =======
 
@@ -788,7 +997,13 @@ if (UI.recStartBtn) UI.recStartBtn.onclick = async () => {
     try {
         let stream = microphoneStream;
         if (!stream) {
-            stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const constraints = {
+                audio: {
+                    deviceId: AudioState.selectedDeviceId !== 'default' ? { exact: AudioState.selectedDeviceId } : undefined,
+                    ...AudioState.constraints[AudioState.mode]
+                }
+            };
+            stream = await navigator.mediaDevices.getUserMedia(constraints);
             microphoneStream = stream;
         }
 

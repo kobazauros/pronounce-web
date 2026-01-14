@@ -19,12 +19,7 @@
             <h1 class="text-3xl font-bold text-gray-800">Instructor Dashboard</h1>
             <p class="text-gray-600">Monitor student progress across Pre-test and Post-test curriculums.</p>
         </div>
-        <div class="flex gap-2 items-center">
-            <a href="{{ url_for('dashboards.research_dashboard') }}"
-                class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition shadow-sm">
-                Research View
-            </a>
-        </div>
+        <!-- (Research View button removed as requested) -->
     </div>
 
     <!-- Class Stats Cards -->
@@ -48,6 +43,11 @@
             <p class="text-xs text-gray-400">High Separation</p>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3 class="text-gray-500 text-sm font-medium uppercase">N/A Results</h3>
+            <p class="text-3xl font-bold text-gray-500 mt-2">{{ class_stats.missing_count }}</p>
+            <p class="text-xs text-gray-400">Unanalyzable</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h3 class="text-gray-500 text-sm font-medium uppercase">Active Today</h3>
             <p class="text-3xl font-bold text-gray-800 mt-2">{{ class_stats.active_today }}</p>
         </div>
@@ -55,10 +55,29 @@
 
     <!-- Student Table -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <!-- Table Header with Search -->
+        <div
+            class="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50">
+            <h3 class="font-bold text-gray-700">Student Directory</h3>
+            <form method="GET" action="{{ url_for('dashboards.teacher_dashboard') }}">
+                <div class="relative">
+                    <input type="text" name="search" placeholder="Search students..."
+                        class="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-64"
+                        value="{{ search_query }}">
+                    <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </form>
+        </div>
+
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Student
                     </th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
                         Pre-Test Progress</th>
@@ -66,7 +85,8 @@
                         Post-Test Progress</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last
                         Active</th>
-                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
                     </th>
                 </tr>
             </thead>
@@ -148,6 +168,18 @@
                             Outlier
                         </span>
                         {% endif %}
+                        {% if student.has_missing %}
+                        <span
+                            class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 mr-2"
+                            title="Missing Scores / Unanalyzable Audio">
+                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            N/A
+                        </span>
+                        {% endif %}
                         <a href="{{ url_for('dashboards.student_detail', user_id=student.id) }}"
                             class="text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-3 py-1 rounded-md hover:bg-indigo-100 transition">
                             View Details
@@ -158,5 +190,51 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination (Active only if > 10 entries) -->
+    {% if pagination.total > 10 %}
+    <div class="px-6 py-4 border-t border-gray-100 bg-white flex justify-between items-center rounded-b-xl">
+        <span class="text-xs text-gray-500">
+            Showing <strong>{{ students|length }}</strong> of <strong>{{ pagination.total }}</strong> students
+        </span>
+        <div class="flex gap-2">
+            {% if pagination.has_prev %}
+            <a href="{{ url_for('dashboards.teacher_dashboard', page=pagination.prev_num, search=search_query) }}"
+                class="px-3 py-1 border border-gray-300 rounded-md text-xs text-gray-600 hover:bg-gray-100 transition">Previous</a>
+            {% else %}
+            <button
+                class="px-3 py-1 border border-gray-200 rounded-md text-xs text-gray-400 bg-gray-50 cursor-not-allowed"
+                disabled>Previous</button>
+            {% endif %}
+
+            {% if pagination.has_next %}
+            <a href="{{ url_for('dashboards.teacher_dashboard', page=pagination.next_num, search=search_query) }}"
+                class="px-3 py-1 border border-gray-300 rounded-md text-xs text-gray-600 hover:bg-gray-100 transition">Next</a>
+            {% else %}
+            <button
+                class="px-3 py-1 border border-gray-200 rounded-md text-xs text-gray-400 bg-gray-50 cursor-not-allowed"
+                disabled>Next</button>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
 </div>
+
+<script>
+    // Responsive search
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.querySelector('input[name="search"]');
+        if (searchInput) {
+            const searchForm = searchInput.closest('form');
+            let debounceTimeout;
+
+            searchInput.addEventListener('input', () => {
+                clearTimeout(debounceTimeout);
+                debounceTimeout = setTimeout(() => {
+                    searchForm.submit();
+                }, 300); // 300ms delay
+            });
+        }
+    });
+</script>
 {% endblock %}

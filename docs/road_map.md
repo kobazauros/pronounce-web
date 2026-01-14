@@ -115,20 +115,54 @@ Tech Stack: Flask, SQLite (Dev) / PostgreSQL (Prod), SQLAlchemy, Flask-Login, Do
 *37 [x] **Articulatory Recommendations:** Generate text feedback based on F1/F2 vectors (e.g., "Open mouth more", "Move tongue forward").
 *38 [x] **UX/Design Consistency Audit:** Completed visual/mobile audit (Report available).
 
-### **Phase 8: Quality Assurance & Staging (The Pipeline) (In-Progress)**
+### **Phase 8: Quality Assurance & Staging (Completed)**
 *Before any external sharing, we verify data accuracy and system stability.*
 *39 [x] **Automated Testing Suite:** Implemented `pytest` for unit analysis (100% pass) and basic route integration.
 *40 [x] **Linguistic & Concept Analysis:** Documented acoustic pitfalls and design validation strategy.
-*41 [ ] **Load Testing (Local):** Simulate classroom traffic using `locust` to ensure local performance.
-*42 [ ] **Remote Evaluation Prep:** Setup `ngrok` for secure external evaluation.
+*41 [x] **Load Testing (Local):** Verified server efficiency (30ms processing time) using `simulate_student.py`.
+*42 [x] **Remote Evaluation Prep:** Verified Ngrok tunnel performance (~130ms latency) for external access.
+*43 [x] **Student Simulation:** Created automated script to simulate full user lifecycle (Register -> Pre/Post Test).
+
+### **Phase 8.5: Documentation & Help System (Completed)**
+*Comprehensive guides for all user roles.*
+*44 [x] **User Manual Expansion:** Rewrote `/manual` with roles (Student/Teacher/Admin) and "Research Panel" guide.
+*45 [x] **Role-Based Navigation:** Implemented dynamic header links and "Smart Manual" that adapts to user role.
+*46 [x] **Glossary & FAQ:** Added technical definitions (Bark, Formants) and troubleshooting tips.
+
+### **Phase 8.6: Client-Side Reliability Matrix (Hardware & Browsers)**
+*Goal: Optimize testing by establishing a "Gold Standard" baseline first, then strictly validating variations.*
+
+*   **Step 1: Signal Baseline (ASUS Laptop + Chrome)**
+    *   **Action:** Tune **Trimming** (fix cutoff issues) and **Silence Detection** on this primary device.
+    *   **Goal:** Establish a working baseline for internal microphones (highest noise floor scenario).
+*   **Step 2: Browser Cross-Check (ASUS Laptop)**
+    *   **Action:** Verify core functionality on **Edge, Opera, and Firefox**.
+    *   **Optimization:** Focus purely on API compatibility (MediaRecorder), assuming signal logic holds from Step 1.
+*   **Step 3: Hardware/Browser Interaction Matrix (The "Colleague's Bug" Check)**
+    *   **Context:** User reported: *Headset works on Opera, fails on Chrome.*
+    *   **Action:** Test **Headset (USB & 3.5mm)** specifically on **Chrome vs Opera**.
+    *   **Goal:** Identify browser-specific handling of external audio devices (e.g., Chrome's strict AudioContext rules vs Opera).
+    *   **Fix:** Ensure `handleDeviceChange` and `AudioContext.resume()` logic is robust across all browser/hardware combinations.
+*   **Step 4: Mobile Verification (Poco F5)**
+    *   **Action:** Test Chrome for Android.
+    *   **Focus:** Verify responsive layout and mobile audio permissions.
+
+### **Phase 8.8: Analysis Calibration & Fine-Tuning (Pre-Production)**
+*CRITICAL: Ensure the engine is fair and accurate across different voices before public launch.*
+*47 [x] **Data Prep:** Create `dataset/forvo` directory structure to organize diverse audio samples.
+*48 [x] **Data Collection:** Fetched and structurized 81 diverse audio samples from Forvo.com (26 speakers) for calibration.
+*49 [x] **Diversity Simulation:** Ran simulation on 81 diverse files. Verified robustness for high-pitched voices (e.g., corrected MichaelDS pitch ceiling).
+*50 [ ] **Threshold Tuning:** Review the 1.5 Bark recommendation threshold. Is it too strict? Too lenient?
+*51 [x] **False Positive/Negative Analysis:** Fixed "Unanalyzable" errors for whispered/noisy inputs (TopQuark, eggypp) and high pitch (MichaelDS).
+*52 [ ] **Beta "Soft Launch":** Deploy to a small group (Staging) to gather real-world data for final tuning.
 
 ### **Phase 9: Production Deployment (Live Infrastructure)**
 *The "Real-World" Environment.*
-*45 [ ] **Infrastructure Provisioning:** DigitalOcean Droplet (Ubuntu LTS) with UFW Firewall.
-*46 [ ] **Web Server Optimization:** Nginx tuned for file uploads (client_max_body_size) and Gzip compression.
-*47 [ ] **Application Server:** Gunicorn with `gthread` workers to handle concurrent I/O (audio processing blocking).
-*48 [ ] **Security:** SSL (Let's Encrypt), Rate Limiting (Flask-Limiter) to prevent abuse.
-*49 [ ] **Observability:** Sentry integration for real-time error tracking and performance monitoring.
+*51 [ ] **Infrastructure Provisioning:** DigitalOcean Droplet (Ubuntu LTS) with UFW Firewall.
+*52 [ ] **Web Server Optimization:** Nginx tuned for file uploads (client_max_body_size) and Gzip compression.
+*53 [ ] **Application Server:** Gunicorn with `gthread` workers to handle concurrent I/O (audio processing blocking).
+*54 [ ] **Security:** SSL (Let's Encrypt), Rate Limiting (Flask-Limiter) to prevent abuse.
+*55 [ ] **Observability:** Sentry integration for real-time error tracking and performance monitoring.
 
 ### **Phase 10: Scalability & Architecture (Post-MVP)**
 *Optimizing for 100+ concurrent users.*

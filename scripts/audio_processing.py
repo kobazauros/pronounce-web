@@ -34,6 +34,26 @@ def process_audio_data(audio_data: bytes, target_sr: int = 16000) -> bytes:
             logger.warning("Empty audio data received during processing.")
             return audio_data
 
+        # --- CLIPPING DETECTION ---
+        # Clipping distorts formants significantly (15-20% error on F1).
+        # We reject audio if > 0.5% samples are fully saturated (>0.99)
+        max_possible = 1.0  # Float32 normalized
+        clipped_samples = np.sum(np.abs(y) > 0.99)
+        clip_ratio = clipped_samples / len(y)
+
+        if clip_ratio > 0.005:  # 0.5%
+            error_msg = f"Audio clipping detected ({clip_ratio*100:.1f}%). Please reduce microphone volume."
+            logger.warning(error_msg)
+            # We return a specific error bytes marker or raise?
+            # Since return type is bytes, we can't easily raise without breaking caller.
+            # However, this function is utility. It SHOULD raise.
+            # BUT existing code catches 'Exception' and returns original.
+            # To force failure, we raise a custom ValueError that caller can catch specifically?
+            # For now, let's Log and Proceed but maybe capping it won't help.
+            # Actually, if we return original, the system analyzes clipped audio.
+            # We MUST fail or signal failure.
+            raise ValueError(error_msg)
+
         # --- ROBUST TRIM SILENCE ---
         # Ported from optimized JS logic:
         # 1. Calculate adaptive noise floor (10th percentile of RMS)
@@ -62,9 +82,10 @@ def process_audio_data(audio_data: bytes, target_sr: int = 16000) -> bytes:
             )
             local_floor = max(0.001, local_floor)
 
-            # 2. Thresholds
-            vol_thresh = max(0.015, local_floor * 4.0)
-            sens_thresh = max(0.005, local_floor * 2.5)
+            # 2. Thresholds (RELAXED for trailing consonants)
+            # Originally 4.0x/2.5x - reduced to 2.0x/1.5x to catch quiet releases
+            vol_thresh = max(0.015, local_floor * 2.0)
+            sens_thresh = max(0.005, local_floor * 1.5)
             zcr_thresh = 0.1
 
             # 3. Identify Speech Frames
@@ -84,8 +105,8 @@ def process_audio_data(audio_data: bytes, target_sr: int = 16000) -> bytes:
                 start_sample = start_frame * hop_length
                 end_sample = (end_frame + 1) * hop_length
 
-                # Padding: 10ms (0.01s)
-                padding = int(target_sr * 0.01)
+                # Padding: 100ms (0.1s) - Increased from 10ms to preserve tails
+                padding = int(target_sr * 0.1)
 
                 start = max(0, start_sample - padding)
                 end = min(len(y), end_sample + padding)

@@ -56,7 +56,7 @@ def load_audio_mono(path: Path | str, target_sr: int = 16000) -> Tuple[np.ndarra
 
 
 def find_syllable_nucleus(
-    sound: parselmouth.Sound, pitch_floor: float = 75, pitch_ceiling: float = 600
+    sound: parselmouth.Sound, pitch_floor: float = 75, pitch_ceiling: float = 1200
 ) -> Optional[Tuple[float, float]]:
     """Finds the loudest voiced segment in the audio."""
     pitch = sound.to_pitch(pitch_floor=pitch_floor, pitch_ceiling=pitch_ceiling)
@@ -83,13 +83,18 @@ def find_syllable_nucleus(
         )
 
     if not voiced_intervals:
+        print("Debug: No voiced intervals found.")
         return None
 
     best_segment = None
     max_peak = -100.0
 
     for t0, t1 in voiced_intervals:
-        if (t1 - t0) < 0.03:
+        duration = t1 - t0
+        print(f"Debug: Checking interval {t0:.3f}-{t1:.3f} (dur={duration:.3f})")
+
+        if duration < 0.03:
+            print(f"Debug: Rejected (too short)")
             continue
         try:
             peak: float = float(
@@ -98,10 +103,12 @@ def find_syllable_nucleus(
                     call(intensity, "Get maximum", float(t0), float(t1), "Parabolic"),
                 )
             )
+            print(f"Debug: Peak Intensity = {peak:.2f}")
             if peak > max_peak:
                 max_peak = peak
                 best_segment = (t0, t1)
-        except:
+        except Exception as e:
+            print(f"Debug: Intensity Error: {e}")
             pass
 
     return best_segment

@@ -1,0 +1,673 @@
+{% extends "base.html" %}
+
+{% block title %}User Manual{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto py-10">
+
+    <!-- Header -->
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-black text-slate-900 tracking-tight mb-4">User Manual</h1>
+        <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+            Comprehensive guide for students, teachers, and administrators.
+            <br>
+            <span class="text-sm font-bold text-indigo-500 uppercase tracking-widest mt-2 block">
+                <i class="fas fa-keyboard mr-1"></i> Press F1 for Help
+            </span>
+        </p>
+    </div>
+
+    <!-- Quick Navigation -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
+        <a href="#student-guide"
+            class="group bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-300 hover:shadow-md transition text-center">
+            <div
+                class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
+                <i class="fas fa-user-graduate text-xl"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 mb-2">Student Guide</h3>
+            <p class="text-sm text-slate-500">Recording, visualization, and progress tracking.</p>
+        </a>
+        <a href="#teacher-guide"
+            class="group bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-sky-300 hover:shadow-md transition text-center">
+            <div
+                class="w-12 h-12 bg-sky-50 text-sky-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-sky-600 group-hover:text-white transition">
+                <i class="fas fa-chalkboard-teacher text-xl"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 mb-2">Teacher Guide</h3>
+            <p class="text-sm text-slate-500">Class overview, student details, and research data.</p>
+        </a>
+        <a href="#admin-guide"
+            class="group bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-sky-300 hover:shadow-md transition text-center">
+            <div
+                class="w-12 h-12 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-sky-600 group-hover:text-white transition">
+                <i class="fas fa-user-shield text-xl"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 mb-2">Admin Guide</h3>
+            <p class="text-sm text-slate-500">User management, class management, and system settings.</p>
+        </a>
+        <a href="#technical-setup"
+            class="group bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-rose-300 hover:shadow-md transition text-center">
+            <div
+                class="w-12 h-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-rose-600 group-hover:text-white transition">
+                <i class="fas fa-cogs text-xl"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 mb-2">Technical Setup</h3>
+            <p class="text-sm text-slate-500">Browser settings, hardware, and troubleshooting.</p>
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+
+        <!-- Sidebar Navigation -->
+        <div class="hidden lg:block col-span-1">
+            <div class="sticky top-24 space-y-1">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 pl-3">Contents</p>
+                <a href="#technical-setup"
+                    class="block px-3 py-2 text-sm text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition font-medium">Technical
+                    Setup</a>
+                <a href="#registration"
+                    class="block px-3 py-2 text-sm text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition font-medium">Registration</a>
+                <a href="#student-guide"
+                    class="block px-3 py-2 text-sm text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition font-medium">Student
+                    Guide</a>
+                <a href="#teacher-guide"
+                    class="block px-3 py-2 text-sm text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition font-medium">Teacher
+                    Guide</a>
+                <a href="#admin-guide"
+                    class="block px-3 py-2 text-sm text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition font-medium">Admin
+                    Guide</a>
+                <a href="#research-panel"
+                    class="block px-3 py-2 text-sm text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition font-medium">Research
+                    Panel</a>
+                <a href="#glossary"
+                    class="block px-3 py-2 text-sm text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition font-medium">Glossary</a>
+            </div>
+        </div>
+
+        <!-- content -->
+        <div class="col-span-1 lg:col-span-3 space-y-16">
+
+            <!-- Technical Setup -->
+            <section id="technical-setup" class="scroll-mt-24">
+                <h2 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                    <span
+                        class="bg-rose-100 text-rose-600 w-10 h-10 rounded-lg flex items-center justify-center text-lg">
+                        <i class="fas fa-cogs"></i>
+                    </span>
+                    Technical Requirements
+                </h2>
+
+                <div class="prose prose-slate max-w-none text-slate-600">
+                    <p class="lead">
+                        High-quality audio recording is essential for accurate vowel analysis. Please review these
+                        settings before starting.
+                    </p>
+
+                    <h3 class="text-slate-900 font-bold mt-8">Recommended Browsers</h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>Google Chrome (Desktop/Android)</strong>: <span
+                                class="text-green-600 font-bold">Best Choice</span>. Most stable Web Audio API support.
+                        </li>
+                        <li><strong>Microsoft Edge</strong>: Excellent alternative.</li>
+                        <li><strong>Firefox</strong>: Fully supported.</li>
+                        <li><span class="text-rose-600 font-bold">AVOID</span>: Opera Mini, UC Browser, and In-App
+                            Browsers (Facebook/Line/Instagram).</li>
+                    </ul>
+
+                    <h3 class="text-slate-900 font-bold mt-8">Critical Settings: Disable "Data Savers"</h3>
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 my-6">
+                        <h4 class="text-amber-800 font-bold flex items-center gap-2 mb-2">
+                            <i class="fas fa-exclamation-triangle"></i> Important
+                        </h4>
+                        <p class="text-amber-800 text-sm mb-4">
+                            "Data Saver", "Turbo Mode", or "Lite Mode" features route traffic through proxy servers.
+                            This <strong>blocks the microphone</strong> or compresses audio, making analysis impossible.
+                        </p>
+                        <ul class="text-sm space-y-2 text-amber-900">
+                            <li><strong>Chrome (Android):</strong> Go to Settings > Lite Mode (if available) > Select
+                                <strong>OFF</strong>.
+                            </li>
+                            <li><strong>Opera Mobile / Mini:</strong> Go to Settings > Data Saver > Select
+                                <strong>OFF</strong>.
+                            </li>
+                            <li><strong>Android System:</strong> Ensure Settings > Network & Internet > Data Saver is
+                                OFF in system network settings.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <h3 class="text-slate-900 font-bold mt-8">Hardware Recommendation</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 not-prose">
+                        <div class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm">
+                            <h4 class="text-emerald-700 font-bold text-sm mb-1"><i class="fas fa-check mr-2"></i>Wired
+                                Headset</h4>
+                            <p class="text-xs text-slate-500">Best consistency (44.1kHz/48kHz). No connection drops.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-rose-100 shadow-sm">
+                            <h4 class="text-rose-700 font-bold text-sm mb-1"><i
+                                    class="fas fa-exclamation-circle mr-2"></i>Bluetooth/AirPods</h4>
+                            <p class="text-xs text-slate-500">Often drops to "Hands-Free" quality (8kHz), which is too
+                                low for accurate analysis.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+
+            <!-- Registration Guide -->
+            <section id="registration" class="scroll-mt-24">
+                <hr class="border-slate-200 mb-12">
+                <h2 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                    <span
+                        class="bg-emerald-100 text-emerald-600 w-10 h-10 rounded-lg flex items-center justify-center text-lg">
+                        <i class="fas fa-id-card"></i>
+                    </span>
+                    Registration & Access
+                </h2>
+
+                <div class="prose prose-slate max-w-none text-slate-600">
+                    <p>The system distinguishes between Students and Teachers during the registration process.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <!-- Student Registration -->
+                        <div class="border border-slate-200 rounded-xl p-6">
+                            <h4 class="font-bold text-slate-900 mb-2 flex items-center">
+                                <i class="fas fa-user-graduate text-indigo-500 mr-2"></i> For Students
+                            </h4>
+                            <ul class="list-disc pl-5 text-sm space-y-2">
+                                <li>Go to the <strong>Register</strong> page.</li>
+                                <li>Fill in your Username, First/Last Name, and Password.</li>
+                                <li><strong>Required:</strong> Enter your exact <strong>10-digit Student ID</strong>.
+                                </li>
+                                <li>Leave the "Invite Code" field <strong>blank</strong>.</li>
+                                <li>Check the consent box and submit.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Teacher Registration -->
+                        <div class="border border-slate-200 rounded-xl p-6 bg-slate-50">
+                            <h4 class="font-bold text-slate-900 mb-2 flex items-center">
+                                <i class="fas fa-chalkboard-teacher text-sky-500 mr-2"></i> For Teachers
+                            </h4>
+                            <ul class="list-disc pl-5 text-sm space-y-2">
+                                <li>Obtain an <strong>Invite Code</strong> from a system administrator.</li>
+                                <li>Go to the <strong>Register</strong> page.</li>
+                                <li>Fill in your Username, First/Last Name, and Password.</li>
+                                <li>Enter the code in the <strong>"Invite Code"</strong> field.</li>
+                                <li><strong>Note:</strong> When a valid code is detected, the "Student ID" requirement
+                                    is automatically removed.</li>
+                                <li>Submit the form to create your Instructor account.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Student Guide -->
+            <section id="student-guide" class="scroll-mt-24">
+                <hr class="border-slate-200 mb-12">
+                <h2 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                    <span
+                        class="bg-indigo-100 text-indigo-600 w-10 h-10 rounded-lg flex items-center justify-center text-lg">
+                        <i class="fas fa-user-graduate"></i>
+                    </span>
+                    Student Guide
+                </h2>
+
+                <div class="prose prose-slate max-w-none text-slate-600 mb-8">
+                    <p>The student interface is designed for a structured learning path. You cannot skip ahead.</p>
+                    <h4 class="font-bold text-slate-900">Learning Phases</h4>
+                    <ul class="list-disc pl-5">
+                        <li><strong>Pre-Test:</strong> The first phase. You must record all 20 words from the list to
+                            establish a baseline. You cannot switch to Post-Test until this is complete.</li>
+                        <li><strong>Post-Test:</strong> Unlocked after completing the Pre-Test. This phase serves as
+                            your training and final assessment.</li>
+                        <li><strong>Strict Mode:</strong> The system enforces order. Ensure you complete each word's
+                            recording before moving to the next phase.</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="flex gap-4">
+                        <div class="flex-none font-black text-2xl text-slate-200">1</div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-800">Select a Word</h4>
+                            <p class="text-slate-600 text-sm mt-1">
+                                Choose a word from the left sidebar. Words you have already practiced and saved will
+                                show a <i class="fas fa-check-circle text-green-500 mx-1"></i> green checkmark.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-none font-black text-2xl text-slate-200">2</div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-800">Listen & Practice</h4>
+                            <p class="text-slate-600 text-sm mt-1">
+                                Click the <i
+                                    class="fas fa-volume-up bg-slate-100 p-1.5 rounded-full text-xs text-slate-500 mx-1"></i>
+                                "Listen to Model" button to hear the reference pronunciation. The Blue waveform
+                                represents the native
+                                pronunciation of the word by default provided by Cambridge Dictionary.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-none font-black text-2xl text-slate-200">3</div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-800">Record & Submit</h4>
+                            <p class="text-slate-600 text-sm mt-1">
+                                Click the <i
+                                    class="fas fa-microphone bg-slate-100 p-1.5 rounded-full text-xs text-red-500 mx-1"></i>
+                                "Record" button to start recording. Speak clearly. The recording stops automatically
+                                after
+                                silence is detected (or 5 seconds). After recording, your data will be processed by
+                                server and you will be able
+                                to see the Red waveform of your recording. There might be a delay of a few seconds
+                                before you can see the Red waveform. This is normal and usually happens when you submit
+                                your recording for the first time.
+                                <br>
+                                Listen to your recording by clicking the
+                                <i class="fas fa-play bg-slate-100 p-1.5 rounded-full text-xs text-blue-500 mx-1"></i>
+                                "Play" button. You can listen to example pronunciation and you recording several times
+                                before submitting your recording. To submit your recording, click the
+                                <strong>SAVE RECORDING</strong> button.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="flex-none font-black text-2xl text-slate-200">4</div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-800">Analyze Feedback</h4>
+                            <p class="text-slate-600 text-sm mt-1">
+                                After submitting, you will be able to see you score represented by Bark distance between
+                                acoustic features of vowel in the word pronounced by you and and vowel in example
+                                pronunciation.
+                                <br><br>
+                                <strong>Understanding the Bark score and colors:</strong>
+                                <br>
+                                <span class="inline-block w-2 h-2 rounded-full bg-green-500 mx-1"></span>
+                                <strong><span style="color: green;">Green:</span></strong> Bark score less than 1.5.
+                                Excellent!
+                                <br>
+                                <span class="inline-block w-2 h-2 rounded-full bg-amber-500 mx-1"></span>
+                                <strong><span style="color: orange;">Orange:</span></strong> Bark score less than 3.0.
+                                Good.
+                                <br>
+                                <span class="inline-block w-2 h-2 rounded-full bg-rose-500 mx-1"></span>
+                                <strong><span style="color: red;">Red:</span></strong> Bark score greater than or equal
+                                to 3.0. Try Again.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-none font-black text-2xl text-slate-200">5</div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-800">Recommendations</h4>
+                            <p class="text-slate-600 text-sm mt-1">
+                                After submitting, you will be able to see recommendations for improvement if your
+                                score
+                                is more than 1.5. The system is analyzing several formants (frequencies of sound in
+                                your
+                                speech) and comparing them with the native pronunciation. Recommendations might
+                                include
+                                suggestions to open your mouth more or close it slightly; move your tongue forward
+                                or
+                                backward.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-none font-black text-2xl text-slate-200">6</div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-800">Troubleshooting: Data Logging</h4>
+                            <p class="text-slate-600 text-sm mt-1">
+                                If you experience technical issues, you can enable the
+                                <strong><i class="fas fa-check-square text-indigo-500 mx-1"></i> LOG</strong>
+                                checkbox located at the bottom of the recording card.
+                                <br>
+                                This sends detailed diagnostic data (browser version, audio sample rate, errors)
+                                to the server to help the administrator debug your problem.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Teach Guide -->
+            <section id="teacher-guide" class="scroll-mt-24">
+                <hr class="border-slate-200 mb-12">
+                <h2 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                    <span class="bg-sky-100 text-sky-600 w-10 h-10 rounded-lg flex items-center justify-center text-lg">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </span>
+                    Teacher Guide
+                </h2>
+
+                <div class="prose prose-slate max-w-none text-slate-600">
+                    <p>The Teacher Dashboard provides a high-level overview of class performance and individual student
+                        diagnostics.</p>
+
+                    <h4 class="font-bold text-slate-900 mt-6">Navigation & Filtering</h4>
+                    <ul class="list-disc pl-5 text-sm text-slate-600 mb-4">
+                        <li><strong>Search:</strong> Use the search bar at the top of the Student Directory to filter by
+                            name or ID.</li>
+                        <li><strong>Pagination:</strong> The table displays 10 students per page. Use the "Next" and
+                            "Previous" buttons to navigate large classes.</li>
+                    </ul>
+
+                    <h4 class="font-bold text-slate-900 mt-6">Reading the Dashboard Table</h4>
+                    <table class="w-full text-sm text-left border-collapse border border-slate-200 mt-2">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="border border-slate-200 p-2">Column</th>
+                                <th class="border border-slate-200 p-2">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-slate-200 p-2 font-bold">Progress</td>
+                                <td class="border border-slate-200 p-2">Two bars showing Pre-Test and Post-Test
+                                    completion percentage. 100% = 20 words submitted.</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 p-2 font-bold">VTLN Alpha</td>
+                                <td class="border border-slate-200 p-2">
+                                    <strong>Vocal Tract Length Normalization Factor.</strong>
+                                    A numeric value representing the acoustic scaling applied to the student's voice.
+                                    <br>
+                                    <span class="text-xs text-slate-500">Typical values: Children (0.8-0.9), Women
+                                        (1.0), Men (1.1-1.2).</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 p-2 font-bold">Flags</td>
+                                <td class="border border-slate-200 p-2">
+                                    <span class="bg-rose-100 text-rose-800 text-xs px-1 rounded">Outlier</span>:
+                                    Indicates one or more recordings have a Bark distance > 5.0 (Review required).
+                                    <br>
+                                    <span class="bg-indigo-100 text-indigo-800 text-xs px-1 rounded">Deep Voice</span>:
+                                    Indicates the system applied specialized logic for low-frequency formants (F2 <
+                                        1500Hz). </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 class="font-bold text-slate-900 mt-6">Student Details</h4>
+                    <p>Clicking on a student's name opens their detailed profile. You can:</p>
+                    <ul class="list-disc pl-5">
+                        <li>View their full submission history timeline.</li>
+                        <li><strong>Filter:</strong> Use the dropdown menu to toggle between "All", "Pre-Test Only", or
+                            "Post-Test Only" submissions.</li>
+                        <li>Listen to their specific audio files to verify quality.</li>
+                        <li>See exact VLTN normalization factors, Bark Score</li>
+                        <li>See correction and outlier flags for each recording</li>
+                        <li>For each recording it is possible to see vowel formant comparison chart</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Research Panel -->
+            <section id="research-panel" class="scroll-mt-24">
+                <hr class="border-slate-200 mb-12">
+                <h2 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                    <span
+                        class="bg-purple-100 text-purple-600 w-10 h-10 rounded-lg flex items-center justify-center text-lg">
+                        <i class="fas fa-microscope"></i>
+                    </span>
+                    Research Panel
+                </h2>
+                <div class="prose prose-slate max-w-none text-slate-600">
+                    <p class="lead">The Acoustic Research Dashboard serves as a comprehensive tool for analyzing the
+                        phonetic accuracy of student pronunciations. Its primary purpose is to visualize the
+                        discrepancies between student speech and native reference models.</p>
+
+                    <h3 class="text-slate-900 font-bold mt-8">Analysis Visualizations</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 not-prose">
+                        <div class="bg-white p-4 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-slate-800 mb-2">1. Vowel Space (F1 vs F2)</h4>
+                            <p class="text-sm text-slate-600">Maps each vowel sound based on tongue height (F1) and
+                                backness (F2). This scatter plot reveals clustering patterns and how distinct a
+                                student's vowels are from each other.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-slate-800 mb-2">2. Error Distribution (Bark)</h4>
+                            <p class="text-sm text-slate-600">A histogram showing the frequency of different error
+                                magnitudes. It helps identify if the class generally struggles (high error peak) or
+                                performs well (low error peak).</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-slate-800 mb-2">3. F1 Correlation (Height)</h4>
+                            <p class="text-sm text-slate-600">Plots Student F1 against Reference F1 with a linear trend
+                                line. Deviations from the diagonal indicate consistent issues with jaw opening (e.g.,
+                                mouth too closed).</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-slate-800 mb-2">4. F2 Correlation (Backness)</h4>
+                            <p class="text-sm text-slate-600">Plots Student F2 against Reference F2 with a linear trend
+                                line. Deviations here highlight systematic errors in tongue advancement (e.g., tongue
+                                too far back).</p>
+                        </div>
+                    </div>
+
+                    <h3 class="text-slate-900 font-bold mt-8">5. Raw Data Table</h3>
+                    <p>The table provides granular data for every single recording submitted.</p>
+                    <table class="w-full text-sm text-left border-collapse border border-slate-200 mt-4">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="border border-slate-200 p-2">Column</th>
+                                <th class="border border-slate-200 p-2">Explanation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-slate-200 p-2 font-bold">Student</td>
+                                <td class="border border-slate-200 p-2">The Username and ID of the speaker.</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 p-2 font-bold">Word / Vowel</td>
+                                <td class="border border-slate-200 p-2">The target word and its primary stressed vowel
+                                    (IPA) being analyzed.</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 p-2 font-bold">F1 / F2 (Student)</td>
+                                <td class="border border-slate-200 p-2">The normalized first and second formants
+                                    extracted from the student's recording.</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 p-2 font-bold">F1 / F2 (Ref)</td>
+                                <td class="border border-slate-200 p-2">The target formants from the native speaker
+                                    reference model.</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 p-2 font-bold">Dist (Bark)</td>
+                                <td class="border border-slate-200 p-2">The perceptual distance between the student's
+                                    vowel and the reference. Lower is better.</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 p-2 font-bold">Alpha</td>
+                                <td class="border border-slate-200 p-2">The VTLN scaling factor used.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Admin Guide -->
+            <section id="admin-guide" class="scroll-mt-24">
+                <hr class="border-slate-200 mb-12">
+                <h2 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                    <span
+                        class="bg-slate-100 text-slate-600 w-10 h-10 rounded-lg flex items-center justify-center text-lg">
+                        <i class="fas fa-user-shield"></i>
+                    </span>
+                    Admin Guide
+                </h2>
+
+                <div class="prose prose-slate max-w-none text-slate-600">
+
+                    <h3 class="text-slate-900 font-bold">1. Critical System Operations (CLI)</h3>
+                    <p>Some operations are restricted to the server command line for security.</p>
+                    <div class="bg-slate-900 text-slate-50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                        # Create a new Admin user<br>
+                        flask create-admin [username] [password]<br><br>
+
+                        # Delete any user (including admins)<br>
+                        flask delete-user [username]<br><br>
+
+                        # Examples:<br>
+                        flask create-admin superuser Pass123!<br>
+                        flask delete-user old_admin<br>
+                    </div>
+
+                    <h3 class="text-slate-900 font-bold mt-8">2. Web Control Panel Features</h3>
+                    <div class="space-y-6 mt-4">
+                        <div class="border border-slate-200 rounded-xl p-5">
+                            <h4 class="font-bold text-slate-900 mb-2">User Management</h4>
+                            <p class="text-sm text-slate-600 mb-2">Located in the "Users" summary card. The directory
+                                lists 10 users per page.</p>
+                            <ul class="list-disc pl-5 text-sm text-slate-600">
+                                <li><strong>Edit Role:</strong> You can promote a 'Student' to 'Teacher' or 'Admin'. It
+                                    is not possible to change 'Admin' role to 'Student' or 'Teacher'.
+                                </li>
+                                <li><strong>Assign Student ID:</strong> Link a physical university ID to a user account.
+                                </li>
+                                <li><strong>Manage Invite Codes:</strong>
+                                    <ul class="list-disc pl-5 mt-1 text-slate-500">
+                                        <li><strong>Generate:</strong> Click "Generate Code" to create a random
+                                            10-character key.</li>
+                                        <li><strong>Distribute:</strong> Give this code to instructors for registration.
+                                        </li>
+                                        <li><strong>Delete:</strong> Remove unused codes to prevent unauthorized access.
+                                            (Used codes are locked and can only be deleted alogside with a teacher they
+                                            are assigned to.).</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Delete User:</strong> <span class="text-rose-600 font-bold">WARNING:</span>
+                                    This is a destructive action. It permanently deletes the user account AND all their
+                                    uploaded audio files/submissions from the disk. This cannot be undone.</li>
+                            </ul>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-xl p-5">
+                            <h4 class="font-bold text-slate-900 mb-2">Word Management</h4>
+                            <p class="text-sm text-slate-600">Manage the list of words.</p>
+                            <ul class="list-disc pl-5 text-sm text-slate-600">
+                                <li><strong>Fetch / Auto-Generate:</strong> Enter a word to auto-fetch its IPA and
+                                    Cambridge
+                                    pronunciation audio.</li>
+                                <li><strong>Waveform Editor:</strong> The reference audio is visualized as a waveform.
+                                </li>
+                                <li><strong>Manual Correction:</strong>
+                                    <ul class="list-disc pl-5 mt-1 text-slate-500">
+                                        <li><strong>Download:</strong> Save the current reference audio to your disk.
+                                        </li>
+                                        <li><strong>Upload:</strong> Replace it with your own custom MP3 (e.g., if the
+                                            auto-generated one is poor).</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Delete Word:</strong> Cascades to delete all student submissions for this
+                                    word.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-xl p-5">
+                            <h4 class="font-bold text-slate-900 mb-2">System Configuration & Health</h4>
+                            <p class="text-sm text-slate-600 mb-2">Control global application settings via toggle
+                                switches.
+                            </p>
+                            <ul class="list-disc pl-5 text-sm text-slate-600">
+                                <li><strong>Maintenance Mode:</strong> When enabled (<i
+                                        class="fas fa-toggle-on text-emerald-500"></i>), only Admins can access the
+                                    site.
+                                    All other users are blocked. Use for updates.</li>
+                                <li><strong>Registration Open:</strong> Toggle OFF (<i
+                                        class="fas fa-toggle-off text-slate-400"></i>) to strictly block new account
+                                    creation.</li>
+                                <li><strong>Enable Logging:</strong> When enabled, the client application sends detailed
+                                    usage logs to the server. Useful for debugging specific user issues.</li>
+                                <li><strong>System Logs:</strong> Button to download the full server-side log file
+                                    (`pronounce.log`).</li>
+                            </ul>
+                            <div class="mt-4 pt-4 border-t border-slate-100">
+                                <h5 class="font-bold text-slate-800 text-xs uppercase tracking-wide mb-1">Health Metrics
+                                    (Footer)</h5>
+                                <ul class="list-disc pl-5 text-sm text-slate-600">
+                                    <li><strong>DB Size:</strong> Current size of the SQLite database file.</li>
+                                    <li><strong>CPU Load:</strong> Real-time server processor usage percentage.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- Glossary -->
+            <section id="glossary" class="scroll-mt-24">
+                <hr class="border-slate-200 mb-12">
+                <h2 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                    <span
+                        class="bg-gray-100 text-gray-600 w-10 h-10 rounded-lg flex items-center justify-center text-lg">
+                        <i class="fas fa-book"></i>
+                    </span>
+                    Glossary of Scientific Terms
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <h3 class="font-bold text-slate-900 mb-2">Formants (F1 & F2)</h3>
+                        <p class="text-sm text-slate-600">
+                            Resonant frequencies of the vocal tract that determine vowel quality.
+                            <br><br>
+                            <strong>F1 (First Formant):</strong> Correlates with <em>jaw opening</em>. Higher F1 = Lower
+                            jaw (e.g., "aa" in 'cat').
+                            <br>
+                            <strong>F2 (Second Formant):</strong> Correlates with <em>tongue advancement</em>. Higher F2
+                            = Tongue forward (e.g., "iy" in 'seed').
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <h3 class="font-bold text-slate-900 mb-2">Bark Scale</h3>
+                        <p class="text-sm text-slate-600">
+                            A frequency scale that matches how the human ear perceives pitch. Unlike Hertz (Hz) which is
+                            linear, the Bark scale is logarithmic, making it better for measuring perceptual differences
+                            in speech.
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <h3 class="font-bold text-slate-900 mb-2">VTLN (Alpha)</h3>
+                        <p class="text-sm text-slate-600">
+                            <strong>Vocal Tract Length Normalization.</strong> Men, women, and children have different
+                            vocal tract lengths, which shifts their formant frequencies.
+                            <br><br>
+                            Comparison logic uses an "Alpha" factor to mathematically scale a student's voice to match
+                            the reference speaker model, allowing for accurate grading regardless of the speaker's age
+                            or gender.
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <h3 class="font-bold text-slate-900 mb-2">Euclidean Distance</h3>
+                        <p class="text-sm text-slate-600">
+                            The straight-line distance between two points. In this app, it measures the "error" between
+                            your vowel pronunciation and the target vowel in the F1-F2 space.
+                            <br><br>
+                            <span class="text-green-600 font-bold">Low Distance (< 1.5):</span> Excellent match.
+                                    <br>
+                                    <span class="text-red-600 font-bold">High Distance (> 3.0):</span> Significant
+                                    deviation.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

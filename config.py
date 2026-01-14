@@ -12,6 +12,9 @@ class Config:
     ) or "sqlite:///" + os.path.join(basedir, "instance", "pronounce.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # Development Settings
+    TEMPLATES_AUTO_RELOAD = True
+
     # File Storage
     UPLOAD_FOLDER = os.path.join(basedir, "submissions")
     AUDIO_FOLDER = os.path.join(basedir, "static", "audio")

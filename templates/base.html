@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pronounce Web - {% block title %}{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -19,11 +19,11 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
-                    <a href="{{ url_for('index') }}" class="flex items-center space-x-3 group">
-                        <div class="bg-indigo-500 p-2 rounded-lg group-hover:bg-indigo-400 transition">
+                    <a href="{{ url_for('index') }}" class="flex items-center space-x-2 md:space-x-3 group">
+                        <div class="bg-indigo-500 p-1.5 md:p-2 rounded-lg group-hover:bg-indigo-400 transition">
                             <i class="fas fa-microphone-lines text-white"></i>
                         </div>
-                        <span class="font-black text-xl tracking-tighter uppercase">Pronounce<span
+                        <span class="font-black text-lg md:text-xl tracking-tighter uppercase">Pronounce<span
                                 class="text-indigo-400">Web</span></span>
                     </a>
                     {% if current_user.role == 'student' %}
@@ -34,7 +34,31 @@
                     </div>
                     {% endif %}
                 </div>
-                <div class="flex items-center space-x-6">
+                {% if current_user.role == 'teacher' %}
+                <div class="hidden md:flex items-center space-x-1 ml-6 border-l border-slate-700 pl-6">
+                    <a href="{{ url_for('index') }}"
+                        class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Studio</a>
+                    <a href="{{ url_for('dashboards.teacher_dashboard') }}"
+                        class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Dashboard</a>
+                    <a href="{{ url_for('dashboards.research_dashboard') }}"
+                        class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Research</a>
+                </div>
+                {% endif %}
+                {% if current_user.role == 'admin' %}
+                <div class="hidden md:flex items-center space-x-1 ml-6 border-l border-slate-700 pl-6">
+                    <a href="{{ url_for('index') }}"
+                        class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Studio</a>
+                    <a href="{{ url_for('dashboards.admin_dashboard') }}"
+                        class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Admin
+                        Panel</a>
+                    <a href="{{ url_for('dashboards.teacher_dashboard') }}"
+                        class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Teacher
+                        View</a>
+                    <a href="{{ url_for('dashboards.research_dashboard') }}"
+                        class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Research</a>
+                </div>
+                {% endif %}
+                <div class="flex items-center space-x-2 md:space-x-6">
                     {% if current_user.is_authenticated %}
                     <div class="hidden md:flex flex-col items-end">
                         <span class="text-xs font-bold text-slate-400 uppercase">Participant</span>
@@ -49,7 +73,7 @@
                     <a href="{{ url_for('auth.login') }}"
                         class="text-slate-300 hover:text-white font-bold text-sm">Login</a>
                     <a href="{{ url_for('auth.register') }}"
-                        class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-sm font-bold transition">Register</a>
+                        class="bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm font-bold transition">Register</a>
                     {% endif %}
                 </div>
             </div>
@@ -57,8 +81,7 @@
     </nav>
 
     <main class="flex-grow">
-        <div
-            class="max-w-7xl mx-auto pt-1 man you sure that's the second that she's in the government 0 pb-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto pt-10 pb-8 px-4 sm:px-6 lg:px-8">
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             {% for category, message in messages %}
@@ -88,10 +111,59 @@
                 <a href="{{ url_for('about') }}"
                     class="text-slate-400 hover:text-indigo-600 text-xs font-bold uppercase tracking-wider transition">About
                     Project</a>
+                <a href="{{ url_for('manual') }}"
+                    class="text-slate-400 hover:text-indigo-600 text-xs font-bold uppercase tracking-wider transition">User
+                    Manual</a>
             </div>
         </div>
     </footer>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        // Global F1 Shortcut for Manual
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'F1') {
+                event.preventDefault();
+                window.location.href = "{{ url_for('manual') }}";
+            }
+        });
+
+        // FORCE 100% ZOOM (Disabling Browser Scaling)
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. Prevent Pinch Zoom
+            document.addEventListener('touchmove', function (event) {
+                if (event.scale !== 1) { event.preventDefault(); }
+            }, { passive: false });
+
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function (event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+
+            // 2. Prevent Ctrl + Wheel
+            document.addEventListener('wheel', function (event) {
+                if (event.ctrlKey) {
+                    event.preventDefault();
+                }
+            }, { passive: false });
+
+            // 3. Prevent Ctrl + +/- keys
+            document.addEventListener('keydown', function (event) {
+                if (event.ctrlKey && (
+                    event.key === '+' ||
+                    event.key === '-' ||
+                    event.key === '=' ||
+                    event.key === '_' ||
+                    event.key === '0'
+                )) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

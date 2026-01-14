@@ -148,3 +148,33 @@
 }
 
 /* red-600 */
+
+/* FORCE CROSS-BROWSER CONSISTENCY */
+html {
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    touch-action: pan-x pan-y;
+    /* Disable pinch zoom actions via CSS */
+    height: 100%;
+    /* LOCK ROOT SIZE: Ensures 1rem = 16px everywhere */
+    font-size: 16px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    /* Force consistent padding math */
+}
+
+body {
+    overscroll-behavior: none;
+    /* Prevent bounce effects */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Consistency Fixes */
+    line-height: 1.5;
+    letter-spacing: normal;
+    text-rendering: optimizeLegibility;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}

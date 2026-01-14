@@ -155,7 +155,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             {% for user in users %}
-                            <tr class="hover:bg-gray-50 transition-colors">
+                            <tr class="hover:bg-gray-50 transition-colors h-[73px]">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div
@@ -204,6 +204,19 @@
                                 </td>
                             </tr>
                             {% endfor %}
+
+                            {# --- Pad with empty rows to maintain fixed height (10 rows) --- #}
+                            {% set remaining_rows = 10 - users|length %}
+                            {% if remaining_rows > 0 %}
+                            {% for i in range(remaining_rows) %}
+                            <tr class="h-[73px]">
+                                <td class="px-6 py-4">&nbsp;</td>
+                                <td class="px-6 py-4">&nbsp;</td>
+                                <td class="px-6 py-4">&nbsp;</td>
+                                <td class="px-6 py-4">&nbsp;</td>
+                            </tr>
+                            {% endfor %}
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>

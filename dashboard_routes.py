@@ -1,6 +1,7 @@
 import os
 import shutil
 from datetime import datetime, timezone
+import math
 
 import psutil
 from flask import (
@@ -35,7 +36,7 @@ def admin_dashboard():
 
     # Search and Pagination
     page = request.args.get("page", 1, type=int)
-    per_page = 8  # Display 8 users per page
+    per_page = 10  # Display 10 users per page
     search_query = request.args.get("search", "")
 
     # Base query
@@ -156,68 +157,117 @@ def admin_dashboard():
 @dashboards.route("/teacher")
 @login_required
 def teacher_dashboard():
-    if current_user.role != "teacher":
+    if current_user.role not in ["teacher", "admin"]:
         flash("Access denied. Instructor privileges required.", "danger")
         return redirect(url_for("index"))
 
-    # 1. Fetch all students
-    students = User.query.filter_by(role="student").all()
+    # --- 1. Class Stats Calculation (All Students) ---
+    all_students = User.query.filter_by(role="student").all()
 
-    student_data = []
     total_pre_progress = 0
     total_post_progress = 0
     deep_voice_count = 0
     outlier_count = 0
+    missing_count = 0
     active_today = 0
     today_date = datetime.now(timezone.utc).date()
 
-    for s in students:
-        # Get submissions (lazy dynamic query)
+    for s in all_students:
         subs = s.submissions.all()
-
-        # Split by test type
+        # Progress Calculation
         pre_subs = [sub for sub in subs if sub.test_type == "pre"]
         post_subs = [sub for sub in subs if sub.test_type == "post"]
 
-        # Calculate Unique Progress (Words / 20)
         pre_count = len({sub.word_id for sub in pre_subs})
         post_count = len({sub.word_id for sub in post_subs})
 
-        # Calculate Progress (Cap at 100%)
         pre_pct = min(100, int((pre_count / 20) * 100))
         post_pct = min(100, int((post_count / 20) * 100))
 
         total_pre_progress += pre_pct
         total_post_progress += post_pct
 
-        # Determine Last Active & VTLN Status
-        last_active_str = "Never"
-        vtln_alpha = None
-
         if subs:
             # Sort by timestamp descending to get latest
             subs.sort(key=lambda x: x.timestamp, reverse=True)
             last_sub = subs[0]
-
-            last_active_str = last_sub.timestamp.strftime("%Y-%m-%d %H:%M")
             if last_sub.timestamp.date() == today_date:
                 active_today += 1
 
-            # Check for analysis data (if available)
-            if last_sub.analysis:
-                vtln_alpha = last_sub.analysis.scaling_factor
-
-            # Check flags across ALL submissions for this student
-            # If they have at least one correction or outlier, we flag the student
+            # Count distinct students with flags
             has_deep_voice = any(
-                s.analysis and s.analysis.is_deep_voice_corrected for s in subs
+                sub.analysis and sub.analysis.is_deep_voice_corrected for sub in subs
             )
-            has_outlier = any(s.analysis and s.analysis.is_outlier for s in subs)
+            has_outlier = any(sub.analysis and sub.analysis.is_outlier for sub in subs)
+            has_missing = any(
+                sub.analysis and sub.analysis.distance_bark is None for sub in subs
+            )
 
             if has_deep_voice:
                 deep_voice_count += 1
             if has_outlier:
                 outlier_count += 1
+            if has_missing:
+                missing_count += 1
+
+    num_students = len(all_students) if all_students else 1
+    class_stats = {
+        "avg_pre_completion": int(total_pre_progress / num_students),
+        "avg_post_completion": int(total_post_progress / num_students),
+        "deep_voice_count": deep_voice_count,
+        "outlier_count": outlier_count,
+        "missing_count": missing_count,
+        "active_today": active_today,
+    }
+
+    # --- 2. Table Data (Paginated & Searched) ---
+    page = request.args.get("page", 1, type=int)
+    search_query = request.args.get("search", "")
+    per_page = 10
+
+    query = User.query.filter_by(role="student")
+
+    if search_query:
+        search_term = f"%{search_query}%"
+        query = query.filter(
+            db.or_(
+                User.username.ilike(search_term),  # type: ignore
+                User.first_name.ilike(search_term),  # type: ignore
+                User.last_name.ilike(search_term),  # type: ignore
+                User.student_id.ilike(search_term),  # type: ignore
+            )
+        )
+
+    pagination = query.order_by(User.first_name.asc()).paginate(  # type: ignore
+        page=page, per_page=per_page, error_out=False
+    )
+
+    student_data = []
+
+    for s in pagination.items:
+        subs = s.submissions.all()
+        # Quick re-calc for table view only
+        pre_count = len({sub.word_id for sub in subs if sub.test_type == "pre"})
+        post_count = len({sub.word_id for sub in subs if sub.test_type == "post"})
+
+        pre_pct = min(100, int((pre_count / 20) * 100))
+        post_pct = min(100, int((post_count / 20) * 100))
+
+        last_active_str = "Never"
+        has_deep_voice = False
+        has_outlier = False
+        has_missing = False
+
+        if subs:
+            subs.sort(key=lambda x: x.timestamp, reverse=True)
+            last_active_str = subs[0].timestamp.strftime("%Y-%m-%d %H:%M")
+            has_deep_voice = any(
+                sub.analysis and sub.analysis.is_deep_voice_corrected for sub in subs
+            )
+            has_outlier = any(sub.analysis and sub.analysis.is_outlier for sub in subs)
+            has_missing = any(
+                sub.analysis and sub.analysis.distance_bark is None for sub in subs
+            )
 
         student_data.append(
             {
@@ -231,35 +281,26 @@ def teacher_dashboard():
                 "post_completed_count": post_count,
                 "pre_progress_percent": pre_pct,
                 "post_progress_percent": post_pct,
-                "vtln_alpha": round(vtln_alpha, 2) if vtln_alpha else None,
                 "last_active_str": last_active_str,
-                "has_deep_voice": has_deep_voice if subs else False,
-                "has_outlier": has_outlier if subs else False,
+                "has_deep_voice": has_deep_voice,
+                "has_outlier": has_outlier,
+                "has_missing": has_missing,
             }
         )
 
-    # 2. Calculate Class Stats
-    num_students = len(students) if students else 1
-    avg_pre_completion = int(total_pre_progress / num_students)
-    avg_post_completion = int(total_post_progress / num_students)
-
-    class_stats = {
-        "avg_pre_completion": avg_pre_completion,
-        "avg_post_completion": avg_post_completion,
-        "deep_voice_count": deep_voice_count,
-        "outlier_count": outlier_count,
-        "active_today": active_today,
-    }
-
     return render_template(
-        "dashboards/teacher_view.html", class_stats=class_stats, students=student_data
+        "dashboards/teacher_view.html",
+        class_stats=class_stats,
+        students=student_data,
+        pagination=pagination,
+        search_query=search_query,
     )
 
 
 @dashboards.route("/teacher/student/<int:user_id>")
 @login_required
 def student_detail(user_id):
-    if current_user.role != "teacher":
+    if current_user.role not in ["teacher", "admin"]:
         flash("Access denied.", "danger")
         return redirect(url_for("index"))
 
@@ -268,11 +309,25 @@ def student_detail(user_id):
         flash("Invalid student selection.", "warning")
         return redirect(url_for("dashboards.teacher_dashboard"))
 
-    # Fetch submissions ordered by latest first
-    submissions = student.submissions.order_by(Submission.timestamp.desc()).all()
+    # Fetch submissions with filtering and pagination
+    test_type_filter = request.args.get("test_type", "all")
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+
+    query = student.submissions.order_by(Submission.timestamp.desc())
+
+    if test_type_filter in ["pre", "post"]:
+        query = query.filter(Submission.test_type == test_type_filter)
+
+    submissions_pagination = query.paginate(
+        page=page, per_page=per_page, error_out=False
+    )
 
     return render_template(
-        "dashboards/student_detail.html", student=student, submissions=submissions
+        "dashboards/student_detail.html",
+        student=student,
+        submissions=submissions_pagination,
+        current_filter=test_type_filter,
     )
 
 

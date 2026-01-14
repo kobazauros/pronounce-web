@@ -12,16 +12,77 @@
         class="flex-grow bg-white rounded-3xl p-3 shadow-sm border border-slate-200 flex flex-col min-w-0 h-auto min-h-[500px] lg:h-full lg:min-h-0 overflow-hidden">
 
         <!-- Header -->
-        <div class="text-center mb-1 shrink-0">
+        <div class="relative text-center mt-4 mb-4 shrink-0">
             <h2 id="sample-word-placeholder"
                 class="text-xl font-black text-slate-900 tracking-tighter uppercase leading-none">Select Word</h2>
-            <div id="phonetic-display" class="text-sky-500 font-mono text-sm font-bold tracking-widest opacity-30">/ ...
+            <div id="phonetic-display" class="text-sky-500 font-mono text-sm mt-2 font-bold tracking-widest opacity-30">
+                / ...
                 /</div>
+
+            <!-- Settings Toggle -->
+            <button id="open-settings-btn"
+                class="absolute right-0 top-0 text-slate-300 hover:text-slate-600 transition-colors p-2"
+                title="Audio Settings">
+                <i class="fas fa-cog"></i>
+            </button>
+        </div>
+
+        <!-- Audio Settings Modal -->
+        <div id="audio-settings-modal"
+            class="hidden absolute inset-0 z-50 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-slate-800 rounded-3xl">
+            <h3 class="text-lg font-black uppercase tracking-tighter mb-6">Sound Check</h3>
+
+            <div class="w-full max-w-xs space-y-4">
+                <!-- Mic Selection -->
+                <div>
+                    <label
+                        class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Microphone</label>
+                    <select id="audio-input-select"
+                        class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="default">Default</option>
+                    </select>
+                </div>
+
+                <!-- Mode Selection -->
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Audio
+                        Mode</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="mode-fidelity"
+                            class="mode-btn active px-3 py-2 rounded-lg border border-sky-200 bg-sky-50 text-sky-700 text-xs font-bold transition-all relative overflow-hidden">
+                            High Fidelity
+                            <span class="block text-[9px] font-normal opacity-70 mt-0.5">Recommended</span>
+                        </button>
+                        <button id="mode-reduction"
+                            class="mode-btn px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-500 text-xs font-bold transition-all hover:bg-slate-50">
+                            Noise Reduce
+                            <span class="block text-[9px] font-normal opacity-70 mt-0.5">Fix Static</span>
+                        </button>
+                    </div>
+                    <input type="hidden" id="audio-mode-value" value="fidelity">
+                </div>
+
+                <!-- Input Meter -->
+                <div class="bg-slate-100 rounded-lg p-3">
+                    <div class="flex justify-between items-end mb-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Input Level</span>
+                        <span id="settings-noise-label" class="text-[10px] font-bold text-slate-400">...</span>
+                    </div>
+                    <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                        <div id="settings-meter-bar" class="h-full bg-green-500 w-0 transition-all duration-75"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="close-settings-btn"
+                class="mt-8 px-8 py-2.5 bg-slate-900 text-white text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-slate-800 transition shadow-lg">
+                Done
+            </button>
         </div>
 
         <!-- The Studio Stage (Dynamic Height ~35% of Viewport) -->
         <div id="difference-waveform-container"
-            class="w-full h-[25vh] bg-slate-950 rounded-2xl border border-slate-800 relative overflow-hidden mb-2 shadow-lg shrink-0">
+            class="w-full h-[20vh] bg-slate-950 rounded-2xl border border-slate-800 relative overflow-hidden mb-2 shadow-lg shrink-0">
             <div id="message-box"
                 class="absolute inset-0 flex items-center justify-center text-slate-700 font-black text-[10px] uppercase tracking-[0.4em] z-10 pointer-events-none transition-opacity">
                 READY
@@ -40,7 +101,7 @@
         </div>
 
         <!-- Controls Area (Compact) -->
-        <div class="flex flex-col items-center gap-1 shrink-0 border-t border-slate-50 pt-1">
+        <div class="flex flex-col items-center gap-1 shrink-0 border-t border-slate-50 pt-2">
             <div class="flex items-center gap-3">
                 <button id="play-sample" disabled
                     class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all"
@@ -69,7 +130,7 @@
             <!-- Submit Action -->
             <div class="w-full max-w-[200px] flex flex-col items-center">
                 <button id="submit-recording" disabled
-                    class="w-full py-1.5 bg-slate-900 text-white rounded-md font-black uppercase text-[10px] tracking-[0.2em] hover:bg-sky-700 disabled:bg-slate-100 disabled:text-slate-300 transition-all shadow active:scale-95">
+                    class="w-full py-3 bg-slate-900 text-white rounded-md font-black uppercase text-[10px] tracking-[0.2em] hover:bg-sky-700 disabled:bg-slate-100 disabled:text-slate-300 transition-all shadow active:scale-95">
                     Save Recording
                 </button>
                 <p id="submit-msg"
@@ -82,13 +143,14 @@
 
 
         <!-- Monitor Footer (Compact & Scrollable if needed, but intended to fit) -->
-        <div
-            class="bg-sky-50 border border-sky-200 rounded-lg p-2.5 text-center mt-1 text-xs shrink min-h-0 overflow-y-auto">
-            <h3 class="font-bold text-sky-800 mb-1 text-[11px] uppercase tracking-wide">Practice Steps</h3>
-            <ol class="text-sky-700 list-inside text-left space-y-0.5 inline-block mx-auto text-[10px]">
-                <li><span class="font-bold">1. Select Word</span></li>
-                <li><span class="font-bold">2. Listen & Record</span> (Allow Mic)</li>
-                <li><span class="font-bold">3. Wait for Results</span> (Processing...)</li>
+        <!-- Monitor Footer (Expanded - No Scroll) -->
+        <div class="bg-sky-50 border border-sky-200 rounded-lg p-3 text-center mt-2 shrink-0 text-xs">
+            <h3 class="font-bold text-sky-800 mb-2 text-xs uppercase tracking-wide">Practice Steps</h3>
+            <ol class="text-sky-700 list-inside text-left space-y-1 inline-block mx-auto text-xs">
+                <li><span class="font-bold">1. Select an example word</span> from the panel.</li>
+                <li><span class="font-bold">2. Listen 🔊</span> to the example, <span class="font-bold">Record
+                        🎙️</span> yourself, <span class="font-bold">Play ▶️</span> to compare.</li>
+                <li><span class="font-bold">3. Save</span> your recording when satisfied. Wait for Results.</li>
                 <li><span class="font-bold">4. Check Score:</span>
                     <span class="score-success">Green</span> (Good),
                     <span class="score-warning">Yellow</span> (Ok),
@@ -106,15 +168,11 @@
                     class="text-[10px] font-black uppercase tracking-widest text-slate-400">WAITING...</span>
             </div>
 
-            {% if enable_logging %}
-            <div class="flex items-center gap-2" title="Enable Data Logging">
-                <label for="logging-toggle"
-                    class="text-[10px] uppercase font-bold text-slate-300 cursor-pointer select-none">Log</label>
-                <input type="checkbox" id="logging-toggle" class="accent-indigo-600 w-3 h-3 cursor-pointer">
-            </div>
-            {% endif %}
         </div>
-        <script>window.CURRENT_USER = "{{ current_user.username }}";</script>
+        <script>
+            window.CURRENT_USER = "{{ current_user.username }}";
+            window.ENABLE_LOGGING = {{ enable_logging | tojson }};
+        </script>
     </div>
 
 

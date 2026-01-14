@@ -142,6 +142,12 @@ def about() -> str:
     return render_template("about.html")
 
 
+@app.route("/manual")
+def manual() -> str:
+    """Renders the comprehensive User Manual."""
+    return render_template("manual.html")
+
+
 # 7. File Upload Route (Updated for Phase 3 DB Integration)
 @app.route("/upload", methods=["POST"])
 @login_required
@@ -199,6 +205,11 @@ def upload_file() -> tuple[Response, int]:
 
         with open(full_save_path, "wb") as f:
             f.write(processed_bytes)
+
+    except ValueError as ve:
+        # Known processing error (Clipping)
+        app.logger.warning(f"Upload rejected: {ve}")
+        return jsonify({"error": str(ve)}), 400
 
     except Exception as e:
         app.logger.error(f"Error saving file {unique_filename}: {e}")
@@ -403,6 +414,52 @@ def create_admin(username: str, password: str) -> None:
     db.session.add(user)
     db.session.commit()
     print(f"Success: Admin user '{username}' created.")
+
+
+@app.cli.command("delete-user")
+@click.argument("username")
+def delete_user(username: str) -> None:
+    """Delete a user via CLI (including admins): flask delete-user <username>"""
+    import shutil
+
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        print(f"Error: User '{username}' not found.")
+        return
+
+    # Confirm deletion
+    click.confirm(
+        f"Are you sure you want to PERMANENTLY delete user '{username}' and all their data?",
+        abort=True,
+    )
+
+    try:
+        # Delete files
+        user_upload_dir = os.path.join(app.config["UPLOAD_FOLDER"], str(user.id))
+        if os.path.exists(user_upload_dir):
+            shutil.rmtree(user_upload_dir)
+
+        # Cascading DB delete (Submissions, InviteCodes used, etc need handling if not cascaded)
+        # Assuming database cascade or manual cleanup.
+        # Manual cleanup for safety as per dashboard_routes:
+        Submission.query.filter_by(user_id=user.id).delete()
+
+        # If they consumed an invite code, delete that usage record?
+        # Actually in dashboard_routes we deleted the invite code itself if it was used by them?
+        # "Cascade Delete: Remove associated InviteCode if this user used one".
+        from models import InviteCode
+
+        invite_used = InviteCode.query.filter_by(used_by_user_id=user.id).first()
+        if invite_used:
+            db.session.delete(invite_used)
+
+        db.session.delete(user)
+        db.session.commit()
+        print(f"Success: User '{username}' deleted.")
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting user: {e}")
 
 
 if __name__ == "__main__":
