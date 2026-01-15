@@ -150,6 +150,29 @@ def init_metrics() -> Response | tuple[Response, int]:
     return jsonify({"status": "success", "added": added})
 
 
+@app.route("/api/log_event", methods=["POST"])
+@login_required
+def log_event() -> Response | tuple[Response, int]:
+    """
+    Accepts analytics events from the frontend.
+    Events are logged for debugging and user behavior analysis.
+    """
+    data = request.json
+    if not data:
+        return jsonify({"error": "No data"}), 400
+
+    event_type = data.get("event")
+    timestamp = data.get("timestamp")
+
+    # Log to application logger for debugging
+    app.logger.info(f"Event: {event_type} | User: {current_user.id} | Data: {data}")
+
+    # Future: Store in database for analytics
+    # EventLog.create(user_id=current_user.id, event_type=event_type, data=data)
+
+    return jsonify({"status": "success"})
+
+
 @app.route("/api/word_list")
 @login_required
 def get_word_list() -> Response | tuple[Response, int]:
