@@ -346,6 +346,19 @@ def process_submission_cmd(submission_id):
         print(f"Failed to process submission {submission_id}")
 
 
+@app.cli.command("init-words")
+def init_words_command():
+    """Populate the database with the thesis word list."""
+    from scripts.parser import update_word_list
+
+    print("Initializing word list (fetching from Cambridge Dictionary)...")
+    try:
+        count = update_word_list(limit=20)
+        print(f"Successfully added {count} words.")
+    except Exception as e:
+        print(f"Error: {e}")
+
+
 # --- JIT WARMUP ---
 def warmup_audio_engine():
     """
