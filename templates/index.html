@@ -267,37 +267,37 @@
         window.CURRENT_USER = appState.username;
         window.ENABLE_LOGGING = (appState.logging === 'true');
     </script>
-</div>
 
 
-<!-- Right Sidebar -->
-<div class="w-full lg:w-60 flex flex-col gap-3 shrink-0 h-[400px] lg:h-full overflow-hidden">
-    <!-- Progress Module -->
-    <div class="bg-white rounded-3xl p-3 shadow-sm border border-slate-200 shrink-0">
-        <select id="test-type" name="testType"
-            class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-base font-medium outline-none mb-3 cursor-pointer focus:ring-2 focus:ring-blue-500">
-            <option value="pre">Phase: Pre-Test</option>
-            <option value="post">Phase: Post-Test</option>
-        </select>
 
-        <div class="flex justify-between items-end mb-1">
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Mastery</span>
-            <span id="progress-percent"
-                class="text-xs font-black text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded">0%</span>
+    <!-- Right Sidebar -->
+    <div class="w-full lg:w-60 flex flex-col gap-3 shrink-0 h-[400px] lg:h-full overflow-hidden">
+        <!-- Progress Module -->
+        <div class="bg-white rounded-3xl p-3 shadow-sm border border-slate-200 shrink-0">
+            <select id="test-type" name="testType"
+                class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-base font-medium outline-none mb-3 cursor-pointer focus:ring-2 focus:ring-blue-500">
+                <option value="pre">Phase: Pre-Test</option>
+                <option value="post">Phase: Post-Test</option>
+            </select>
+
+            <div class="flex justify-between items-end mb-1">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Mastery</span>
+                <span id="progress-percent"
+                    class="text-xs font-black text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded">0%</span>
+            </div>
+            <div class="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
+                <div id="progress-bar-fill" class="h-full bg-sky-500 transition-all duration-1000" style="width: 0%">
+                </div>
+            </div>
         </div>
-        <div class="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
-            <div id="progress-bar-fill" class="h-full bg-sky-500 transition-all duration-1000" style="width: 0%">
+
+        <!-- Word Selection -->
+        <div class="bg-white rounded-3xl p-3 shadow-sm border border-slate-200 flex-grow flex flex-col min-h-0">
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-2">Vocabulary</h3>
+            <div id="word-list" class="flex flex-col gap-1 overflow-y-auto pr-1 custom-scroll">
+                <!-- Words injected via script.js -->
             </div>
         </div>
     </div>
-
-    <!-- Word Selection -->
-    <div class="bg-white rounded-3xl p-3 shadow-sm border border-slate-200 flex-grow flex flex-col min-h-0">
-        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-2">Vocabulary</h3>
-        <div id="word-list" class="flex flex-col gap-1 overflow-y-auto pr-1 custom-scroll">
-            <!-- Words injected via script.js -->
-        </div>
-    </div>
-</div>
 </div>
 {% endblock %}
