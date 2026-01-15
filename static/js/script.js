@@ -1084,7 +1084,12 @@ async function stopRecording() {
 
         if (!res.ok) throw new Error('Processing Failed');
 
-        const processedBlob = await res.blob();
+        // Backend returns JSON with URL, not a blob
+        const data = await res.json();
+
+        // Fetch the actual audio file from the URL
+        const audioRes = await fetch(data.url);
+        const processedBlob = await audioRes.blob();
 
         // Decode for visualization
         const ab = await processedBlob.arrayBuffer();
