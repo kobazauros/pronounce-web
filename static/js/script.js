@@ -1215,7 +1215,7 @@ if (UI.submitBtn) UI.submitBtn.onclick = async (e) => {
     fd.append('noiseFloor', measuredNoiseFloor);
     fd.append('testType', UI.testTypeInput?.value || 'pre');
     try {
-        const res = await fetch('/upload', { method: 'POST', body: fd });
+        const res = await fetch('/api/submit_recording', { method: 'POST', body: fd });
         const data = await res.json();
 
         if (res.ok) {
