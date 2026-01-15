@@ -58,7 +58,10 @@ let microphoneStream = null;
 let measuredNoiseFloor = 0.015;
 let userProgress = { pre: [], post: [] };
 let lockedStage = null; // Fix: Global lock state
-let isLoggingEnabled = window.ENABLE_LOGGING || false;
+let isLoggingEnabled = (() => {
+    const appState = document.getElementById('app-state');
+    return appState ? JSON.parse(appState.dataset.logging || 'false') : false;
+})();
 let lastLogTime = 0;
 
 const UI = {
