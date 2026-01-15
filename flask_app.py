@@ -398,7 +398,7 @@ def warmup_audio_engine():
             # In Flask Dev server (reloader), this runs twice. WERKZEUG_RUN_MAIN checks if it's the reloader process.
             pass
 
-        app.logger.info("🔥 Warming up Audio Engine (JIT Compilation)...")
+        app.logger.info("Warming up Audio Engine (JIT Compilation)...")
         import numpy as np
         import soundfile as sf
         import tempfile
@@ -408,16 +408,24 @@ def warmup_audio_engine():
         sr = 16000
         y = np.zeros(int(sr * 0.5), dtype=np.float32)
 
-        # Use temp file
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=True) as tmp:
-            sf.write(tmp.name, y, sr)
+        # Use temp file (Windows fix: close file before soundfile opens it)
+        tmp = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+        tmp_path = tmp.name
+        tmp.close()  # Close handle so soundfile can open it on Windows
+
+        try:
+            sf.write(tmp_path, y, sr)
             # Run analysis (Trigger JIT)
             # We use a dummy target vowel 'a'
-            analyze_formants_from_path(tmp.name, "a")
+            analyze_formants_from_path(tmp_path, "a")
+        finally:
+            # Clean up temp file
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
 
-        app.logger.info("✅ Audio Engine Ready!")
+        app.logger.info("Audio Engine Ready!")
     except Exception as e:
-        app.logger.warning(f"⚠️ Audio Engine Warmup failed: {e}")
+        app.logger.warning(f"Audio Engine Warmup failed: {e}")
 
 
 # Execute Warmup (Runs on module import)
