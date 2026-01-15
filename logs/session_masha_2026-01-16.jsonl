@@ -1,0 +1,16 @@
+{"event": "noise_sample", "timestamp": 1768504392.276, "peak": 0, "db": -80, "noiseFloor": 0.0135}
+{"event": "noise_sample", "timestamp": 1768504393.281, "peak": 0.0042877197265625, "db": -47.355472214372384, "noiseFloor": 0.004899307011527047}
+{"event": "noise_sample", "timestamp": 1768504394.297, "peak": 0.003875732421875, "db": -48.232924280075224, "noiseFloor": 0.0038282169410537685}
+{"event": "noise_sample", "timestamp": 1768504395.314, "peak": 0.00498977629467845, "db": -46.038378490997246, "noiseFloor": 0.0038148364847695525}
+{"event": "noise_sample", "timestamp": 1768504396.331, "peak": 0.004776146728545427, "db": -46.41844679327399, "noiseFloor": 0.0036815289629335344}
+{"event": "noise_sample", "timestamp": 1768504397.347, "peak": 0.004623554181307554, "db": -46.70048097415687, "noiseFloor": 0.0036634646155256864}
+{"event": "noise_sample", "timestamp": 1768504398.364, "peak": 0.003204345703125, "db": -49.885212717795596, "noiseFloor": 0.0033540152158011947}
+{"event": "noise_sample", "timestamp": 1768504399.38, "peak": 0.0045013427734375, "db": -46.933158292910726, "noiseFloor": 0.003200708867185345}
+{"event": "noise_sample", "timestamp": 1768504400.397, "peak": 0.0045928955078125, "db": -46.758268700597114, "noiseFloor": 0.0032497801033903725}
+{"event": "noise_sample", "timestamp": 1768504401.414, "peak": 0.004181035794317722, "db": -47.57432228779521, "noiseFloor": 0.003313802844149336}
+{"event": "noise_sample", "timestamp": 1768504402.43, "peak": 0.0067596435546875, "db": -43.40152408801259, "noiseFloor": 0.003360340883291189}
+{"event": "noise_sample", "timestamp": 1768504502.694, "peak": 0.00651570176705718, "db": -43.720776043702486, "noiseFloor": 0.0033776932337918186}
+{"event": "noise_sample", "timestamp": 1768504503.711, "peak": 0, "db": -80, "noiseFloor": 6.070813976375529e-06}
+{"event": "noise_sample", "timestamp": 1768504522.527, "peak": 0, "db": -80, "noiseFloor": 0.0135}
+{"event": "noise_sample", "timestamp": 1768504523.543, "peak": 0.005600146483629942, "db": -45.03601225916118, "noiseFloor": 0.004680988358876429}
+{"event": "noise_sample", "timestamp": 1768504524.56, "peak": 0.004669189453125, "db": -46.61517008284238, "noiseFloor": 0.004129932859488178}
