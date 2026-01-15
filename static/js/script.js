@@ -559,7 +559,9 @@ function refreshProgressUI() {
         }
     });
 
-    const percent = total > 0 ? Math.min(100, Math.round((done.length / total) * 100)) : 0;
+    // Count unique words completed (not total submissions)
+    const uniqueDone = new Set(done).size;
+    const percent = total > 0 ? Math.min(100, Math.round((uniqueDone / total) * 100)) : 0;
     if (UI.progressFill) UI.progressFill.style.width = `${percent}%`;
     if (UI.progressPercent) UI.progressPercent.textContent = `${percent}%`;
 }
