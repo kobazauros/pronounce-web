@@ -1087,6 +1087,9 @@ async function stopRecording() {
         // Backend returns JSON with URL, not a blob
         const data = await res.json();
 
+        // Store the processed file path for submission
+        window.processedFilePath = data.path;
+
         // Fetch the actual audio file from the URL
         const audioRes = await fetch(data.url);
         const processedBlob = await audioRes.blob();
@@ -1205,17 +1208,32 @@ if (UI.playUserBtn) UI.playUserBtn.onclick = async () => {
 
 if (UI.submitBtn) UI.submitBtn.onclick = async (e) => {
     e.preventDefault();
-    if (!lastRecordingBlob) return;
+    if (!window.processedFilePath) return;
     if (UI.submitMsg) UI.submitMsg.textContent = 'SAVING...';
     UI.submitBtn.disabled = true;
     if (UI.testTypeInput) UI.testTypeInput.disabled = true;
-    const fd = new FormData();
-    fd.append('file', lastRecordingBlob, 'attempt.wav');
-    fd.append('word', selectedWord);
-    fd.append('noiseFloor', measuredNoiseFloor);
-    fd.append('testType', UI.testTypeInput?.value || 'pre');
+
+    // Get word_id from WORDS array
+    const wordObj = WORDS.find(w => (typeof w === 'object' ? w.word : w) === selectedWord);
+    const word_id = wordObj ? (typeof wordObj === 'object' ? wordObj.id : null) : null;
+
+    if (!word_id) {
+        say('ERROR: Word not found');
+        UI.submitBtn.disabled = false;
+        if (UI.testTypeInput) UI.testTypeInput.disabled = false;
+        return;
+    }
+
     try {
-        const res = await fetch('/api/submit_recording', { method: 'POST', body: fd });
+        const res = await fetch('/api/submit_recording', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                word_id: word_id,
+                file_path: window.processedFilePath,
+                test_type: UI.testTypeInput?.value || 'pre'
+            })
+        });
         const data = await res.json();
 
         if (res.ok) {
