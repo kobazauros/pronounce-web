@@ -1072,7 +1072,7 @@ async function stopRecording() {
     // Upload to Server for Robust Trimming
     try {
         const formData = new FormData();
-        formData.append('file', wavBlob, 'recording.wav');
+        formData.append('audio', wavBlob, 'recording.wav');
         formData.append('word', selectedWord);
         // Pass the continuous noise floor for better trimming
         formData.append('noiseFloor', measuredNoiseFloor);
