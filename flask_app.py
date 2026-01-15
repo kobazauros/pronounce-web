@@ -170,18 +170,17 @@ def get_word_list() -> Response | tuple[Response, int]:
 @login_required
 def get_progress():
     """Returns user progress for strict stage enforcement."""
-    # Assuming user has a 'progress' column or relationship
-    # Since I cannot see the model logic for progress, I will deduce it from context or use a placeholder
-    # The frontend expects { progress: { pre: [...], post: [...] }, stage: 'pre'/'post' }
+    # Query submissions by test_type (not phase)
+    pre_subs = Submission.query.filter_by(
+        user_id=current_user.id, test_type="pre"
+    ).all()
+    post_subs = Submission.query.filter_by(
+        user_id=current_user.id, test_type="post"
+    ).all()
 
-    # Mocking robust logic based on known schema
-    # We need to query Submissions
-
-    pre_subs = Submission.query.filter_by(user_id=current_user.id, phase="pre").all()
-    post_subs = Submission.query.filter_by(user_id=current_user.id, phase="post").all()
-
-    pre_words = [s.word_text for s in pre_subs]
-    post_words = [s.word_text for s in post_subs]
+    # Get word text from the relationship
+    pre_words = [s.target_word.text for s in pre_subs]
+    post_words = [s.target_word.text for s in post_subs]
 
     # Simple logic: if pre is full, stage is post.
     # We know there are 20 words.
