@@ -130,6 +130,7 @@ class Submission(db.Model):
     # Naming Convention: submissions/{user_id}/{uuid}.mp3
     file_path = db.Column(db.String(256), nullable=False)
     file_size_bytes = db.Column(db.Integer, nullable=True)
+    score = db.Column(db.Integer, nullable=True)  # 0-100
 
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 

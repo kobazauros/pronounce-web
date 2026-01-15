@@ -274,7 +274,7 @@ def submit_recording() -> Response:
     if success:
         # Reload submission to get results
         db.session.refresh(sub)
-        result = sub.analysis_result
+        result = sub.analysis
 
         # Determine Score Category (dummy logic -> implement valid logic)
         # Distance (Bark) < 1.5 = Excellent (Green)

@@ -92,6 +92,71 @@ def get_word_data(
     return transcription, audio_bytes
 
 
+def update_word_list(limit: int = 20) -> int:
+    """
+    Populates the database with the thesis word list.
+    """
+    from models import Word, db
+
+    # Thesis Word List (20 words)
+    # 10 Monophthongs, 8 Diphthongs, 2 Extras?
+    # Based on user's earlier context:
+    words = [
+        "beat",
+        "bit",
+        "bet",
+        "bat",
+        "ask",
+        "box",
+        "off",
+        "sort",
+        "put",
+        "pool",
+        "cup",
+        "bird",
+        "about",
+        "day",
+        "go",
+        "high",
+        "how",
+        "boy",
+        "ear",
+        "air",
+        "sure",
+    ]
+    # Limit to 'limit'
+    words = words[:limit]
+
+    count = 0
+    for i, w_text in enumerate(words):
+        if not Word.query.filter_by(text=w_text).first():
+            print(f"Fetching {w_text}...")
+            ipa, audio = get_word_data(w_text)
+
+            # Save Audio locally
+            audio_path = None
+            if audio:
+                # Ensure static/audio exists
+                # Assuming current working dir is app root
+                save_dir = "static/audio"
+                if not os.path.exists(save_dir):
+                    os.makedirs(save_dir)
+
+                filename = f"{w_text}.mp3"
+                full_path = os.path.join(save_dir, filename)
+                with open(full_path, "wb") as f:
+                    f.write(audio)
+                audio_path = filename  # Store relative to static/audio or serving logic
+
+            w = Word(text=w_text, sequence_order=i + 1, ipa=ipa, audio_path=audio_path)
+            db.session.add(w)
+            count += 1
+            print(f"Added {w_text}")
+
+    db.session.commit()
+    return count
+
+
 if __name__ == "__main__":
     """
     Example usage when run as a standalone script.
