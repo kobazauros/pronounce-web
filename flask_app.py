@@ -346,14 +346,50 @@ def submit_recording() -> Response | tuple[Response, int]:
             sub.score = score_val
             db.session.commit()
 
-            # Generate recommendation based on distance
+            # Generate detailed recommendation based on formant differences
             recommendation = None
-            if dist >= 3.5:
-                recommendation = "Focus on vowel clarity and mouth position"
-            elif dist >= 1.5:
-                recommendation = (
-                    "Good effort! Try exaggerating the vowel sound slightly"
+            if dist >= 1.5 and result:
+                # Get formant differences (normalized values for fair comparison)
+                f1_diff = (
+                    result.f1_norm - result.f1_ref
+                    if result.f1_norm and result.f1_ref
+                    else 0
                 )
+                f2_diff = (
+                    result.f2_norm - result.f2_ref
+                    if result.f2_norm and result.f2_ref
+                    else 0
+                )
+
+                tips = []
+
+                # F2 indicates tongue front/back position
+                # Higher F2 = more front, Lower F2 = more back
+                if abs(f2_diff) > 100:  # Significant F2 difference
+                    if f2_diff > 0:
+                        tips.append("move your tongue slightly back")
+                    else:
+                        tips.append("move your tongue slightly forward")
+
+                # F1 indicates tongue height / jaw openness
+                # Higher F1 = lower tongue / more open jaw
+                # Lower F1 = higher tongue / more closed jaw
+                if abs(f1_diff) > 50:  # Significant F1 difference
+                    if f1_diff > 0:
+                        tips.append("raise your tongue slightly (close your jaw a bit)")
+                    else:
+                        tips.append("lower your tongue slightly (open your jaw more)")
+
+                if tips:
+                    recommendation = "Try to " + " and ".join(tips) + "."
+                elif dist >= 3.5:
+                    recommendation = (
+                        "Focus on matching the sample pronunciation more closely."
+                    )
+                else:
+                    recommendation = (
+                        "Good effort! Keep practicing to refine your pronunciation."
+                    )
 
             return jsonify(
                 {
