@@ -5,7 +5,7 @@ import datetime
 import json
 import time
 from logging.handlers import RotatingFileHandler
-from typing import Any
+from typing import Any, Optional
 
 import click
 from flask import (
@@ -130,7 +130,7 @@ def manual() -> str:
 
 
 @app.route("/admin/init")
-def init_metrics() -> Response:
+def init_metrics() -> Response | tuple[Response, int]:
     """
     Hidden endpoint to initialize the word list.
     Only allows running if the word table is empty.
@@ -152,7 +152,7 @@ def init_metrics() -> Response:
 
 @app.route("/api/word_list")
 @login_required
-def get_word_list() -> Response:
+def get_word_list() -> Response | tuple[Response, int]:
     """
     API to fetch words for the frontend list.
     Supports filtering by active/inactive.
@@ -169,7 +169,7 @@ def get_word_list() -> Response:
 
 @app.route("/api/process_audio", methods=["POST"])
 @login_required
-def api_process_audio() -> Response:
+def api_process_audio() -> Response | tuple[Response, int]:
     """
     Receives raw audio blob, processes it (trim/normalize), and saves it.
     Input: Multipart form data with 'audio' file.
@@ -180,7 +180,7 @@ def api_process_audio() -> Response:
 
     file = request.files["audio"]
     # Get client noise floor if provided
-    noise_floor = request.form.get("noise_floor", type=float)
+    noise_floor: Optional[float] = request.form.get("noise_floor", type=float)
 
     if file.filename == "":
         return jsonify({"error": "No selected file"}), 400
@@ -190,7 +190,9 @@ def api_process_audio() -> Response:
         raw_data = file.read()
 
         # Process (Trim, Normalize, Convert to MP3)
-        processed_data = process_audio_data(raw_data, noise_floor=noise_floor)
+        processed_data = process_audio_data(
+            raw_data, noise_floor=noise_floor if noise_floor is not None else 0.0
+        )
 
         # Generate specific filename for this upload
         # Structure: uploads/<user_id>/<uuid>.mp3
@@ -237,7 +239,7 @@ def serve_upload(filename: str) -> Response:
 
 @app.route("/api/submit_recording", methods=["POST"])
 @login_required
-def submit_recording() -> Response:
+def submit_recording() -> Response | tuple[Response, int]:
     """
     Analyzes the user's recording against the reference model.
     """
