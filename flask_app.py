@@ -323,13 +323,26 @@ def submit_recording() -> Response | tuple[Response, int]:
             sub.score = score_val
             db.session.commit()
 
+            # Generate recommendation based on distance
+            recommendation = None
+            if dist >= 3.5:
+                recommendation = "Focus on vowel clarity and mouth position"
+            elif dist >= 1.5:
+                recommendation = (
+                    "Good effort! Try exaggerating the vowel sound slightly"
+                )
+
             return jsonify(
                 {
                     "status": "success",
                     "score": score_val,
                     "category": score_cat,
-                    "feedback": "Analysis complete.",  # Future: Add specific articulatory feedback
+                    "feedback": "Analysis complete.",
                     "distance": f"{dist:.2f} Bark",
+                    "analysis": {
+                        "distance_bark": round(dist, 2),
+                        "recommendation": recommendation,
+                    },
                 }
             )
 
