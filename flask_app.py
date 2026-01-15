@@ -181,7 +181,7 @@ def get_word_list() -> Response | tuple[Response, int]:
     Supports filtering by active/inactive.
     """
     # In the future, we can add phase logic here (Pre-test vs Post-test)
-    words = Word.query.order_by(Word.sequence_order).all()
+    words = Word.query.order_by(Word.sequence_order).all()  # type: ignore[arg-type]
     # Serialize
     data = [
         {"id": w.id, "word": w.text, "ipa": w.ipa, "audio": w.audio_path} for w in words
