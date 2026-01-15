@@ -1,0 +1,13 @@
+{"event": "noise_sample", "timestamp": 1768505710.156, "peak": 0.005996887106448412, "db": -44.44148253669443, "noiseFloor": 0.01409968871064484}
+{"event": "noise_sample", "timestamp": 1768505711.172, "peak": 0.01264992170035839, "db": -37.95824325293722, "noiseFloor": 0.011170971223910043}
+{"event": "noise_sample", "timestamp": 1768505774.887, "peak": 0.0089111328125, "db": -41.00134167022599, "noiseFloor": 0.01439111328125}
+{"event": "noise_sample", "timestamp": 1768505775.903, "peak": 0.013061922043561935, "db": -37.679858250659905, "noiseFloor": 0.009109718521423452}
+{"event": "noise_sample", "timestamp": 1768506003.183, "peak": 0, "db": -80, "noiseFloor": 0.0135}
+{"event": "noise_sample", "timestamp": 1768506004.196, "peak": 0.009002685546875, "db": -40.9125583796311, "noiseFloor": 0.008257504870707102}
+{"event": "noise_sample", "timestamp": 1768506093.677, "peak": 0, "db": -80, "noiseFloor": 0.0135}
+{"event": "noise_sample", "timestamp": 1768506094.693, "peak": 0.009384442120790482, "db": -40.55183079769591, "noiseFloor": 0.008956109608567324}
+{"event": "noise_sample", "timestamp": 1768506109.66, "peak": 0, "db": -80, "noiseFloor": 0.0135}
+{"event": "noise_sample", "timestamp": 1768506110.676, "peak": 0.008972441777586937, "db": -40.9417870226802, "noiseFloor": 0.008854222638590975}
+{"event": "noise_sample", "timestamp": 1768506111.692, "peak": 0.0098724365234375, "db": -40.11151299909997, "noiseFloor": 0.008115404843949736}
+{"event": "noise_sample", "timestamp": 1768506190.591, "peak": 0.0064699240028858185, "db": -43.78201641234831, "noiseFloor": 0.014146992400288582}
+{"event": "noise_sample", "timestamp": 1768506191.607, "peak": 0.009216589853167534, "db": -40.70859477178033, "noiseFloor": 0.008762381974685126}

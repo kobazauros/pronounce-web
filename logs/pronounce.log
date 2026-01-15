@@ -48,3 +48,8 @@
 2026-01-16 01:37:58,665 INFO: Analysis completed for submission #625 [in C:\Users\rookie\Documents\Projects\pronounce-web\flask_app.py:248]
 2026-01-16 01:38:18,688 INFO: User 'anna' uploaded file for word 'cup' (post-test). Path: 20/ec3c92fc-7a2d-4aea-b061-15c5b6e0dbdb.mp3 [in C:\Users\rookie\Documents\Projects\pronounce-web\flask_app.py:239]
 2026-01-16 01:38:18,728 INFO: Analysis completed for submission #626 [in C:\Users\rookie\Documents\Projects\pronounce-web\flask_app.py:248]
+2026-01-16 02:13:02,753 INFO: User 'masha' logged in successfully. [in C:\Users\rookie\Documents\Projects\pronounce-web\auth_routes.py:47]
+2026-01-16 02:15:32,607 INFO: User 'admin' logged in successfully. [in C:\Users\rookie\Documents\Projects\pronounce-web\auth_routes.py:47]
+2026-01-16 02:49:54,080 INFO: New user registered: 'testuser9988776655' with role 'student'. [in C:\Users\rookie\Documents\Projects\pronounce-web\auth_routes.py:158]
+2026-01-16 02:55:19,012 INFO: New user registered: 'user0059595988' with role 'student'. [in C:\Users\rookie\Documents\Projects\pronounce-web\auth_routes.py:158]
+2026-01-16 02:56:58,405 INFO: User 'anna' logged in successfully. [in C:\Users\rookie\Documents\Projects\pronounce-web\auth_routes.py:47]
