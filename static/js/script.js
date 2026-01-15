@@ -559,7 +559,7 @@ function refreshProgressUI() {
         }
     });
 
-    const percent = total > 0 ? Math.round((done.length / total) * 100) : 0;
+    const percent = total > 0 ? Math.min(100, Math.round((done.length / total) * 100)) : 0;
     if (UI.progressFill) UI.progressFill.style.width = `${percent}%`;
     if (UI.progressPercent) UI.progressPercent.textContent = `${percent}%`;
 }
