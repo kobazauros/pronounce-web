@@ -1296,7 +1296,7 @@ window.addEventListener('blur', handleBlur);
 
 // Init Logging & Manifest
 window.onload = () => {
-    loadManifest();
+    loadWordList();
 
     // Logging Setup
     isLoggingEnabled = localStorage.getItem('loggingEnabled') === 'true';
