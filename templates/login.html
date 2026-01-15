@@ -12,7 +12,7 @@
                 Log in to continue your pronunciation journey. Access your saved recordings, track your
                 progress, and keep improving.</p>
         </div>
-        <form class="mt-6 space-y-6" method="POST">
+        <form class="mt-6 space-y-6" method="POST" action="{{ url_for('auth.login') }}">
             <div class="rounded-md shadow-sm -space-y-px">
                 <div>
                     <label for="username" class="sr-only">Username</label>
