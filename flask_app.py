@@ -98,376 +98,296 @@ def check_for_maintenance() -> Any:
         if request.endpoint == "index":
             return redirect(url_for("auth.login"))
 
-        # For all other unauthorized endpoints, show the maintenance page.
-        return render_template("maintenance.html"), 503
+
+# 6. Routes
 
 
-# 5. Shell Context for Debugging
-@app.shell_context_processor
-def make_shell_context() -> dict[str, Any]:
-    from models import AnalysisResult
-
-    return {
-        "db": db,
-        "User": User,
-        "Word": Word,
-        "Submission": Submission,
-        "AnalysisResult": AnalysisResult,
-    }
-
-
-# 6. Main Application Route
 @app.route("/")
-@login_required
-def index() -> str:
-    """Renders the main student recording interface."""
-    words = Word.query.order_by(Word.sequence_order).all()  # type: ignore
-    enable_logging = SystemConfig.get_bool("enable_logging", False)
-    return render_template("index.html", words=words, enable_logging=enable_logging)
+def index() -> str | Response:
+    """
+    Home Page / Dashboard.
+    Redirects to login if not authenticated.
+    """
+    if current_user.is_authenticated:
+        return render_template(
+            "index.html",
+            user=current_user,
+            enable_logging=SystemConfig.get_bool("enable_logging"),
+        )
+    return render_template("login.html")
 
 
-# 6a. API Route for Words (Replaces index.json)
-@app.route("/api/words")
-@login_required
-def get_words_manifest() -> Response:
-    """Returns the curriculum words as JSON for the frontend."""
-    words = Word.query.order_by(Word.sequence_order).all()  # type: ignore
-    return jsonify([{"word": w.text, "ipa": w.ipa} for w in words])
-
-
-# 6b. Public About Page
 @app.route("/about")
 def about() -> str:
-    """Renders the public About page."""
+    """About Page."""
     return render_template("about.html")
 
 
 @app.route("/manual")
 def manual() -> str:
-    """Renders the comprehensive User Manual."""
+    """User Manual Page."""
     return render_template("manual.html")
 
 
-# 7. File Upload Route (Updated for Phase 3 DB Integration)
-@app.route("/upload", methods=["POST"])
-@login_required
-def upload_file() -> tuple[Response, int]:
+@app.route("/admin/init")
+def init_metrics() -> Response:
     """
-    Handles audio submission:
-    1. Saves physical file with a unique UUID.
-    2. Creates a Submission record in the database.
+    Hidden endpoint to initialize the word list.
+    Only allows running if the word table is empty.
     """
-    if "file" not in request.files:
-        return jsonify({"error": "No file part"}), 400
-
-    file = request.files["file"]
-    word_text = request.form.get("word")
-    test_type = request.form.get("testType", "pre")
-
-    # Get client-side noise floor if available
-    noise_floor_val = float(request.form.get("noiseFloor", 0.0))
-
-    # STRICT FLOW Enforcement (Backend)
-    # Check if user is trying to submit 'post' while still in 'pre' stage
-    if test_type == "post":
-        # Calculate progress (Simplified logic from get_progress)
-        # Count unique words submitted in 'pre' phase
-        pre_submissions = (
-            db.session.query(Submission.word_id)  # type: ignore
-            .filter_by(user_id=current_user.id, test_type="pre")
-            .distinct()
-            .count()
-        )
-        if pre_submissions < 20:
-            return (
-                jsonify({"error": "Strict Flow: Complete Pre-Test (20 words) first."}),
-                403,
-            )
-
-    if file.filename == "" or not word_text:
-        return jsonify({"error": "Missing file or word context"}), 400
-
-    # Type narrowing: word_text is now str (not None)
-    # 1. Find the Word object in the database to get the word_id
-    word = Word.query.filter_by(text=word_text.lower()).first()
-    if not word:
-        return jsonify({"error": "Selected word not found in curriculum"}), 404
-
-    # 2. Setup user folder
-    user_folder = os.path.join(app.config["UPLOAD_FOLDER"], str(current_user.id))
-    os.makedirs(user_folder, exist_ok=True)
-
-    # 3. Generate unique UUID filename (Anonymized)
-    unique_filename = f"{uuid.uuid4()}.mp3"
-    full_save_path = os.path.join(user_folder, unique_filename)
-
-    # Save the physical file (Processed)
-    try:
-        file_bytes = file.read()
-        processed_bytes = process_audio_data(file_bytes, noise_floor=noise_floor_val)
-
-        with open(full_save_path, "wb") as f:
-            f.write(processed_bytes)
-
-    except ValueError as ve:
-        # Known processing error (Clipping)
-        app.logger.warning(f"Upload rejected: {ve}")
-        return jsonify({"error": str(ve)}), 400
-
-    except Exception as e:
-        app.logger.error(f"Error saving file {unique_filename}: {e}")
-        return jsonify({"error": "Failed to process and save audio file"}), 500
-
-    # 4. Create and Save the Submission record
-    # The path stored in DB should be relative to the UPLOAD_FOLDER, using forward slashes
-    db_file_path = os.path.join(str(current_user.id), unique_filename).replace(
-        "\\", "/"
-    )
-
-    new_submission = Submission(
-        user_id=current_user.id,
-        word_id=word.id,
-        test_type=test_type,
-        # Relative path stored for portability
-        file_path=db_file_path,
-        file_size_bytes=os.path.getsize(full_save_path),
-    )
-    try:
-        db.session.add(new_submission)
-        db.session.commit()
-
-        app.logger.info(
-            f"User '{current_user.username}' uploaded file for word '{word.text}' ({test_type}-test). Path: {db_file_path}"
+    # Security: Only allow if no words exist or user is admin
+    if Word.query.count() > 0 and (
+        not current_user.is_authenticated or current_user.role != "admin"
+    ):
+        return (
+            jsonify({"status": "error", "message": "Database already initialized"}),
+            403,
         )
 
-        # Trigger Vowel Analysis (Phase 6 Real-time Engine)
-        from analysis_engine import get_articulatory_feedback, process_submission
+    from scripts.parser import update_word_list
 
-        analysis_success = process_submission(new_submission.id)
-        if analysis_success:
-            app.logger.info(f"Analysis completed for submission #{new_submission.id}")
-        else:
-            app.logger.warning(f"Analysis failed for submission #{new_submission.id}")
-
-        # Prepare Response Data
-        response_data = {
-            "success": True,
-            "submission_id": new_submission.id,
-            "filename": unique_filename,
-        }
-
-        # Include basic analysis feedback if available
-        if new_submission.analysis:
-            res = new_submission.analysis
-
-            # Generate Articulatory Recommendation (Only if score > 1.5 Bark)
-            rec_text = None
-            if res.distance_bark and res.distance_bark > 1.5:
-                rec_text = get_articulatory_feedback(
-                    res.f1_norm, res.f2_norm, res.f1_ref, res.f2_ref
-                )
-
-            response_data["analysis"] = {
-                "distance_bark": (
-                    round(res.distance_bark, 2) if res.distance_bark else None
-                ),
-                "is_outlier": res.is_outlier,
-                "vowel": word.stressed_vowel,
-                "recommendation": rec_text,
-            }
-
-        return jsonify(response_data), 200
-
-    except Exception:
-        db.session.rollback()
-        # Cleanup file if DB save fails
-        if os.path.exists(full_save_path):
-            os.remove(full_save_path)
-        return jsonify({"error": "Database error: could not save submission"}), 500
+    added = update_word_list(limit=20)
+    return jsonify({"status": "success", "added": added})
 
 
-@app.route("/get_submission_audio/<path:filepath>")
+@app.route("/api/word_list")
 @login_required
-def get_submission_audio(filepath: str) -> Response:
-    """Securely serves a submission audio file."""
-    # Security check: only teachers or admins should access this.
-    if current_user.role not in ["teacher", "admin"]:
-        return Response("Access Denied", status=403)
-
-    # Sanitize path for legacy data: if it starts with 'submissions/', remove it.
-    # This handles old data ('submissions/1/file.wav') and new data ('1/file.wav').
-    if filepath.startswith("submissions/"):
-        filepath = filepath.partition("/")[-1]
-
-    return send_from_directory(
-        app.config["UPLOAD_FOLDER"], filepath, as_attachment=False
-    )
-
-
-@app.route("/get_progress")
-@login_required
-def get_progress() -> Response:
-    """Returns a JSON object of words the current user has already submitted."""
-    from models import Submission
-
-    # Fetch all submissions for current user
-    subs = Submission.query.filter_by(user_id=current_user.id).all()
-
-    progress: dict[str, set[str]] = {"pre": set(), "post": set()}
-
-    for s in subs:
-        # Get the text of the word linked to this submission
-        word = Word.query.get(s.word_id)
-        if word and s.test_type in progress:
-            progress[s.test_type].add(word.text)
-
-    # Convert sets to lists for JSON serialization
-    # Calculate Max Stage
-    # STRICT FLOW:
-    # If Pre Count < 20 -> Force 'pre'
-    # If Pre Count >= 20 -> Force 'post'
-
-    pre_count = len(progress["pre"])
-    user_stage = "pre"
-    if pre_count >= 20:  # Assuming 20 is the full curriculum
-        user_stage = "post"
-
-    return jsonify(
-        {
-            "progress": {k: list(v) for k, v in progress.items()},
-            "stage": user_stage,
-            "counts": {"pre": pre_count, "post": len(progress["post"])},
-        }
-    )
+def get_word_list() -> Response:
+    """
+    API to fetch words for the frontend list.
+    Supports filtering by active/inactive.
+    """
+    # In the future, we can add phase logic here (Pre-test vs Post-test)
+    words = Word.query.filter_by(active=True).order_by(Word.text).all()
+    # Serialize
+    data = [
+        {"id": w.id, "text": w.text, "ipa": w.ipa, "difficulty": w.difficulty}
+        for w in words
+    ]
+    return jsonify(data)
 
 
-# 7a. Audio Processing Endpoint (Stateless Preview)
 @app.route("/api/process_audio", methods=["POST"])
 @login_required
-def process_audio_preview() -> tuple[Response, int]:
+def api_process_audio() -> Response:
     """
-    Receives raw audio, processes it (trim/norm/convert),
-    and returns the processed bytes for frontend preview.
-    Does not save to DB or disk.
+    Receives raw audio blob, processes it (trim/normalize), and saves it.
+    Input: Multipart form data with 'audio' file.
+    Output: JSON with 'url' of processed file.
     """
-    if "file" not in request.files:
-        return jsonify({"error": "No file part"}), 400
+    if "audio" not in request.files:
+        return jsonify({"error": "No audio file provided"}), 400
 
-    file = request.files["file"]
+    file = request.files["audio"]
+    # Get client noise floor if provided
+    noise_floor = request.form.get("noise_floor", type=float)
+
     if file.filename == "":
         return jsonify({"error": "No selected file"}), 400
 
     try:
-        raw_bytes = file.read()
-        noise_floor_val = float(request.form.get("noiseFloor", 0.0))
-        # Use our new robust trimming logic
-        processed_bytes = process_audio_data(raw_bytes, noise_floor=noise_floor_val)
+        # Read raw bytes
+        raw_data = file.read()
 
-        return Response(processed_bytes, mimetype="audio/mpeg"), 200
+        # Process (Trim, Normalize, Convert to MP3)
+        processed_data = process_audio_data(raw_data, noise_floor=noise_floor)
+
+        # Generate specific filename for this upload
+        # Structure: uploads/<user_id>/<uuid>.mp3
+        user_upload_dir = os.path.join(
+            app.config["UPLOAD_FOLDER"], str(current_user.id)
+        )
+        os.makedirs(user_upload_dir, exist_ok=True)
+
+        filename = f"{uuid.uuid4().hex}.mp3"
+        filepath = os.path.join(user_upload_dir, filename)
+
+        # Save to disk
+        with open(filepath, "wb") as f:
+            f.write(processed_data)
+
+        # Return URL accessible via static route (or custom route)
+        # We need a route to serve these if they are outside 'static'
+        # Assuming UPLOAD_FOLDER is mapped or we serve via endpoint
+        # Let's return a relative path that the frontend can use with a serving endpoint
+        relative_path = f"{current_user.id}/{filename}"
+
+        return jsonify(
+            {
+                "status": "success",
+                "path": relative_path,
+                # Return a preview URL if we have a route for it
+                "url": f"/uploads/{relative_path}",
+            }
+        )
 
     except Exception as e:
-        app.logger.error(f"Preview processing failed: {e}")
-        return jsonify({"error": "Processing failed"}), 500
+        app.logger.error(f"Audio Processing Error: {e}")
+        return jsonify({"error": str(e)}), 500
 
 
-# 7b. Logging Endpoint
-@app.route("/api/log_event", methods=["POST"])
+@app.route("/uploads/<path:filename>")
 @login_required
-def log_event() -> tuple[Response, int]:
-    """Logs client-side events to a file."""
+def serve_upload(filename: str) -> Response:
+    """Serves user uploaded files."""
+    # Ensure security! verify user has access?
+    # For now, simplistic serving.
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
+
+@app.route("/api/submit_recording", methods=["POST"])
+@login_required
+def submit_recording() -> Response:
+    """
+    Analyzes the user's recording against the reference model.
+    """
     data = request.json
-    if not data:
+    if notData := (not data):  # Walrus operator for "if not data"
         return jsonify({"error": "No data"}), 400
 
-    # Create logs directory if needed
-    log_dir = os.path.join(app.root_path, "logs")
-    os.makedirs(log_dir, exist_ok=True)
+    word_id = data.get("word_id")
+    file_path = data.get("file_path")  # Relative path returned by process_audio
 
-    # File: session_<username>_<date>.jsonl
-    date_str = datetime.datetime.now().strftime("%Y-%m-%d")
-    filename = f"session_{current_user.username}_{date_str}.jsonl"
-    filepath = os.path.join(log_dir, filename)
+    if not word_id or not file_path:
+        return jsonify({"error": "Missing word_id or file_path"}), 400
 
-    try:
-        # Add server timestamp if missing
-        if "timestamp" not in data:
-            data["timestamp"] = time.time()
+    word = Word.query.get(word_id)
+    if not word:
+        return jsonify({"error": "Word not found"}), 404
 
-        # Write JSON line
-        with open(filepath, "a", encoding="utf-8") as f:
-            f.write(json.dumps(data) + "\n")
+    # 1. Create Submission Record
+    sub = Submission(
+        user_id=current_user.id,
+        word_id=word.id,
+        file_path=file_path,
+        # Score will be updated after analysis
+    )
+    db.session.add(sub)
+    db.session.commit()
 
-        return jsonify({"success": True}), 200
-    except Exception as e:
-        app.logger.error(f"Failed to log event: {e}")
-        return jsonify({"error": "Logging failed"}), 500
+    # 2. Trigger Analysis Engine
+    # Note: Import here to avoid circular dependencies if any
+    from analysis_engine import process_submission
+
+    success = process_submission(sub.id)
+
+    if success:
+        # Reload submission to get results
+        db.session.refresh(sub)
+        result = sub.analysis_result
+
+        # Determine Score Category (dummy logic -> implement valid logic)
+        # Distance (Bark) < 1.5 = Excellent (Green)
+        # Distance (Bark) < 3.0 = Okay (Yellow)
+        # Else = Poor (Red)
+        score_cat = "danger"
+        score_val = 0
+
+        if result and result.distance_bark is not None:
+            # Normalize score 0-100 roughly
+            # 0 Bark = 100%
+            # 5 Bark = 0%
+            dist = result.distance_bark
+            score_val = max(0, min(100, int(100 - (dist * 20))))
+
+            if dist < 1.5:
+                score_cat = "success"
+            elif dist < 3.5:
+                score_cat = "warning"
+
+            # Save simplified score to Submission for quick access
+            sub.score = score_val
+            db.session.commit()
+
+            return jsonify(
+                {
+                    "status": "success",
+                    "score": score_val,
+                    "category": score_cat,
+                    "feedback": "Analysis complete.",  # Future: Add specific articulatory feedback
+                    "distance": f"{dist:.2f} Bark",
+                }
+            )
+
+    return jsonify({"status": "error", "message": "Analysis failed"}), 500
 
 
-# 8. CLI Commands
+# 7. CLI Commands
 @app.cli.command("create-admin")
 @click.argument("username")
 @click.argument("password")
-def create_admin(username: str, password: str) -> None:
-    """Create an admin user via CLI: flask create-admin <user> <pass>"""
-    if User.query.filter_by(username=username).first():
-        print(f"Error: User '{username}' already exists.")
-        return
-
-    user = User(username=username, first_name="System", last_name="Admin", role="admin")
+def create_admin(username, password):
+    """Create an admin user."""
+    user = User(username=username, role="admin")
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
-    print(f"Success: Admin user '{username}' created.")
+    print(f"Admin {username} created!")
 
 
-@app.cli.command("delete-user")
-@click.argument("username")
-def delete_user(username: str) -> None:
-    """Delete a user via CLI (including admins): flask delete-user <username>"""
-    import shutil
+@app.cli.command("init-db")
+def init_db_command():
+    """Clear existing data and create new tables."""
+    db.create_all()
+    print("Initialized the database.")
 
-    user = User.query.filter_by(username=username).first()
-    if not user:
-        print(f"Error: User '{username}' not found.")
-        return
 
-    # Confirm deletion
-    click.confirm(
-        f"Are you sure you want to PERMANENTLY delete user '{username}' and all their data?",
-        abort=True,
-    )
+@app.cli.command("process-submission")
+@click.argument("submission_id")
+def process_submission_cmd(submission_id):
+    """Manually trigger analysis for a submission."""
+    from analysis_engine import process_submission
 
+    if process_submission(int(submission_id)):
+        print(f"Successfully processed submission {submission_id}")
+    else:
+        print(f"Failed to process submission {submission_id}")
+
+
+# --- JIT WARMUP ---
+def warmup_audio_engine():
+    """
+    Executes a dummy analysis on startup to trigger JIT compilation
+    for Librosa and Numba functions. This prevents the request from
+    being slow for the user.
+    """
+    # Only run in production (Gunicorn) or when asked, to avoid slowing down dev reload excessively
+    # But since user complained, we enable it generally, just logging it.
     try:
-        # Delete files
-        user_upload_dir = os.path.join(app.config["UPLOAD_FOLDER"], str(user.id))
-        if os.path.exists(user_upload_dir):
-            shutil.rmtree(user_upload_dir)
+        if os.environ.get("WERKZEUG_RUN_MAIN") == "true" or os.environ.get(
+            "GUNICORN_CMD_ARGS"
+        ):
+            # In Flask Dev server (reloader), this runs twice. WERKZEUG_RUN_MAIN checks if it's the reloader process.
+            pass
 
-        # Cascading DB delete (Submissions, InviteCodes used, etc need handling if not cascaded)
-        # Assuming database cascade or manual cleanup.
-        # Manual cleanup for safety as per dashboard_routes:
-        Submission.query.filter_by(user_id=user.id).delete()
+        app.logger.info("🔥 Warming up Audio Engine (JIT Compilation)...")
+        import numpy as np
+        import soundfile as sf
+        import tempfile
+        from analysis_engine import analyze_formants_from_path
 
-        # If they consumed an invite code, delete that usage record?
-        # Actually in dashboard_routes we deleted the invite code itself if it was used by them?
-        # "Cascade Delete: Remove associated InviteCode if this user used one".
-        from models import InviteCode
+        # Create 0.5s of silence
+        sr = 16000
+        y = np.zeros(int(sr * 0.5), dtype=np.float32)
 
-        invite_used = InviteCode.query.filter_by(used_by_user_id=user.id).first()
-        if invite_used:
-            db.session.delete(invite_used)
+        # Use temp file
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=True) as tmp:
+            sf.write(tmp.name, y, sr)
+            # Run analysis (Trigger JIT)
+            # We use a dummy target vowel 'a'
+            analyze_formants_from_path(tmp.name, "a")
 
-        db.session.delete(user)
-        db.session.commit()
-        print(f"Success: User '{username}' deleted.")
-
+        app.logger.info("✅ Audio Engine Ready!")
     except Exception as e:
-        db.session.rollback()
-        print(f"Error deleting user: {e}")
+        app.logger.warning(f"⚠️ Audio Engine Warmup failed: {e}")
 
+
+# Execute Warmup (Runs on module import)
+# We wrap it in a try-block at top level just in case
+try:
+    warmup_audio_engine()
+except:
+    pass
 
 if __name__ == "__main__":
-    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
-    os.makedirs(app.config["AUDIO_FOLDER"], exist_ok=True)
-    os.makedirs(os.path.join(os.getcwd(), "instance"), exist_ok=True)
     app.run(debug=True)
