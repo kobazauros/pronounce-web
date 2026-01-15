@@ -102,13 +102,15 @@ def admin_dashboard():
         pass  # Keep it as N/A if anything goes wrong
 
     # --- Calculate CPU Load ---
-    cpu_load_percent = 0
+    cpu_load_percent = "N/A"
     try:
-        # Get CPU load over a short interval to get a representative value
-        cpu_load_percent = psutil.cpu_percent(interval=0.1)
-    except Exception:
-        # psutil might not be installed or could fail
-        pass
+        # Get CPU load over a slightly longer interval for better accuracy
+        # usage=0.0 is common on powerful servers with low load if interval is too short
+        cpu_load_percent = psutil.cpu_percent(interval=0.5)
+    except Exception as e:
+        # Log the error to debug why it might be failing
+        current_app.logger.error(f"Error reading CPU load: {e}")
+        cpu_load_percent = "Err"
 
     # Calculate Stats
     stats = {
