@@ -161,7 +161,7 @@ def get_word_list() -> Response | tuple[Response, int]:
     words = Word.query.order_by(Word.sequence_order).all()
     # Serialize
     data = [
-        {"id": w.id, "text": w.text, "ipa": w.ipa, "audio": w.audio_path} for w in words
+        {"id": w.id, "word": w.text, "ipa": w.ipa, "audio": w.audio_path} for w in words
     ]
     return jsonify(data)
 
