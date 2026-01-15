@@ -341,10 +341,10 @@ if (UI.playUserBtn) UI.playUserBtn.onclick = async () => {
 
 // ======= Data Management =======
 
-async function loadManifest() {
+async function loadWordList() {
     try {
-        const res = await fetch('/api/words', { cache: 'no-store' });
-        const data = await res.json();
+        const response = await fetch('/api/word_list', { cache: 'no-store' });
+        const data = await response.json();
         WORDS = Array.isArray(data) ? data : (data.words || []);
         buildWordList();
         await fetchUserProgress();
