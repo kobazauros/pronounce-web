@@ -164,6 +164,9 @@ def upload_file() -> tuple[Response, int]:
     word_text = request.form.get("word")
     test_type = request.form.get("testType", "pre")
 
+    # Get client-side noise floor if available
+    noise_floor_val = float(request.form.get("noiseFloor", 0.0))
+
     # STRICT FLOW Enforcement (Backend)
     # Check if user is trying to submit 'post' while still in 'pre' stage
     if test_type == "post":
@@ -201,7 +204,7 @@ def upload_file() -> tuple[Response, int]:
     # Save the physical file (Processed)
     try:
         file_bytes = file.read()
-        processed_bytes = process_audio_data(file_bytes)
+        processed_bytes = process_audio_data(file_bytes, noise_floor=noise_floor_val)
 
         with open(full_save_path, "wb") as f:
             f.write(processed_bytes)
@@ -356,8 +359,9 @@ def process_audio_preview() -> tuple[Response, int]:
 
     try:
         raw_bytes = file.read()
+        noise_floor_val = float(request.form.get("noiseFloor", 0.0))
         # Use our new robust trimming logic
-        processed_bytes = process_audio_data(raw_bytes)
+        processed_bytes = process_audio_data(raw_bytes, noise_floor=noise_floor_val)
 
         return Response(processed_bytes, mimetype="audio/mpeg"), 200
 

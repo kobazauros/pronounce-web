@@ -129,46 +129,49 @@ Tech Stack: Flask, SQLite (Dev) / PostgreSQL (Prod), SQLAlchemy, Flask-Login, Do
 *45 [x] **Role-Based Navigation:** Implemented dynamic header links and "Smart Manual" that adapts to user role.
 *46 [x] **Glossary & FAQ:** Added technical definitions (Bark, Formants) and troubleshooting tips.
 
-### **Phase 8.6: Client-Side Reliability Matrix (Hardware & Browsers)**
-*Goal: Optimize testing by establishing a "Gold Standard" baseline first, then strictly validating variations.*
+### **Phase 8.6: Client-Side Reliability (Chrome-First Strategy)**
+*Goal: Optimize availability for the "Most Popular" user setup (Chrome + Laptop) first.*
 
-*   **Step 1: Signal Baseline (ASUS Laptop + Chrome)**
-    *   **Action:** Tune **Trimming** (fix cutoff issues) and **Silence Detection** on this primary device.
-    *   **Goal:** Establish a working baseline for internal microphones (highest noise floor scenario).
-*   **Step 2: Browser Cross-Check (ASUS Laptop)**
-    *   **Action:** Verify core functionality on **Edge, Opera, and Firefox**.
-    *   **Optimization:** Focus purely on API compatibility (MediaRecorder), assuming signal logic holds from Step 1.
-*   **Step 3: Hardware/Browser Interaction Matrix (The "Colleague's Bug" Check)**
-    *   **Context:** User reported: *Headset works on Opera, fails on Chrome.*
-    *   **Action:** Test **Headset (USB & 3.5mm)** specifically on **Chrome vs Opera**.
-    *   **Goal:** Identify browser-specific handling of external audio devices (e.g., Chrome's strict AudioContext rules vs Opera).
-    *   **Fix:** Ensure `handleDeviceChange` and `AudioContext.resume()` logic is robust across all browser/hardware combinations.
-*   **Step 4: Mobile Verification (Poco F5)**
-    *   **Action:** Test Chrome for Android.
-    *   **Focus:** Verify responsive layout and mobile audio permissions.
+*47 [x] **Step 1: The "Mass Market" Baseline (Chrome + Internal Mic) [COMPLETED]**
+    *   **Context:** The most widely used setup in the world (Students on Laptops).
+    *   **Action:** Tune **Silence Detection** and **Noise Gate** specifically for noisy internal laptop microphones.
+    *   **Result:** Verified that software tuning has limits. High Fidelity Mode on internal mics captures too much fan noise.
+    *   **Resolution:** Implemented **"Quiet Room Requirement"** via UI Tips Modal (+ Manual Update). We do *not* artificially suppress noise to preserve formant accuracy.
+*48 [x] **Step 2: High-Fidelity Check (Chrome + USB/Headset) [COMPLETED]**
+    *   **Action:** Verify that cleaner signals (USB Mic) improve the "Match Score" precision.
+    *   **Result:** Confirmed 0.33 Bark improvement (1.72 vs 2.05) with headset. Headset is indeed the "Performance Ceiling".
+    *   **Goal:** Establish the performance ceiling (Best Case Scenario) using **standard USB/3.5mm headsets with boom mics**.
+    *   **Exclusion:** "Hidden Microphone" headsets (e.g., Bluetooth earbuds with poor encoding, gaming headsets with hidden mics) are deferred to Post-Deployment.
+*49 [x] **Step 3: Mobile Verification (Chrome for Android)**
+    *   **Action:** Verify responsive layout and audio permissions on Android.
+    *   **Note:** We assume "Chrome is Chrome" for signal processing, but UI needs checking.
 
 ### **Phase 8.8: Analysis Calibration & Fine-Tuning (Pre-Production)**
 *CRITICAL: Ensure the engine is fair and accurate across different voices before public launch.*
-*47 [x] **Data Prep:** Create `dataset/forvo` directory structure to organize diverse audio samples.
-*48 [x] **Data Collection:** Fetched and structurized 81 diverse audio samples from Forvo.com (26 speakers) for calibration.
-*49 [x] **Diversity Simulation:** Ran simulation on 81 diverse files. Verified robustness for high-pitched voices (e.g., corrected MichaelDS pitch ceiling).
-*50 [ ] **Threshold Tuning:** Review the 1.5 Bark recommendation threshold. Is it too strict? Too lenient?
-*51 [x] **False Positive/Negative Analysis:** Fixed "Unanalyzable" errors for whispered/noisy inputs (TopQuark, eggypp) and high pitch (MichaelDS).
-*52 [ ] **Beta "Soft Launch":** Deploy to a small group (Staging) to gather real-world data for final tuning.
+*50 [x] **Data Prep:** Create `dataset/forvo` directory structure to organize diverse audio samples.
+*51 [x] **Data Collection:** Fetched and structurized 81 diverse audio samples from Forvo.com (26 speakers) for calibration.
+*52 [x] **Diversity Simulation:** Ran simulation on 81 diverse files. Verified robustness for high-pitched voices (e.g., corrected MichaelDS pitch ceiling).
+*53 [x] **Threshold Tuning:** Review the 1.5 Bark recommendation threshold. Is it too strict? Too lenient?
+*54 [x] **False Positive/Negative Analysis:** Fixed "Unanalyzable" errors for whispered/noisy inputs (TopQuark, eggypp) and high pitch (MichaelDS).
+*55 [x] **Beta "Soft Launch":** Deploy to a small group (Staging) to gather real-world data for final tuning.
 
 ### **Phase 9: Production Deployment (Live Infrastructure)**
 *The "Real-World" Environment.*
-*51 [ ] **Infrastructure Provisioning:** DigitalOcean Droplet (Ubuntu LTS) with UFW Firewall.
-*52 [ ] **Web Server Optimization:** Nginx tuned for file uploads (client_max_body_size) and Gzip compression.
-*53 [ ] **Application Server:** Gunicorn with `gthread` workers to handle concurrent I/O (audio processing blocking).
-*54 [ ] **Security:** SSL (Let's Encrypt), Rate Limiting (Flask-Limiter) to prevent abuse.
-*55 [ ] **Observability:** Sentry integration for real-time error tracking and performance monitoring.
+*56 [ ] **Infrastructure Provisioning:** DigitalOcean Droplet (Ubuntu LTS) with UFW Firewall.
+*57 [ ] **Web Server Optimization:** Nginx tuned for file uploads (client_max_body_size) and Gzip compression.
+*58 [ ] **Application Server:** Gunicorn with `gthread` workers to handle concurrent I/O (audio processing blocking).
+*59 [ ] **Security:** SSL (Let's Encrypt), Rate Limiting (Flask-Limiter) to prevent abuse.
+*60 [ ] **Observability:** Sentry integration for real-time error tracking and performance monitoring.
 
-### **Phase 10: Scalability & Architecture (Post-MVP)**
-*Optimizing for 100+ concurrent users.*
-*50 [ ] **Asynchronous Processing:** Move `process_submission` to a background worker (Celery + Redis) to prevent HTTP timeouts.
-*51 [ ] **Database Migration:** Migrate from SQLite (disk-locked) to PostgreSQL (concurrent-safe).
-*52 [ ] **CDN Integration:** Serve static audio reference files via Cloudflare/AWS S3.
+### **Phase 10: Scalability & Expansion (Post-MVP)**
+*Optimizing for 100+ concurrent users and Cross-Browser support.*
+*61 [ ] **Asynchronous Processing:** Move `process_submission` to a background worker (Celery + Redis) to prevent HTTP timeouts.
+*62 [ ] **Database Migration:** Migrate from SQLite (disk-locked) to PostgreSQL (concurrent-safe).
+*63 [ ] **CDN Integration:** Serve static audio reference files via Cloudflare/AWS S3.
+*64 [ ] **Cross-Browser Certification:**
+    *   Expand support to **Firefox, Safari (iOS), and Edge**.
+
+    *   Address browser-specific AudioContext quirks.
 
 
 ## **Project Structure**

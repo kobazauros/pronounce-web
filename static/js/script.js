@@ -87,12 +87,19 @@ const UI = {
     openSettingsBtn: document.getElementById('open-settings-btn'),
     closeSettingsBtn: document.getElementById('close-settings-btn'),
     settingsModal: document.getElementById('audio-settings-modal'),
+
+    // Tips UI
+    openTipsBtn: document.getElementById('open-tips-btn'),
+    closeTipsBtn: document.getElementById('close-tips-btn'),
+    tipsModal: document.getElementById('recording-tips-modal'),
     inputSelect: document.getElementById('audio-input-select'),
     modeFidelityBtn: document.getElementById('mode-fidelity'),
     modeReductionBtn: document.getElementById('mode-reduction'),
     modeValue: document.getElementById('audio-mode-value'),
     settingsMeter: document.getElementById('settings-meter-bar'),
-    settingsNoiseLabel: document.getElementById('settings-noise-label')
+    settingsNoiseLabel: document.getElementById('settings-noise-label'),
+    mobileStageLabel: document.getElementById('mobile-stage-label'),
+    nextWordBtn: document.getElementById('next-word-btn')
 };
 
 // ======= Audio Config State =======
@@ -183,7 +190,7 @@ function trimSilence(buffer) {
 
     // Thresholds (Hybrid)
     // Optimization found 3.0 (Live) vs 4.0 (Local). Using conservative (higher) to be safe.
-    const volThresh = Math.max(0.015, effectiveFloor * 4.0);
+    const volThresh = Math.max(0.015, effectiveFloor * Config.TRIM_THRESHOLD_FACTOR);
     const sensitiveThresh = Math.max(0.005, effectiveFloor * 2.5);
     const zcrThresh = 0.1;
 
@@ -346,6 +353,38 @@ async function loadManifest() {
             UI.statusDot.style.backgroundColor = '#22c55e';
         }
         startNoiseMonitor();
+
+        // 3. Universal: Auto-Select First INCOMPLETE Word if none selected
+        if (!selectedWord && WORDS.length > 0) {
+            // Find first word alphabetically (as built in list)
+            const sorted = [...WORDS].sort((a, b) => {
+                const wordA = (typeof a === 'object') ? a.word : a;
+                const wordB = (typeof b === 'object') ? b.word : b;
+                return wordA.localeCompare(wordB);
+            });
+
+            // Determine active stage
+            const stage = UI.testTypeInput?.value || 'pre';
+            const completed = userProgress[stage] || [];
+
+            // Find first incomplete word
+            const target = sorted.find(item => {
+                const w = (typeof item === 'object') ? item.word : item;
+                return !completed.includes(w);
+            }) || sorted[0]; // Fallback to first if all done
+
+            const w = (typeof target === 'object') ? target.word : target;
+
+            // Trigger UI click to set state
+            const link = document.querySelector(`.word-link[data-word="${w}"]`);
+            if (link) {
+                // Small delay to ensure UI is ready
+                setTimeout(() => {
+                    link.click();
+                    say(`Auto-selected "${w}"`);
+                }, 500);
+            }
+        }
     } catch (e) {
         if (UI.statusText) { UI.statusText.textContent = 'ERROR'; UI.statusDot.style.backgroundColor = '#ef4444'; }
     }
@@ -379,8 +418,60 @@ async function fetchUserProgress() {
                 userProgress = data;
             }
             refreshProgressUI();
+            updateMobileLabel(); // Update label on load/sync
         }
     } catch (e) { console.warn("Sync failed", e); }
+}
+
+const isMobile = () => window.innerWidth < 1024; // Matches Tailwind lg breakpoint
+
+function updateMobileLabel() {
+    if (!UI.mobileStageLabel || !UI.testTypeInput) return;
+    const stage = UI.testTypeInput.value;
+    UI.mobileStageLabel.textContent = stage === 'pre' ? 'PRE-TEST' : 'POST-TEST';
+    // Style update based on stage
+    if (stage === 'post') {
+        UI.mobileStageLabel.classList.remove('text-slate-400');
+        UI.mobileStageLabel.classList.add('text-indigo-500');
+    } else {
+        UI.mobileStageLabel.classList.add('text-slate-400');
+        UI.mobileStageLabel.classList.remove('text-indigo-500');
+    }
+}
+
+function autoProceed() {
+    if (!selectedWord) return;
+
+    // 1. Find current index
+    const sortedWords = [...WORDS].sort((a, b) => {
+        const wordA = (typeof a === 'object') ? a.word : a;
+        const wordB = (typeof b === 'object') ? b.word : b;
+        return wordA.localeCompare(wordB);
+    });
+
+    const currentIndex = sortedWords.findIndex(item => {
+        const w = (typeof item === 'object') ? item.word : item;
+        return w === selectedWord;
+    });
+
+    // 2. Find next word
+    if (currentIndex >= 0 && currentIndex < sortedWords.length - 1) {
+        const nextItem = sortedWords[currentIndex + 1];
+        const nextWord = (typeof nextItem === 'object') ? nextItem.word : nextItem;
+
+        // 3. Trigger selection
+        const link = document.querySelector(`.word-link[data-word="${nextWord}"]`);
+        if (link) {
+            say(`Auto-advancing to "${nextWord}"...`);
+            setTimeout(() => {
+                link.click();
+                // REMOVED SCROLL: User requested to keep viewport steady
+                // link.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+            }, 1500); // 1.5s delay for user to see result
+        }
+    } else {
+        say("All words completed!");
+    }
 }
 
 function buildWordList() {
@@ -431,6 +522,14 @@ function buildWordList() {
                 UI.phonetic.style.opacity = '0';
             }
             if (UI.submitBtn) UI.submitBtn.disabled = true;
+
+            // Check if already completed to enable Next
+            if (UI.nextWordBtn) {
+                const stage = UI.testTypeInput?.value || 'pre';
+                const done = userProgress[stage] || [];
+                const isDone = done.includes(w);
+                UI.nextWordBtn.disabled = !isDone;
+            }
         };
         UI.wordList.appendChild(a);
     });
@@ -583,7 +682,16 @@ async function startNoiseMonitor() {
                 updateSettingsMeter(peak);
             }
 
-            measuredNoiseFloor = (measuredNoiseFloor * 0.95) + (peak * 0.05);
+            // Asymmetric Attack/Decay for Noise Floor
+            // Goal: Track the BACKGROUND noise, not the speech.
+            if (peak < measuredNoiseFloor) {
+                // Decay quickly (it got quieter, so the floor is lower)
+                measuredNoiseFloor = (measuredNoiseFloor * 0.90) + (peak * 0.10);
+            } else {
+                // Attack slowly (it got louder, might be speech, don't inflate the floor too much)
+                // But still track rising ambient noise (fan spinning up)
+                measuredNoiseFloor = (measuredNoiseFloor * 0.9995) + (peak * 0.0005);
+            }
 
             const isQuiet = peak < 0.02;
             if (UI.noiseIcon) {
@@ -591,6 +699,8 @@ async function startNoiseMonitor() {
                 UI.noiseIcon.style.transform = isQuiet ? "scale(1)" : `scale(${1 + peak * 5})`;
             }
             if (UI.noiseLevel) {
+                // Debug: Show the floor value in the UI tooltip or title
+                UI.noiseLevel.title = `Floor: ${measuredNoiseFloor.toFixed(4)}`;
                 UI.noiseLevel.textContent = isQuiet ? "QUIET" : "NOISY";
                 UI.noiseLevel.className = isQuiet
                     ? "text-[9px] font-bold text-slate-400 uppercase tracking-widest transition-colors"
@@ -725,6 +835,18 @@ if (UI.closeSettingsBtn) {
     };
 }
 
+// Event Listeners for Tips Modal
+if (UI.openTipsBtn) {
+    UI.openTipsBtn.onclick = () => {
+        if (UI.tipsModal) UI.tipsModal.classList.remove('hidden');
+    };
+}
+if (UI.closeTipsBtn) {
+    UI.closeTipsBtn.onclick = () => {
+        if (UI.tipsModal) UI.tipsModal.classList.add('hidden');
+    };
+}
+
 if (UI.inputSelect) {
     UI.inputSelect.onchange = async (e) => {
         AudioState.selectedDeviceId = e.target.value;
@@ -755,6 +877,13 @@ const setMode = async (mode) => {
 
 if (UI.modeFidelityBtn) UI.modeFidelityBtn.onclick = () => setMode('fidelity');
 if (UI.modeReductionBtn) UI.modeReductionBtn.onclick = () => setMode('reduction');
+
+if (UI.nextWordBtn) UI.nextWordBtn.onclick = () => {
+    autoProceed();
+    // Disable self until next logical state? No, user might want to skip.
+    // Actually, "autoProceed" selects the *next* word.
+    // The selection logic triggers enable/disable based on that *next* word's status.
+};
 
 
 // ======= Visual Feedback Helpers =======
@@ -945,6 +1074,8 @@ async function stopRecording() {
         const formData = new FormData();
         formData.append('file', wavBlob, 'recording.wav');
         formData.append('word', selectedWord);
+        // Pass the continuous noise floor for better trimming
+        formData.append('noiseFloor', measuredNoiseFloor);
 
         const res = await fetch('/api/process_audio', {
             method: 'POST',
@@ -1076,6 +1207,7 @@ if (UI.submitBtn) UI.submitBtn.onclick = async (e) => {
     const fd = new FormData();
     fd.append('file', lastRecordingBlob, 'attempt.wav');
     fd.append('word', selectedWord);
+    fd.append('noiseFloor', measuredNoiseFloor);
     fd.append('testType', UI.testTypeInput?.value || 'pre');
     try {
         const res = await fetch('/upload', { method: 'POST', body: fd });
@@ -1112,6 +1244,18 @@ if (UI.submitBtn) UI.submitBtn.onclick = async (e) => {
 
             await fetchUserProgress();
             if (UI.testTypeInput) UI.testTypeInput.disabled = false;
+
+            await fetchUserProgress();
+            if (UI.testTypeInput) UI.testTypeInput.disabled = false;
+
+            // Enable Next Word Button
+            if (UI.nextWordBtn) {
+                UI.nextWordBtn.disabled = false;
+                UI.nextWordBtn.classList.add('animate-pulse-subtle'); // Optional visual cue
+            }
+
+            // Universal Auto-Advance REMOVED per user request
+            // autoProceed(); logic is now on button click
         } else {
             if (UI.submitMsg) UI.submitMsg.textContent = '⚠️ ERROR';
             UI.submitBtn.disabled = false;

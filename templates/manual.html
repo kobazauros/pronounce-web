@@ -115,6 +115,26 @@
                             Browsers (Facebook/Line/Instagram).</li>
                     </ul>
 
+                    <h3 class="text-slate-900 font-bold mt-8">Audio Modes & Environment</h3>
+                    <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 my-6">
+                        <h4 class="text-indigo-800 font-bold flex items-center gap-2 mb-2">
+                            <i class="fas fa-microphone-lines"></i> High Fidelity Mode (Recommended)
+                        </h4>
+                        <p class="text-indigo-800 text-sm mb-4">
+                            By default, the app uses <strong>High Fidelity Mode</strong>. This captures your raw voice
+                            without any artificial enhancement.
+                            This is critical for accurate analysis but comes with a requirement:
+                        </p>
+                        <div class="flex items-start gap-3 bg-white p-3 rounded-lg border border-indigo-100">
+                            <i class="fas fa-volume-mute text-rose-500 mt-1"></i>
+                            <div class="text-sm text-slate-600">
+                                <strong>Quiet Room Required:</strong> Because noise suppression is disabled, the system
+                                will hear fans, AC units, and background chatter.
+                                Please ensure you are in a silent environment.
+                            </div>
+                        </div>
+                    </div>
+
                     <h3 class="text-slate-900 font-bold mt-8">Critical Settings: Disable "Data Savers"</h3>
                     <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 my-6">
                         <h4 class="text-amber-800 font-bold flex items-center gap-2 mb-2">
@@ -233,10 +253,11 @@
                     <div class="flex gap-4">
                         <div class="flex-none font-black text-2xl text-slate-200">1</div>
                         <div>
-                            <h4 class="text-lg font-bold text-slate-800">Select a Word</h4>
+                            <h4 class="text-lg font-bold text-slate-800">Check Selected Word</h4>
                             <p class="text-slate-600 text-sm mt-1">
-                                Choose a word from the left sidebar. Words you have already practiced and saved will
-                                show a <i class="fas fa-check-circle text-green-500 mx-1"></i> green checkmark.
+                                The app automatically selects the first incomplete word for you ("Smart Resume"). You
+                                can also choose a different word from the left sidebar manually. Correctly pronounced
+                                words show a <i class="fas fa-check-circle text-green-500 mx-1"></i> green checkmark.
                             </p>
                         </div>
                     </div>
@@ -249,8 +270,7 @@
                                 Click the <i
                                     class="fas fa-volume-up bg-slate-100 p-1.5 rounded-full text-xs text-slate-500 mx-1"></i>
                                 "Listen to Model" button to hear the reference pronunciation. The Blue waveform
-                                represents the native
-                                pronunciation of the word by default provided by Cambridge Dictionary.
+                                represents the native pronunciation.
                             </p>
                         </div>
                     </div>
@@ -262,19 +282,19 @@
                             <p class="text-slate-600 text-sm mt-1">
                                 Click the <i
                                     class="fas fa-microphone bg-slate-100 p-1.5 rounded-full text-xs text-red-500 mx-1"></i>
-                                "Record" button to start recording. Speak clearly. The recording stops automatically
-                                after
-                                silence is detected (or 5 seconds). After recording, your data will be processed by
-                                server and you will be able
-                                to see the Red waveform of your recording. There might be a delay of a few seconds
-                                before you can see the Red waveform. This is normal and usually happens when you submit
-                                your recording for the first time.
-                                <br>
-                                Listen to your recording by clicking the
-                                <i class="fas fa-play bg-slate-100 p-1.5 rounded-full text-xs text-blue-500 mx-1"></i>
-                                "Play" button. You can listen to example pronunciation and you recording several times
-                                before submitting your recording. To submit your recording, click the
-                                <strong>SAVE RECORDING</strong> button.
+                                "Record" button to start.
+                                <br><br>
+                                <strong>Important Tips:</strong>
+                            <ul class="list-disc pl-5 mb-2">
+                                <li><strong>Auto-Stop:</strong> The system stops automatically when you stop speaking.
+                                    Articulate ending consonants clearly (e.g. "ca<strong>t</strong>").</li>
+                                <li><strong>No Noise:</strong> Do not smack your lips or click your tongue before
+                                    speaking, as this triggers the recording early.</li>
+                            </ul>
+                            After recording, listen to your playback. If satisfied, click <strong>SAVE</strong>.
+                            <br>
+                            Once saved, the <strong>Next ( > )</strong> button will activate. Click it to move to the
+                            next word.
                             </p>
                         </div>
                     </div>

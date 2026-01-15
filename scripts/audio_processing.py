@@ -8,20 +8,16 @@ import soundfile as sf
 logger = logging.getLogger(__name__)
 
 
-def process_audio_data(audio_data: bytes, target_sr: int = 16000) -> bytes:
+def process_audio_data(
+    audio_data: bytes, target_sr: int = 16000, noise_floor: float = None
+) -> bytes:
     """
-    Standardizes audio data to a specific format:
-    - Resamples to target_sr (default 16000 Hz)
-    - Converts to Mono
-    - Normalizes volume (Peak normalization to -0.5dB)
-    - Exports as MP3 bytes
+    Standardizes audio data to a specific format.
 
     Args:
-        audio_data (bytes): Raw audio bytes (WAV, MP3, etc.)
-        target_sr (int): Target sample rate in Hz.
-
-    Returns:
-        bytes: Processed MP3 audio bytes.
+        audio_data (bytes): Raw audio bytes.
+        target_sr (int): Target sample rate.
+        noise_floor (float, optional): Client-measured noise floor (RMS).
     """
     try:
         # Load audio from bytes
@@ -44,22 +40,9 @@ def process_audio_data(audio_data: bytes, target_sr: int = 16000) -> bytes:
         if clip_ratio > 0.005:  # 0.5%
             error_msg = f"Audio clipping detected ({clip_ratio*100:.1f}%). Please reduce microphone volume."
             logger.warning(error_msg)
-            # We return a specific error bytes marker or raise?
-            # Since return type is bytes, we can't easily raise without breaking caller.
-            # However, this function is utility. It SHOULD raise.
-            # BUT existing code catches 'Exception' and returns original.
-            # To force failure, we raise a custom ValueError that caller can catch specifically?
-            # For now, let's Log and Proceed but maybe capping it won't help.
-            # Actually, if we return original, the system analyzes clipped audio.
-            # We MUST fail or signal failure.
             raise ValueError(error_msg)
 
         # --- ROBUST TRIM SILENCE ---
-        # Ported from optimized JS logic:
-        # 1. Calculate adaptive noise floor (10th percentile of RMS)
-        # 2. Thresholds: Vol 4.0x, Sens 2.5x
-        # 3. ZCR check for tails
-
         frame_length = int(target_sr * 0.02)  # 20ms
         hop_length = frame_length  # Non-overlapping for speed/parity with JS
 
@@ -74,12 +57,18 @@ def process_audio_data(audio_data: bytes, target_sr: int = 16000) -> bytes:
         )[0]
 
         if len(rmse) > 0:
-            # 1. Adaptive Noise Floor (10th percentile)
-            sorted_rms = np.sort(rmse)
-            floor_idx = int(len(sorted_rms) * 0.1)
-            local_floor = (
-                sorted_rms[floor_idx] if floor_idx < len(sorted_rms) else 0.001
-            )
+            # 1. Determine Noise Floor
+            if noise_floor is not None and noise_floor > 0.0001:
+                # Use client-provided floor directly (Trust the Meter)
+                local_floor = noise_floor
+            else:
+                # Adaptive Fallback (10th percentile)
+                sorted_rms = np.sort(rmse)
+                floor_idx = int(len(sorted_rms) * 0.1)
+                local_floor = (
+                    sorted_rms[floor_idx] if floor_idx < len(sorted_rms) else 0.001
+                )
+
             local_floor = max(0.001, local_floor)
 
             # 2. Thresholds (RELAXED for trailing consonants)

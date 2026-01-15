@@ -34,8 +34,7 @@ fi
 
 source "$VENV_DIR/bin/activate"
 pip install --upgrade pip
-pip install -r "$APP_DIR/requirements.txt"
-pip install gunicorn
+pip install -r "$APP_DIR/requirements.prod.txt"
 
 # 5. Create Systemd Service
 echo "[*] Creating Gunicorn Service..."
@@ -51,7 +50,7 @@ WorkingDirectory=$APP_DIR
 Environment="PATH=$VENV_DIR/bin"
 Environment="DATABASE_URL=sqlite:///$APP_DIR/instance/pronounce.db"
 Environment="SECRET_KEY=$(openssl rand -hex 32)"
-ExecStart=$VENV_DIR/bin/gunicorn --workers 3 --bind unix:pronounce-web.sock -m 007 wsgi:app
+ExecStart=$VENV_DIR/bin/gunicorn -c gunicorn_config.py wsgi:app
 
 [Install]
 WantedBy=multi-user.target
@@ -59,20 +58,9 @@ EOF
 
 # 6. Configure Nginx
 echo "[*] Configuring Nginx Proxy..."
-cat > /etc/nginx/sites-available/pronounce-web <<EOF
-server {
-    listen 80;
-    server_name $DOMAIN;
-
-    location / {
-        include proxy_params;
-        proxy_pass http://unix:$APP_DIR/pronounce-web.sock;
-    }
-
-    # Increase upload size for audio files
-    client_max_body_size 10M;
-}
-EOF
+# Replace placeholder in nginx conf
+cp "$APP_DIR/deploy/nginx.conf" "/etc/nginx/sites-available/pronounce-web"
+sed -i "s/\$DOMAIN_NAME/$DOMAIN/g" "/etc/nginx/sites-available/pronounce-web"
 
 ln -sf /etc/nginx/sites-available/pronounce-web /etc/nginx/sites-enabled
 rm -f /etc/nginx/sites-enabled/default

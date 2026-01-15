@@ -13,6 +13,12 @@
 
         <!-- Header -->
         <div class="relative text-center mt-4 mb-4 shrink-0">
+            <!-- Mobile Stage Label -->
+            <div id="mobile-stage-label"
+                class="lg:hidden mb-1 text-[10px] font-black tracking-widest uppercase text-slate-400">
+                PRE-TEST
+            </div>
+
             <h2 id="sample-word-placeholder"
                 class="text-xl font-black text-slate-900 tracking-tighter uppercase leading-none">Select Word</h2>
             <div id="phonetic-display" class="text-sky-500 font-mono text-sm mt-2 font-bold tracking-widest opacity-30">
@@ -20,10 +26,86 @@
                 /</div>
 
             <!-- Settings Toggle -->
-            <button id="open-settings-btn"
-                class="absolute right-0 top-0 text-slate-300 hover:text-slate-600 transition-colors p-2"
-                title="Audio Settings">
-                <i class="fas fa-cog"></i>
+            <div class="absolute right-0 top-0 flex gap-2">
+                <button id="open-tips-btn" class="text-slate-300 hover:text-sky-500 transition-colors p-2"
+                    title="Recording Tips">
+                    <i class="fas fa-lightbulb"></i>
+                </button>
+                <button id="open-settings-btn" class="text-slate-300 hover:text-slate-600 transition-colors p-2"
+                    title="Audio Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Recording Tips Modal -->
+        <div id="recording-tips-modal"
+            class="hidden absolute inset-0 z-50 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-slate-800 rounded-3xl animate-fade-in">
+            <h3 class="text-lg font-black uppercase tracking-tighter mb-6 text-sky-600"><i
+                    class="fas fa-magic mr-2"></i>Best Practices</h3>
+
+            <div class="w-full max-w-sm space-y-5">
+                <!-- Tip 1: Environment -->
+                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl flex gap-3">
+                    <div
+                        class="shrink-0 w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold">
+                        1</div>
+                    <div>
+                        <h4 class="font-bold text-sm text-indigo-900">Quiet Environment</h4>
+                        <p class="text-xs text-indigo-700 mt-1">
+                            <strong>High Fidelity Mode</strong> disables noise suppression. You <u>must</u> be in a
+                            silent room. Fan noise or AC will confuse the analyzer.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tip 2: Mic Position -->
+                <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl flex gap-3">
+                    <div
+                        class="shrink-0 w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold">
+                        2</div>
+                    <div>
+                        <h4 class="font-bold text-sm text-emerald-900">Mic Position</h4>
+                        <p class="text-xs text-emerald-700 mt-1">
+                            Don't breathe directly into the mic to prevent "popping". If using a headset, place it to
+                            the side of your mouth.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tip 3: Clear Articulation -->
+                <div class="bg-rose-50 border border-rose-100 p-4 rounded-xl flex gap-3">
+                    <div
+                        class="shrink-0 w-8 h-8 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center font-bold">
+                        3</div>
+                    <div>
+                        <h4 class="font-bold text-sm text-rose-900">Clear Articulation</h4>
+                        <p class="text-xs text-rose-700 mt-1">
+                            Articulate ending consonants distinctively (e.g., "ca<strong>t</strong>",
+                            "boo<strong>k</strong>").
+                            The system stops automatically when you stop speaking.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tip 4: Avoid Noises -->
+                <div class="bg-amber-50 border border-amber-100 p-4 rounded-xl flex gap-3">
+                    <div
+                        class="shrink-0 w-8 h-8 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center font-bold">
+                        4</div>
+                    <div>
+                        <h4 class="font-bold text-sm text-amber-900">Avoid Extra Sounds</h4>
+                        <p class="text-xs text-amber-700 mt-1">
+                            Do not <strong>smack lips</strong> or click your tongue before speaking. This triggers the
+                            recording too early.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <button id="close-tips-btn"
+                class="mt-8 px-8 py-2.5 bg-sky-500 text-white text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-sky-600 transition shadow-lg">
+                Got it
             </button>
         </div>
 
@@ -128,16 +210,21 @@
             </div>
 
             <!-- Submit Action -->
-            <div class="w-full max-w-[200px] flex flex-col items-center">
-                <button id="submit-recording" disabled
-                    class="w-full py-3 bg-slate-900 text-white rounded-md font-black uppercase text-[10px] tracking-[0.2em] hover:bg-sky-700 disabled:bg-slate-100 disabled:text-slate-300 transition-all shadow active:scale-95">
-                    Save Recording
-                </button>
+            <div class="w-full max-w-[280px] flex flex-col items-center gap-2">
+                <div class="flex w-full gap-2">
+                    <button id="submit-recording" disabled
+                        class="flex-grow py-3 bg-slate-900 text-white rounded-md font-black uppercase text-[10px] tracking-[0.2em] hover:bg-sky-700 disabled:bg-slate-100 disabled:text-slate-300 transition-all shadow active:scale-95">
+                        Save
+                    </button>
+                    <button id="next-word-btn" disabled
+                        class="w-12 flex items-center justify-center bg-emerald-500 text-white rounded-md hover:bg-emerald-600 disabled:bg-slate-100 disabled:text-slate-300 transition-all shadow active:scale-95"
+                        title="Next Word">
+                        <i class="fas fa-chevron-right text-sm"></i>
+                    </button>
+                </div>
                 <p id="submit-msg"
                     class="text-[9px] font-black text-slate-400 mt-0.5 uppercase tracking-widest h-auto min-h-[12px] text-center">
                 </p>
-
-                <!-- Noise Monitor removed -->
             </div>
         </div>
 
@@ -147,10 +234,11 @@
         <div class="bg-sky-50 border border-sky-200 rounded-lg p-3 text-center mt-2 shrink-0 text-xs">
             <h3 class="font-bold text-sky-800 mb-2 text-xs uppercase tracking-wide">Practice Steps</h3>
             <ol class="text-sky-700 list-inside text-left space-y-1 inline-block mx-auto text-xs">
-                <li><span class="font-bold">1. Select an example word</span> from the panel.</li>
+                <li><span class="font-bold">1. Check the active word</span> (auto-selected).</li>
                 <li><span class="font-bold">2. Listen 🔊</span> to the example, <span class="font-bold">Record
                         🎙️</span> yourself, <span class="font-bold">Play ▶️</span> to compare.</li>
-                <li><span class="font-bold">3. Save</span> your recording when satisfied. Wait for Results.</li>
+                <li><span class="font-bold">3. Save</span> your recording. <span class="font-bold">Click '>'</span> to
+                    advance.</li>
                 <li><span class="font-bold">4. Check Score:</span>
                     <span class="score-success">Green</span> (Good),
                     <span class="score-warning">Yellow</span> (Ok),
@@ -169,41 +257,47 @@
             </div>
 
         </div>
-        <script>
-            window.CURRENT_USER = "{{ current_user.username }}";
-            window.ENABLE_LOGGING = {{ enable_logging | tojson }};
-        </script>
     </div>
 
+    <!-- Hidden State for JS -->
+    <div id="app-state" data-username="{{ current_user.username }}" data-logging="{{ enable_logging | tojson }}"
+        class="hidden"></div>
+    <script>
+        const appState = document.getElementById('app-state').dataset;
+        window.CURRENT_USER = appState.username;
+        window.ENABLE_LOGGING = (appState.logging === 'true');
+    </script>
+</div>
 
-    <!-- Right Sidebar -->
-    <div class="w-full lg:w-60 flex flex-col gap-3 shrink-0 h-[400px] lg:h-full overflow-hidden">
-        <!-- Progress Module -->
-        <div class="bg-white rounded-3xl p-3 shadow-sm border border-slate-200 shrink-0">
-            <select id="test-type" name="testType"
-                class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-base font-medium outline-none mb-3 cursor-pointer focus:ring-2 focus:ring-blue-500">
-                <option value="pre">Phase: Pre-Test</option>
-                <option value="post">Phase: Post-Test</option>
-            </select>
 
-            <div class="flex justify-between items-end mb-1">
-                <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Mastery</span>
-                <span id="progress-percent"
-                    class="text-xs font-black text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded">0%</span>
-            </div>
-            <div class="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
-                <div id="progress-bar-fill" class="h-full bg-sky-500 transition-all duration-1000" style="width: 0%">
-                </div>
-            </div>
+<!-- Right Sidebar -->
+<div class="w-full lg:w-60 flex flex-col gap-3 shrink-0 h-[400px] lg:h-full overflow-hidden">
+    <!-- Progress Module -->
+    <div class="bg-white rounded-3xl p-3 shadow-sm border border-slate-200 shrink-0">
+        <select id="test-type" name="testType"
+            class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-base font-medium outline-none mb-3 cursor-pointer focus:ring-2 focus:ring-blue-500">
+            <option value="pre">Phase: Pre-Test</option>
+            <option value="post">Phase: Post-Test</option>
+        </select>
+
+        <div class="flex justify-between items-end mb-1">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Mastery</span>
+            <span id="progress-percent"
+                class="text-xs font-black text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded">0%</span>
         </div>
-
-        <!-- Word Selection -->
-        <div class="bg-white rounded-3xl p-3 shadow-sm border border-slate-200 flex-grow flex flex-col min-h-0">
-            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-2">Vocabulary</h3>
-            <div id="word-list" class="flex flex-col gap-1 overflow-y-auto pr-1 custom-scroll">
-                <!-- Words injected via script.js -->
+        <div class="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
+            <div id="progress-bar-fill" class="h-full bg-sky-500 transition-all duration-1000" style="width: 0%">
             </div>
         </div>
     </div>
+
+    <!-- Word Selection -->
+    <div class="bg-white rounded-3xl p-3 shadow-sm border border-slate-200 flex-grow flex flex-col min-h-0">
+        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-2">Vocabulary</h3>
+        <div id="word-list" class="flex flex-col gap-1 overflow-y-auto pr-1 custom-scroll">
+            <!-- Words injected via script.js -->
+        </div>
+    </div>
+</div>
 </div>
 {% endblock %}

@@ -46,3 +46,18 @@ We implemented a **Cumulative VTLN** approach in `analysis_engine.py`:
     *   Updated **Instructor Dashboard** to explicitly handle `NaN` (Not a Number) results.
     *   Added "N/A Results" card to statistics.
     *   Added "N/A" badge to Student Directory.
+
+### Case Study: High Fidelity Noise Floor (Fidelity Test)
+*   **Issue:** User reported internal laptop microphone recordings were being cut off prematurely, particularly on soft endings ("cat", "book"), while external headsets performed better.
+*   **analysis:** 
+    *   Conducted forensic analysis of 23 submissions (Internal vs Headset).
+    *   **Internal Mic:** Avg Score 2.05 Bark. Trailing silence ~0.1ms (Premature cut).
+    *   **Headset:** Avg Score 1.72 Bark. Cleaner signal.
+*   **Root Cause:**
+    *   "High Fidelity Mode" disables browser-side noise suppression (`echoCancellation: false`, `noiseSuppression: false`).
+    *   On laptop internal mics (positioned near fans/keyboards), the physical noise floor is high.
+    *   The server-side trimmer interprets this high noise floor as "signal," preventing the silence detection algorithm from finding a valid "quiet" pad at the end of the word.
+*   **Solution:**
+    *   Instead of enabling aggressive software filtering (which distorts vowel formants), we chose to enforce **Environmental Requirements**.
+    *   **UI Update:** Added "Best Practices" modal to the recorder.
+    *   **Documentation:** Updated manuals to explicitly state "Quiet Room Required" for High Fidelity Mode.
