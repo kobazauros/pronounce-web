@@ -157,7 +157,7 @@ Tech Stack: Flask, SQLite (Dev) / PostgreSQL (Prod), SQLAlchemy, Flask-Login, Do
 
 ### **Phase 9: Production Deployment (Live Infrastructure)**
 *The "Real-World" Environment.*
-*56 [x] **Infrastructure Provisioning:** DigitalOcean Droplet (Ubuntu LTS) with UFW Firewall.
+*56 [x] **Infrastructure Provisioning:** GreenCloudVPS (Ubuntu LTS) with UFW Firewall.
 *57 [x] **Web Server Optimization:** Nginx tuned for file uploads (client_max_body_size) and Gzip compression.
 *58 [x] **Application Server:** Gunicorn with `gthread` workers to handle concurrent I/O (audio processing blocking).
 *59 [x] **Security:** SSL (Let's Encrypt), Rate Limiting (Flask-Limiter) to prevent abuse.

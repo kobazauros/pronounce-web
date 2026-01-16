@@ -7,7 +7,7 @@ This guide covers the end-to-end process of deploying Pronounce Web to a product
 ### Server Requirements
 *   **OS:** Ubuntu 22.04 LTS (Recommended)
 *   **Specs:** 2GB RAM / 1 vCPU (Minimum)
-*   **Provider:** DigitalOcean, Hetzner, AWS, etc.
+*   **Provider:** GreenCloudVPS (or any standard VPS provider)
 
 ### Initial Setup
 1.  **SSH into Server:**
