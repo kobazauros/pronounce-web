@@ -44,6 +44,27 @@ if sentry_sdk and os.environ.get("SENTRY_DSN"):
 app = Flask(__name__)
 app.config.from_object(Config)
 
+# --- Celery Setup ---
+from celery import Celery, Task
+
+
+def celery_init_app(app: Flask) -> Celery:
+    class FlaskTask(Task):
+        def __call__(self, *args: object, **kwargs: object) -> object:
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    celery_app = Celery(app.name, task_cls=FlaskTask)
+    celery_app.config_from_object(
+        app.config["CELERY_CONFIG"] if "CELERY_CONFIG" in app.config else app.config
+    )
+    celery_app.set_default()
+    app.extensions["celery"] = celery_app
+    return celery_app
+
+
+celery = celery_init_app(app)
+
 # --- Logging Setup ---
 # This runs only in production-like environments (not in debug mode)
 if not app.debug and not app.testing:
@@ -330,100 +351,37 @@ def submit_recording() -> Response | tuple[Response, int]:
     db.session.add(sub)
     db.session.commit()
 
-    # 2. Trigger Analysis Engine
-    # Note: Import here to avoid circular dependencies if any
-    from analysis_engine import process_submission
+    # 2. Trigger Analysis Engine (ASYNC)
+    from tasks import async_process_submission
 
-    success = process_submission(sub.id)
+    # Launch background task
+    task = async_process_submission.delay(sub.id)
 
-    if success:
-        # Reload submission to get results
-        db.session.refresh(sub)
-        result = sub.analysis
-
-        # Determine Score Category (dummy logic -> implement valid logic)
-        # Distance (Bark) < 1.5 = Excellent (Green)
-        # Distance (Bark) < 3.0 = Okay (Yellow)
-        # Else = Poor (Red)
-        score_cat = "danger"
-        score_val = 0
-
-        if result and result.distance_bark is not None:
-            # Normalize score 0-100 roughly
-            # 0 Bark = 100%
-            # 5 Bark = 0%
-            dist = result.distance_bark
-            score_val = max(0, min(100, int(100 - (dist * 20))))
-
-            if dist < 1.5:
-                score_cat = "success"
-            elif dist < 3.0:
-                score_cat = "warning"
-
-            # Save simplified score to Submission for quick access
-            sub.score = score_val
-            db.session.commit()
-
-            # Generate detailed recommendation based on formant differences
-            recommendation = None
-            if dist >= 1.5 and result:
-                # Get formant differences (normalized values for fair comparison)
-                f1_diff = (
-                    result.f1_norm - result.f1_ref
-                    if result.f1_norm and result.f1_ref
-                    else 0
-                )
-                f2_diff = (
-                    result.f2_norm - result.f2_ref
-                    if result.f2_norm and result.f2_ref
-                    else 0
-                )
-
-                tips = []
-
-                # F2 indicates tongue front/back position
-                # Higher F2 = more front, Lower F2 = more back
-                if abs(f2_diff) > 100:  # Significant F2 difference
-                    if f2_diff > 0:
-                        tips.append("move your tongue slightly back")
-                    else:
-                        tips.append("move your tongue slightly forward")
-
-                # F1 indicates tongue height / jaw openness
-                # Higher F1 = lower tongue / more open jaw
-                # Lower F1 = higher tongue / more closed jaw
-                if abs(f1_diff) > 50:  # Significant F1 difference
-                    if f1_diff > 0:
-                        tips.append("raise your tongue slightly (close your jaw a bit)")
-                    else:
-                        tips.append("lower your tongue slightly (open your jaw more)")
-
-                if tips:
-                    recommendation = "Try to " + " and ".join(tips) + "."
-                elif dist >= 3.5:
-                    recommendation = (
-                        "Focus on matching the sample pronunciation more closely."
-                    )
-                else:
-                    recommendation = (
-                        "Good effort! Keep practicing to refine your pronunciation."
-                    )
-
-            return jsonify(
-                {
-                    "status": "success",
-                    "score": score_val,
-                    "category": score_cat,
-                    "feedback": "Analysis complete.",
-                    "distance": f"{dist:.2f} Bark",
-                    "analysis": {
-                        "distance_bark": round(dist, 2),
-                        "recommendation": recommendation,
-                    },
-                }
-            )
+    return jsonify({"status": "processing", "task_id": task.id}), 202
 
     return jsonify({"status": "error", "message": "Analysis failed"}), 500
+
+
+@app.route("/api/status/<task_id>")
+@login_required
+def get_task_status(task_id):
+    """
+    Poll this endpoint to check if the analysis is done.
+    """
+    from celery.result import AsyncResult
+
+    task_result = AsyncResult(task_id)
+
+    if task_result.state == "PENDING":
+        return jsonify({"status": "processing"})
+    elif task_result.state == "SUCCESS":
+        return jsonify(
+            task_result.result
+        )  # Returns the dict {status: success, score: ...}
+    elif task_result.state == "FAILURE":
+        return jsonify({"status": "error", "message": str(task_result.result)}), 500
+    else:
+        return jsonify({"status": "processing"})
 
 
 # 7. CLI Commands

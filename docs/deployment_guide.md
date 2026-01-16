@@ -62,6 +62,45 @@ sudo certbot --nginx -d your-domain.com
 
 ---
 
+## 3. Setup Celery Workers (Async Tasks)
+For handling background audio processing, you must run a Celery worker alongside the web server.
+
+### 1. Install Redis
+```bash
+sudo apt update
+sudo apt install redis-server
+sudo systemctl enable redis-server
+sudo systemctl start redis-server
+```
+
+### 2. Create Systemd Service for Celery
+Create file: `/etc/systemd/system/pronounce-celery.service`
+
+```ini
+[Unit]
+Description=Celery Worker for Pronounce
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/var/www/pronounce-web
+ExecStart=/var/www/pronounce-web/.venv/bin/celery -A flask_app.celery worker --loglevel=info
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### 3. Start the Worker
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable pronounce-celery
+sudo systemctl start pronounce-celery
+```
+
+---
+
 ## 3. Database Migration (Postgres)
 
 We use PostgreSQL in production for checking concurrency locking issues.

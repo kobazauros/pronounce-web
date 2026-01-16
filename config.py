@@ -19,3 +19,9 @@ class Config:
     UPLOAD_FOLDER = os.path.join(basedir, "submissions")
     AUDIO_FOLDER = os.path.join(basedir, "static", "audio")
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max upload
+
+    # Celery / Redis
+    CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
+    CELERY_RESULT_BACKEND = os.environ.get(
+        "CELERY_RESULT_BACKEND", "redis://localhost:6379/0"
+    )

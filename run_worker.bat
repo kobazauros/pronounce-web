@@ -1,0 +1,3 @@
+@echo off
+echo Starting Celery Worker...
+celery -A flask_app.celery worker --loglevel=info --pool=solo

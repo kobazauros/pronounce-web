@@ -1239,9 +1239,32 @@ if (UI.submitBtn) UI.submitBtn.onclick = async (e) => {
                 test_type: UI.testTypeInput?.value || 'pre'
             })
         });
-        const data = await res.json();
+        const initialData = await res.json();
 
-        if (res.ok) {
+        // POLL FOR RESULT Logic
+        let data = initialData;
+        if (res.status === 202 && data.task_id) {
+            UI.submitMsg.textContent = 'ANALYSING...';
+            // Start polling
+            const taskId = data.task_id;
+            let polling = true;
+            while (polling) {
+                await new Promise(r => setTimeout(r, 1000)); // Wait 1s
+                const pollRes = await fetch(`/api/status/${taskId}`);
+                const pollData = await pollRes.json();
+                
+                if (pollData.status === 'success' || pollData.status === 'error') {
+                    data = pollData;
+                    polling = false;
+                } else {
+                    // Still processing...
+                    console.log("Waiting for analysis...");
+                }
+            }
+        }
+
+        // Handle Final Result (Same as before)
+        if (data.status === 'success') {
             let msg = '✅ SAVED';
             if (data.analysis && data.analysis.distance_bark !== null) {
                 const d = data.analysis.distance_bark;
@@ -1273,23 +1296,20 @@ if (UI.submitBtn) UI.submitBtn.onclick = async (e) => {
             await fetchUserProgress();
             if (UI.testTypeInput) UI.testTypeInput.disabled = false;
 
-            await fetchUserProgress();
-            if (UI.testTypeInput) UI.testTypeInput.disabled = false;
-
             // Enable Next Word Button
             if (UI.nextWordBtn) {
                 UI.nextWordBtn.disabled = false;
                 UI.nextWordBtn.classList.add('animate-pulse-subtle'); // Optional visual cue
             }
 
-            // Universal Auto-Advance REMOVED per user request
-            // autoProceed(); logic is now on button click
         } else {
+            console.error("Analysis Error:", data.message);
             if (UI.submitMsg) UI.submitMsg.textContent = '⚠️ ERROR';
             UI.submitBtn.disabled = false;
             if (UI.testTypeInput) UI.testTypeInput.disabled = false;
         }
     } catch (e) {
+        console.error(e);
         if (UI.submitMsg) UI.submitMsg.textContent = '⚠️ TIMEOUT';
         UI.submitBtn.disabled = false;
         if (UI.testTypeInput) UI.testTypeInput.disabled = false;
