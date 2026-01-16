@@ -64,35 +64,48 @@ class StudentSimulator:
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
         # User details (as requested)
-        self.username = f"{nickname}_test2"
+        self.username = f"{nickname}_test3"
         self.password = "password123"
-        self.first_name = f"{nickname}_test2"
-        self.last_name = f"{nickname}_test2"
-        # ID starting with 0000
-        self.student_id = f"0000{random.randint(100000, 999999)}"
+        self.first_name = f"{nickname}_test3"
+        self.last_name = f"{nickname}_test3"
+        # ID starting with 000, 10 digits total (so 7 random digits)
+        self.student_id = f"000{random.randint(1000000, 9999999)}"
 
         self.results = []
 
     def log(self, msg):
         print(f"[{self.nickname}] {msg}")
 
+    def get_csrf_token(self, url):
+        try:
+            resp = self.session.get(url)
+            # Simple regex to find the token
+            match = re.search(r'name="csrf_token" value="([^"]+)"', resp.text)
+            if match:
+                return match.group(1)
+        except Exception:
+            pass
+        return None
+
     def register(self):
         url = f"{BASE_URL}/register"
+        csrf = self.get_csrf_token(url)
+
         payload = {
+            "csrf_token": csrf,
             "username": self.username,
             "password": self.password,
             "first_name": self.first_name,
             "last_name": self.last_name,
             "student_id": self.student_id,
             "consent": "on",
+            "email": f"{self.username}@example.com",
+            "confirm_password": self.password,
         }
 
         try:
             resp = self.session.post(url, data=payload, allow_redirects=True)
             if resp.status_code == 200 or resp.url.endswith("/login"):
-                # Sometimes successful register redirects to login, or returns 200 if auto-login logic exists
-                # We assume success if we get a 200 OK without "User already exists" (though we can't easily parse that html here)
-                # But since we use unique IDs, it should be fine.
                 return True
             self.log(f"Register failed: {resp.status_code}")
         except Exception as e:
@@ -101,14 +114,33 @@ class StudentSimulator:
 
     def login(self):
         url = f"{BASE_URL}/login"
-        payload = {"username": self.username, "password": self.password}
-        try:
-            resp = self.session.post(url, data=payload)
-            if "session" in self.session.cookies:
-                return True
-            self.log(f"Login failed: No session cookie. Status: {resp.status_code}")
-        except Exception as e:
-            self.log(f"Login error: {e}")
+        csrf = self.get_csrf_token(url)
+
+        payload = {
+            "csrf_token": csrf,
+            "username": self.username,  # Form likely expects 'username' based on auth_routes.py
+            "password": self.password,
+        }
+
+        # Retry loop
+        for attempt in range(2):
+            try:
+                resp = self.session.post(url, data=payload)
+
+                if "/login" not in resp.url and (
+                    resp.status_code == 200 or resp.status_code == 302
+                ):
+                    return True
+
+                if "Invalid" in resp.text:
+                    self.log(f"Login failed: Invalid credentials.")
+                    return False
+
+                time.sleep(1)
+            except Exception as e:
+                self.log(f"Login error: {e}")
+
+        self.log(f"Login failed after retries. Final URL: {resp.url}")
         return False
 
     def get_word_map(self):
@@ -116,9 +148,15 @@ class StudentSimulator:
         try:
             resp = self.session.get(f"{BASE_URL}/api/word_list")
             if resp.status_code == 200:
-                words = resp.json()
-                return {w["word"].lower(): w["id"] for w in words}
-            self.log(f"Failed to get word list: {resp.status_code}")
+                try:
+                    words = resp.json()
+                    return {w["word"].lower(): w["id"] for w in words}
+                except ValueError:
+                    self.log(
+                        f"Word list returned HTML (likely redirect). First 50 chars: {resp.text[:50]}"
+                    )
+            else:
+                self.log(f"Failed to get word list: {resp.status_code}")
         except Exception as e:
             self.log(f"Word list error: {e}")
         return {}
@@ -220,23 +258,45 @@ class StudentSimulator:
         return False
 
 
+import argparse
+
+
 def main():
+    parser = argparse.ArgumentParser(description="Concurrency Stress Test")
+    parser.add_argument(
+        "--users", type=int, default=0, help="Max users to simulate (0 = all)"
+    )
+    parser.add_argument("--delay", type=float, default=0.1, help="Delay between starts")
+    args = parser.parse_args()
+
     print("--- 🚀 Concurrency Stress Test ---")
     print(f"Target: {BASE_URL}")
     print(f"Scanning {DATASET_DIR}...")
 
     users_dict = get_users_and_files(DATASET_DIR)
-    print(f"Found {len(users_dict)} unique users.")
+    print(f"Found {len(users_dict)} unique users in dataset.")
+
+    # Select subset if requested
+    all_nicknames = list(users_dict.keys())
+    if args.users > 0 and args.users < len(all_nicknames):
+        selected_nicknames = all_nicknames[: args.users]
+        print(f"Limiting to first {args.users} users.")
+    else:
+        selected_nicknames = all_nicknames
 
     simulators = []
-    for nickname, files in users_dict.items():
-        simulators.append(StudentSimulator(nickname, files))
+    for nickname in selected_nicknames:
+        simulators.append(StudentSimulator(nickname, users_dict[nickname]))
 
-    print(f"Starting simulation with {MAX_WORKERS} workers...")
+    print(f"Starting simulation with {len(simulators)} workers...")
     start_all = time.time()
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = [executor.submit(sim.run) for sim in simulators]
+        futures = []
+        for sim in simulators:
+            futures.append(executor.submit(sim.run))
+            if args.delay > 0:
+                time.sleep(args.delay)
         concurrent.futures.wait(futures)
 
     total_duration = time.time() - start_all
