@@ -596,6 +596,9 @@ async function startNoiseMonitor() {
     // FIX: Only start monitoring if we are on a page with a recorder
     if (!document.getElementById('record-start')) return;
 
+    // Prevent race condition (multiple calls while awaiting getUserMedia)
+    isMonitoring = true;
+
     if (!UI.noiseIcon) UI.noiseIcon = document.getElementById('noise-indicator-icon');
     if (!UI.noiseLevel) UI.noiseLevel = document.getElementById('noise-level-display');
 
@@ -724,6 +727,7 @@ async function startNoiseMonitor() {
 
     } catch (err) {
         console.warn("Monitor Error", err);
+        isMonitoring = false; // RESET FLAG
         if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
             if (UI.statusText) {
                 UI.statusText.textContent = 'MIC BLOCKED';
@@ -1338,11 +1342,15 @@ const handleBlur = () => {
     if (audioContext && audioContext.state === 'running') audioContext.suspend();
 };
 
-document.addEventListener('click', unlockAudio);
-document.addEventListener('keydown', unlockAudio);
-document.addEventListener('touchstart', unlockAudio);
+// Only use explicit interactions to unlock AudioContext, not everything
+document.addEventListener('click', () => { handleFocus(); unlockAudio(); }, { once: true });
 
-window.addEventListener('focus', handleFocus);
+// Debounce focus handler to prevent rapid toggling
+let focusTimeout;
+window.addEventListener('focus', () => {
+    clearTimeout(focusTimeout);
+    focusTimeout = setTimeout(handleFocus, 500);
+});
 window.addEventListener('blur', handleBlur);
 
 // Init Logging & Manifest

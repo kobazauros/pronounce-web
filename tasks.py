@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-@shared_task(bind=True, max_retries=3)
+@shared_task(bind=True, max_retries=3, name="tasks.async_process_submission")
 def async_process_submission(self, submission_id):
     """
     Background task to process audio submission.

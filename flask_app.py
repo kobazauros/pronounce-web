@@ -65,6 +65,9 @@ def celery_init_app(app: Flask) -> Celery:
 
 celery = celery_init_app(app)
 
+# Import tasks to ensure they are registered with the Celery worker
+import tasks
+
 # --- Logging Setup ---
 # This runs only in production-like environments (not in debug mode)
 if not app.debug and not app.testing:
