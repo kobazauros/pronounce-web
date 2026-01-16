@@ -166,12 +166,13 @@ Tech Stack: Flask, SQLite (Dev) / PostgreSQL (Prod), SQLAlchemy, Flask-Login, Do
 
 ### **Phase 10: Scalability & Expansion (Post-MVP)**
 *Optimizing for 100+ concurrent users and Cross-Browser support.*
-*61 [ ] **Asynchronous Processing:** Move `process_submission` to a background worker (Celery + Redis) to prevent HTTP timeouts.
+*62 [ ] **Asynchronous Processing:** Move `process_submission` to a background worker (Celery + Redis) to prevent HTTP timeouts.
 *63 [ ] **CDN Integration:** Serve static audio reference files via Cloudflare/AWS S3.
 *64 [ ] **Cross-Browser Certification:**
     *   Expand support to **Firefox, Safari (iOS), and Edge**.
 
     *   Address browser-specific AudioContext quirks.
+*65 [ ] **Mobile App Wrapper:** Wrap PWA into TWA (Trusted Web Activity) for Play Store deployment.
 
 
 ## **Project Structure**

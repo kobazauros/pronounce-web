@@ -413,19 +413,43 @@
                 </svg>
             </div>
             <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">Delete User</h3>
-            <div class="mt-2 px-7 py-3">
-                <p class="text-sm text-gray-500">
-                    Are you sure you want to delete <strong id="modal-user-name"></strong>? This will permanently remove
-                    the user and all their associated data. This action cannot be undone.
+            <div class="mt-2 text-left">
+                <p class="text-sm text-gray-500 mb-4">
+                    Deleting a user is irreversible. Please confirm the scope of deletion:
                 </p>
+
+                <div class="space-y-3 mb-6">
+                    <label for="delete-user-confirm" class="flex items-start cursor-pointer">
+                        <input type="checkbox" id="delete-user-confirm"
+                            class="mt-1 h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                        <div class="ml-3 text-sm">
+                            <span class="font-medium text-gray-900">I confirm I want to delete this user</span>
+                            <p class="text-gray-500 text-xs">This action cannot be undone.</p>
+                        </div>
+                    </label>
+
+                    <label for="delete-user-submissions" class="flex items-start cursor-pointer">
+                        <input type="checkbox" id="delete-user-submissions" name="delete_submissions" checked disabled
+                            class="mt-1 h-4 w-4 text-gray-400 border-gray-300 rounded focus:ring-gray-500 bg-gray-100">
+                        <div class="ml-3 text-sm">
+                            <span class="font-medium text-gray-700">Delete all student submissions</span>
+                            <p class="text-gray-500 text-xs">Required. All user data must be cleaned up.</p>
+                        </div>
+                    </label>
+                </div>
             </div>
-            <div class="items-center px-4 py-3">
-                <button id="cancel-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 mr-2">
+
+            <div class="flex justify-end gap-3 px-4 py-3 bg-gray-50 rounded-b-md -mx-5 -mb-5 mt-4">
+                <button id="cancel-btn"
+                    class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 font-medium">
                     Cancel
                 </button>
                 <form id="delete-form" method="POST" action="" class="inline">
-                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
-                        Yes, Delete
+                    <!-- Implicitly pass delete_submissions=on because backend enforces it, 
+                         but visual feedback helps user understand scope -->
+                    <button type="submit" id="confirm-delete-btn" disabled
+                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm">
+                        Yes, Delete User
                     </button>
                 </form>
             </div>
@@ -499,6 +523,18 @@
     function openDeleteModal(userId, userName) {
         modalUserName.textContent = userName;
         userDeleteForm.action = `/dashboard/admin/user/${userId}/delete`;
+
+        // Reset state
+        const confirmCheckbox = document.getElementById('delete-user-confirm');
+        const submitBtn = document.getElementById('confirm-delete-btn');
+        if (confirmCheckbox) {
+            confirmCheckbox.checked = false;
+            confirmCheckbox.addEventListener('change', (e) => {
+                submitBtn.disabled = !e.target.checked;
+            });
+        }
+        if (submitBtn) submitBtn.disabled = true;
+
         userDeleteModal.classList.remove('hidden');
     }
 

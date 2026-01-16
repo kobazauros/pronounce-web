@@ -24,6 +24,21 @@
         </div>
     </div>
 
+    {% if analysis_data|length == 0 %}
+    <div class="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z">
+            </path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No Research Data</h3>
+        <p class="mt-1 text-sm text-gray-500">
+            No student recordings have been analyzed yet. Run vowel analysis on student submissions to populate this
+            dashboard.
+        </p>
+    </div>
+    {% else %}
+
     <!-- Charts Row 1: Main Analysis (Vowel Space + Histogram) -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
         <!-- Vowel Space (Takes 2/3 width) -->
@@ -111,39 +126,50 @@
             </table>
         </div>
     </div>
+    {% endif %}
+    <!-- Data Payload (Silences IDE Linter) -->
+    <script id="research-data" type="application/json">
+        {{ analysis_data | tojson }}
+    </script>
 </div>
 
 <script>
-    const rawData = {{ analysis_data | tojson }};
-    document.getElementById('total-samples').textContent = rawData.length;
+    const rawData = JSON.parse(document.getElementById('research-data').textContent);
+    const totalSamplesEl = document.getElementById('total-samples');
+    if (totalSamplesEl) totalSamplesEl.textContent = rawData.length;
 
     // --- 1. Populate Table ---
     const tableBody = document.querySelector('#dataTable tbody');
-    rawData.forEach(row => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td class="px-4 py-2 font-medium text-gray-900">${row.username}</td>
-            <td class="px-4 py-2 whitespace-nowrap">${row.student_id || '<span class="text-gray-400 italic">None</span>'}</td>
-            <td class="px-4 py-2 font-medium">${row.word}</td>
-            <td class="px-4 py-2">${row.vowel}</td>
-            <td class="px-4 py-2">${Math.round(row.f1_s)}</td>
-            <td class="px-4 py-2">${Math.round(row.f2_s)}</td>
-            <td class="px-4 py-2 ${row.dist_bark > 3 ? 'text-red-600 font-bold' : ''}">${row.dist_bark.toFixed(2)}</td>
-            <td class="px-4 py-2">${row.alpha.toFixed(2)}</td>
-            <td class="px-4 py-2">${row.is_outlier ? '<span class="text-red-500 font-bold">YES</span>' : '-'}</td>
-        `;
-        tableBody.appendChild(tr);
-    });
+    if (tableBody) {
+        rawData.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="px-4 py-2 font-medium text-gray-900">${row.username}</td>
+                <td class="px-4 py-2 whitespace-nowrap">${row.student_id || '<span class="text-gray-400 italic">None</span>'}</td>
+                <td class="px-4 py-2 font-medium">${row.word}</td>
+                <td class="px-4 py-2">${row.vowel}</td>
+                <td class="px-4 py-2">${Math.round(row.f1_s)}</td>
+                <td class="px-4 py-2">${Math.round(row.f2_s)}</td>
+                <td class="px-4 py-2 ${row.dist_bark > 3 ? 'text-red-600 font-bold' : ''}">${row.dist_bark.toFixed(2)}</td>
+                <td class="px-4 py-2">${row.alpha.toFixed(2)}</td>
+                <td class="px-4 py-2">${row.is_outlier ? '<span class="text-red-500 font-bold">YES</span>' : '-'}</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    }
 
     // --- Search Logic ---
-    document.getElementById('tableSearch').addEventListener('keyup', (e) => {
-        const term = e.target.value.toLowerCase();
-        const rows = tableBody.querySelectorAll('tr');
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(term) ? '' : 'none';
+    const searchInput = document.getElementById('tableSearch');
+    if (searchInput && tableBody) {
+        searchInput.addEventListener('keyup', (e) => {
+            const term = e.target.value.toLowerCase();
+            const rows = tableBody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(term) ? '' : 'none';
+            });
         });
-    });
+    }
 
     // --- 2. Vowel Space Chart Logic ---
     const validData = rawData.filter(d => d.f1_s && d.f2_s && d.f1_r && d.f2_r);

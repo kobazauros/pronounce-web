@@ -95,16 +95,18 @@
                 <tr class="hover:bg-gray-50 transition-colors">
                     <!-- Student Name -->
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="flex items-center">
+                        <a href="{{ url_for('dashboards.student_detail', user_id=student.id) }}"
+                            class="flex items-center group">
                             <div
-                                class="flex-shrink-0 h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold">
+                                class="flex-shrink-0 h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold group-hover:bg-indigo-200 transition">
                                 {{ student.initials }}
                             </div>
                             <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-900">{{ student.name }}</div>
+                                <div class="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition">{{
+                                    student.name }}</div>
                                 <div class="text-sm text-gray-500">ID: {{ student.student_id }}</div>
                             </div>
-                        </div>
+                        </a>
                     </td>
 
                     <!-- Pre-Test Progress -->
