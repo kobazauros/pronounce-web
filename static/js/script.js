@@ -593,6 +593,9 @@ function resetStageData() {
 async function startNoiseMonitor() {
     if (isMonitoring) return;
 
+    // FIX: Only start monitoring if we are on a page with a recorder
+    if (!document.getElementById('record-start')) return;
+
     if (!UI.noiseIcon) UI.noiseIcon = document.getElementById('noise-indicator-icon');
     if (!UI.noiseLevel) UI.noiseLevel = document.getElementById('noise-level-display');
 
@@ -1252,7 +1255,7 @@ if (UI.submitBtn) UI.submitBtn.onclick = async (e) => {
                 await new Promise(r => setTimeout(r, 1000)); // Wait 1s
                 const pollRes = await fetch(`/api/status/${taskId}`);
                 const pollData = await pollRes.json();
-                
+
                 if (pollData.status === 'success' || pollData.status === 'error') {
                     data = pollData;
                     polling = false;
