@@ -23,11 +23,39 @@ def migrate_data():
     Migrates data from the current Flask-SQLAlchemy DB (SQLite) to a target PostgreSQL DB.
     """
     postgres_uri = os.environ.get("DATABASE_URL")
+
+    # Interactive Prompt if missing
     if not postgres_uri:
-        logger.error("DATABASE_URL environment variable is not set.")
-        logger.error(
-            "Usage: set DATABASE_URL=postgresql://user:pass@host/dbname && python utility/migrate_to_postgres.py"
-        )
+        print("DATABASE_URL not found in environment.")
+        print("Please enter PostgreSQL credentials to connect and migrate:")
+
+        db_user = input("DB User (default: postgres): ").strip() or "postgres"
+        db_pass = input("DB Password (leave blank if none): ").strip()
+        db_host = input("DB Host (default: localhost): ").strip() or "localhost"
+        db_name = input("DB Name (default: pronounce_db): ").strip() or "pronounce_db"
+
+        if db_pass:
+            postgres_uri = f"postgresql://{db_user}:{db_pass}@{db_host}/{db_name}"
+        else:
+            postgres_uri = f"postgresql://{db_user}@{db_host}/{db_name}"
+
+        print(f"\nConstructed URI: {postgres_uri}")
+
+        # Persistence Prompt
+        save = input("Save this to .env file for future use? (y/N): ").strip().lower()
+        if save == "y":
+            env_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"
+            )
+            try:
+                with open(env_path, "a") as f:
+                    f.write(f"\nDATABASE_URL={postgres_uri}\n")
+                print(f"Saved to {env_path}")
+            except Exception as e:
+                logger.error(f"Failed to write .env: {e}")
+
+    if not postgres_uri:
+        logger.error("No DATABASE_URL provided. Exiting.")
         sys.exit(1)
 
     logger.info("Starting migration...")
