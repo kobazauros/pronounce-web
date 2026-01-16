@@ -147,5 +147,5 @@ This script reads your credentials from `.vscode/sftp.json` and performs safe tr
 ### Updates
 To deploy new code:
 1.  `git pull`
-2.  `pip install -r requirements.prod.txt` (if deps changed)
+2.  `pip install -r requirements.txt` (if deps changed)
 3.  `sudo systemctl restart pronounce-web`
