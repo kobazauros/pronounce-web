@@ -162,11 +162,11 @@ Tech Stack: Flask, SQLite (Dev) / PostgreSQL (Prod), SQLAlchemy, Flask-Login, Do
 *58 [ ] **Application Server:** Gunicorn with `gthread` workers to handle concurrent I/O (audio processing blocking).
 *59 [ ] **Security:** SSL (Let's Encrypt), Rate Limiting (Flask-Limiter) to prevent abuse.
 *60 [ ] **Observability:** Sentry integration for real-time error tracking and performance monitoring.
+*61 [ ] **Database Migration:** Migrate from SQLite (disk-locked) to PostgreSQL (concurrent-safe).
 
 ### **Phase 10: Scalability & Expansion (Post-MVP)**
 *Optimizing for 100+ concurrent users and Cross-Browser support.*
 *61 [ ] **Asynchronous Processing:** Move `process_submission` to a background worker (Celery + Redis) to prevent HTTP timeouts.
-*62 [ ] **Database Migration:** Migrate from SQLite (disk-locked) to PostgreSQL (concurrent-safe).
 *63 [ ] **CDN Integration:** Serve static audio reference files via Cloudflare/AWS S3.
 *64 [ ] **Cross-Browser Certification:**
     *   Expand support to **Firefox, Safari (iOS), and Edge**.

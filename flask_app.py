@@ -26,6 +26,21 @@ from models import Submission, SystemConfig, User, Word, db
 from scripts.audio_processing import process_audio_data
 
 # 1. Initialize Flask Application
+# --- Sentry Integration (Production Observability) ---
+try:
+    import sentry_sdk  # type: ignore
+    from sentry_sdk.integrations.flask import FlaskIntegration  # type: ignore
+except ImportError:
+    sentry_sdk = None
+
+if sentry_sdk and os.environ.get("SENTRY_DSN"):
+    sentry_sdk.init(
+        dsn=os.environ.get("SENTRY_DSN"),
+        integrations=[FlaskIntegration()],
+        traces_sample_rate=1.0,  # Capture 100% of transactions for performance monitoring
+        profiles_sample_rate=1.0,  # Profile 100% of sampled transactions
+    )
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
@@ -303,10 +318,13 @@ def submit_recording() -> Response | tuple[Response, int]:
         return jsonify({"error": "Word not found"}), 404
 
     # 1. Create Submission Record
+    test_type = data.get("test_type", "pre")  # Default to 'pre' if not provided
+
     sub = Submission(
         user_id=current_user.id,
         word_id=word.id,
         file_path=file_path,
+        test_type=test_type,
         # Score will be updated after analysis
     )
     db.session.add(sub)
