@@ -121,8 +121,9 @@ def admin_dashboard():
     cpu_load_percent = "N/A"
     try:
         # Get CPU load over a slightly longer interval for better accuracy
-        # usage=0.0 is common on powerful servers with low load if interval is too short
-        cpu_load_percent = psutil.cpu_percent(interval=0.1)
+        # usage=0.0 is common on first call, but subsequent calls in same worker return valid utilization since last call
+        # interval=None is non-blocking
+        cpu_load_percent = psutil.cpu_percent(interval=None)
     except Exception as e:
         # Log the error to debug why it might be failing
         current_app.logger.error(f"Error reading CPU load: {e}")

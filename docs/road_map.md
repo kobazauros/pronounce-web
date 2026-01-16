@@ -164,15 +164,19 @@ Tech Stack: Flask, SQLite (Dev) / PostgreSQL (Prod), SQLAlchemy, Flask-Login, Do
 *60 [x] **Observability:** Sentry integration for real-time error tracking and performance monitoring.
 *61 [x] **Database Migration:** Migrate from SQLite (disk-locked) to PostgreSQL (concurrent-safe).
 
-### **Phase 10: Scalability & Expansion (Post-MVP)**
+### **Phase 10: Scalability & Expansion**
 *Optimizing for 100+ concurrent users and Cross-Browser support.*
 *62 [x] **Asynchronous Processing:** Move `process_submission` to a background worker (Celery + Redis) to prevent HTTP timeouts.
-*63 [ ] **CDN Integration:** Serve static audio reference files via Cloudflare/AWS S3.
-*64 [ ] **Cross-Browser Certification:**
+*63 [x] **Deployment Automation:** Created `scripts/deploy.py` for one-click updates (Git pull, pip install, service restart).
+*64 [x] **Concurrency Stress Testing:** Verified system stability with 50+ concurrent users using `scripts/concurrent_test.py`.
+
+### **Phase 11: Post-MVP Expansion (If investor is found)**
+*65 [ ] **CDN Integration:** Serve static audio reference files via Cloudflare/AWS S3.
+*66 [ ] **Cross-Browser Certification:**
     *   Expand support to **Firefox, Safari (iOS), and Edge**.
 
     *   Address browser-specific AudioContext quirks.
-*65 [ ] **Mobile App Wrapper:** Wrap PWA into TWA (Trusted Web Activity) for Play Store deployment.
+*67 [ ] **Mobile App Wrapper:** Wrap PWA into TWA (Trusted Web Activity) for Play Store deployment.
 
 
 ## **Project Structure**

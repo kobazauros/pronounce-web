@@ -78,7 +78,37 @@ We implemented a **Cumulative VTLN** approach in `analysis_engine.py`:
     *   Captures full stack traces, user context (ID), and request data.
     *   Wrapped in `try/except` to ensure local development works without credentials.
     
-## 4. Development Workflow: Code vs. Data
+## 4. Asynchronous Processing & Scalability (Jan 2026)
+
+### Async Architecture (Celery + Redis)
+*   **Problem:** Deep audio analysis (Praat/parsneelmouth) takes 2-5 seconds. High-fidelity uploads via Nginx could time out, and synchronous processing blocked the main Gunicorn web workers, severely limiting concurrency (1 worker = 1 user).
+*   **Solution:** Decoupled the request-response cycle from the analysis logic.
+    *   **Broker:** Redis (`redis-server`).
+    *   **Worker:** Celery (`pronounce-celery.service`).
+*   **New Workflow:**
+    1.  **Upload:** User POSTs audio. Server saves file, creates `Submission` (status: 'processing'), and pushes job to Redis. Returns `202 Accepted` + `task_id` immediately.
+    2.  **Processing:** Background Celery worker picks up the job, runs `analysis_engine.py`, and updates the database record.
+    3.  **Polling:** Client polls `/api/status/<task_id>` every 1s until completion.
+*   **Impact:** Web server remains free to handle new requests instantly.
+
+### Automated Deployment
+*   **Script:** `scripts/deploy.py`
+*   **Purpose:** Eliminates manual SSH errors and ensures consistent environment updates.
+*   **Capabilities:**
+    *   **Git:** Hard resets and pulls latest `main` branch.
+    *   **Dependencies:** Auto-installs `pip` requirements in `.venv`.
+    *   **Services:** Restarts `pronounce-web` and `pronounce-celery`.
+    *   **Fixes:** Auto-corrects shebang paths if the venv moves.
+
+### Concurrency Stress Testing
+*   **Tool:** `scripts/concurrent_test.py`
+*   **Methodology:**
+    *   Scans `dataset/forvo` for real user audio.
+    *   Spawns **50 concurrent threads** (representing 50 simultaneous students).
+    *   Simulates the full lifecycle: Registration -> Login -> Audio Upload -> Result Polling.
+*   **Result:** Validated system stability under load (0 crashes, <4s average processing time).
+
+## 5. Development Workflow: Code vs. Data
 
 To prevent production data loss during rapid development cycles, we have enforced a strict separation of concerns in our tooling.
 
