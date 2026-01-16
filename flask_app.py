@@ -352,10 +352,8 @@ def submit_recording() -> Response | tuple[Response, int]:
     db.session.commit()
 
     # 2. Trigger Analysis Engine (ASYNC)
-    from tasks import async_process_submission
-
-    # Launch background task
-    task = async_process_submission.delay(sub.id)
+    # Use send_task to avoid circular imports and type checker issues
+    task = celery.send_task("tasks.async_process_submission", args=[sub.id])
 
     return jsonify({"status": "processing", "task_id": task.id}), 202
 
@@ -383,25 +381,12 @@ def get_task_status(task_id):
     else:
         return jsonify({"status": "processing"})
 
+    # Ensure default config exists
+    if not SystemConfig.get("maintenance_mode"):
+        SystemConfig.set("maintenance_mode", "False")
 
-# 7. CLI Commands
-@app.cli.command("create-admin")
-@click.argument("username")
-@click.argument("password")
-def create_admin(username, password):
-    """Create an admin user."""
-    user = User(username=username, role="admin")
-    user.set_password(password)
-    db.session.add(user)
     db.session.commit()
-    print(f"Admin {username} created!")
-
-
-@app.cli.command("init-db")
-def init_db_command():
-    """Clear existing data and create new tables."""
-    db.create_all()
-    print("Initialized the database.")
+    print("Initialized the database with default config.")
 
 
 @app.cli.command("process-submission")

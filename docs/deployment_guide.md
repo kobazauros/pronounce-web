@@ -144,8 +144,11 @@ This script reads your credentials from `.vscode/sftp.json` and performs safe tr
 *   **Application:** `sudo journalctl -u pronounce-web -f`
 *   **Web Server:** `sudo tail -f /var/log/nginx/error.log`
 
-### Updates
-To deploy new code:
-1.  `git pull`
-2.  `pip install -r requirements.txt` (if deps changed)
-3.  `sudo systemctl restart pronounce-web`
+### Updates (Automated)
+We have a script to automate the entire update process (pull, pip install, restart services).
+
+**From your LOCAL machine:**
+```bash
+python scripts/deploy.py
+```
+*Use `python scripts/deploy.py --force` if you have conflicting files on the server and want to overwrite them.*

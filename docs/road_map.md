@@ -196,6 +196,7 @@ c:\Users\rookie\Documents\Projects\pronounce-web\
 │   └───analyse_vowel.md
 ├───utility\                (Helper scripts)
 │   ├───migrate_to_postgres.py
+│   ├───manage_admin.py  │   ├───migrate_to_postgres.py
 │   ├───manage_admin.py     (CLI User Management)
 │   └───setup_vps.sh        (Auto-provisioning)
 ├───scripts\                (Data/Audio Processing)

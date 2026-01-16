@@ -43,6 +43,14 @@ We separate **Code Sync** from **Data Sync** to prevent accidents.
     *   **Download All Data:** `python scripts/sync_data.py all`
     *   **Upload (Danger):** `python scripts/sync_data.py all --push`
 
+## 🛠 Management CLI
+
+We have separate tools for different management tasks:
+
+*   **Create Admin:** `python utility/manage_admin.py create [username]`
+*   **Init Database:** `flask init-db` (Sets up tables & default config)
+*   **Deploy (Automated):** `python scripts/deploy.py --force`
+
 ## 🏗 Architecture
 
 *   **Backend:** Flask (Python)
