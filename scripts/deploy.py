@@ -110,7 +110,11 @@ def main():
     commands.extend(
         [
             (
-                f"cd {remote_path} && source .venv/bin/activate && pip install -r requirements.txt",
+                f"cd {remote_path} && python3 -m venv .venv",
+                "Ensuring Virtual Environment exists",
+            ),
+            (
+                f"cd {remote_path} && .venv/bin/python -m pip install -r requirements.txt",
                 "Installing/Updating dependencies",
             ),
             # 4. Restart Services
