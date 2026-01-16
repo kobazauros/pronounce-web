@@ -117,6 +117,11 @@ def main():
                 f"cd {remote_path} && .venv/bin/python -m pip install -r requirements.txt",
                 "Installing/Updating dependencies",
             ),
+            (
+                f"cd {remote_path} && .venv/bin/python -m pip install --force-reinstall --no-deps gunicorn",
+                "Fixing Gunicorn Shebangs (Force Reinstall)",
+            ),
+            # 4. Restart Services
             # 4. Restart Services
             (f"sudo systemctl restart pronounce-web", "Restarting Web Server"),
             (
