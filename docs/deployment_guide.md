@@ -73,7 +73,31 @@ We use PostgreSQL in production for checking concurrency locking issues.
     ```
     *This interactive script will copy all data from the local SQLite (`instance/pronounce.db`) to the production PostgreSQL database.*
 
+    *This interactive script will copy all data from the local SQLite (`instance/pronounce.db`) to the production PostgreSQL database.*
+
 ---
+
+## 5. Managing Production Data (Backup & Sync)
+
+Since we treat **Code** and **Data** separately, you cannot use standard VS Code SFTP to download the database or user audio files. Use the provided utility script instead.
+
+### Prerequisites
+```bash
+pip install paramiko
+```
+
+### Sync Utility (`scripts/sync_data.py`)
+This script reads your credentials from `.vscode/sftp.json` and performs safe transfers.
+
+| Action | Command | Description |
+| :--- | :--- | :--- |
+| **Download DB** | `python scripts/sync_data.py db` | Downloads `instance/pronounce.db` to your local machine. |
+| **Download Audio** | `python scripts/sync_data.py audio` | Downloads `static/audio/` (Reference files). |
+| **Download User Audio** | `python scripts/sync_data.py submissions` | Downloads `submissions/` (Student recordings). |
+| **Full Backup** | `python scripts/sync_data.py all` | Downloads **ALL** data. |
+| **Upload (Restore)** | `python scripts/sync_data.py all --push` | **WARNING:** Overwrites production data. Use with caution. |
+
+> **Note:** The VS Code SFTP plugin is configured to **ignore** these data directories to prevent accidental deletion or corruption during code edits.
 
 ## 4. Monitoring & Maintenance
 

@@ -77,3 +77,16 @@ We implemented a **Cumulative VTLN** approach in `analysis_engine.py`:
     *   Integrated `sentry-sdk[flask]`.
     *   Captures full stack traces, user context (ID), and request data.
     *   Wrapped in `try/except` to ensure local development works without credentials.
+    
+## 4. Development Workflow: Code vs. Data
+
+To prevent production data loss during rapid development cycles, we have enforced a strict separation of concerns in our tooling.
+
+*   **Code (.py, .js, .html):** managed via **VS Code SFTP**.
+    *   *Constraint:* Configured to explicitly **IGNORE** `instance/`, `submissions/`, and `static/audio`.
+    *   *Reason:* Prevents `uploadOnSave` from accidentally overwriting the live database with a local empty test database.
+
+*   **Data (DB, Audio Assets):** managed via **`scripts/sync_data.py`**.
+    *   *Constraint:* Requires explicit command execution (not automatic).
+    *   *Reason:* Forces intent. You must consciously choose to download or overwrite production data.
+    *   *Implementation:* Uses `paramiko` to read `sftp.json` creds but executes independent logic.

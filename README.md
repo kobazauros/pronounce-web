@@ -24,6 +24,25 @@ A web-based pronunciation assessment tool using formant analysis and vocal tract
     flask run
     ```
 
+## 🔄 Data Synchronization
+
+We separate **Code Sync** from **Data Sync** to prevent accidents.
+
+### 1. Code (VS Code SFTP)
+*   **Tools:** VS Code SFTP Plugin
+*   **Purpose:** Syncs `.py`, `.html`, `.css`, `.js`
+*   **Ignores:** Database (`instance/`), Audio (`static/audio`), Submissions (`submissions/`)
+*   **Config:** `.vscode/sftp.json`
+
+### 2. Data & Database (Python Script)
+*   **Tool:** `scripts/sync_data.py`
+*   **Purpose:** Safely syncs production data (DB/Audio) without overwriting.
+*   **Usage:**
+    *   **Install:** `pip install paramiko`
+    *   **Download DB:** `python scripts/sync_data.py db` (Safe)
+    *   **Download All Data:** `python scripts/sync_data.py all`
+    *   **Upload (Danger):** `python scripts/sync_data.py all --push`
+
 ## 🏗 Architecture
 
 *   **Backend:** Flask (Python)
