@@ -357,7 +357,7 @@ def submit_recording() -> Response | tuple[Response, int]:
 
             if dist < 1.5:
                 score_cat = "success"
-            elif dist < 3.5:
+            elif dist < 3.0:
                 score_cat = "warning"
 
             # Save simplified score to Submission for quick access

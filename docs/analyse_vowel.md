@@ -1,20 +1,16 @@
 **Pass 1: Raw Formant Analysis**
-This is the initial data extraction phase, performed by the analyze_raw_data function on each student's audio file.
+This phase is performed by the `AnalysisEngine` (server-side) whenever a student submits audio.
 
-***File Discovery:*** (now all the files are in DB)
-The script scans the submissions directory for all *.mp3 files.
+***Data Loading:***
+The engine retrieves the submission record from the Database.
+It resolves the paths:
+*   Student Audio: `uploads/1/uuid-hash.mp3`
+*   Reference Audio: `static/audio/word.mp3`
 
-***Metadata Parsing:*** (now all the files are in DB)
-For each file, it extracts the student ID, student name, and the spoken word from the filename (e.g., 1_John-Doe_book.mp3).
-
-***Audio Loading:***
-The student's audio file and the corresponding reference audio file (e.g., static/audio/book.mp3) are loaded. The load_audio_mono function ensures the audio is:
-Converted to mono.
-Resampled to a consistent sample rate (16000 Hz).
-Volume-normalized to prevent loudness from affecting the analysis.
+It loads both files using `librosa`, converts them to Mono (16kHz), and normalizes loudness.
 
 ***Syllable Nucleus Detection:***
-The find_syllable_nucleus function identifies the core, loudest part of the vowel in the recording. It does this by analyzing the audio's pitch and intensity to find the most prominent voiced segment.
+The `find_syllable_nucleus` function identifies the core, loudest part of the vowel in the recording. It does this by analyzing the audio's pitch and intensity to find the most prominent voiced segment.
 
 ***Formant Measurement:***
 The measure_formants function measures the F1 and F2 frequencies (which correspond to vowel quality) within the detected syllable nucleus.

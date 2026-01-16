@@ -176,43 +176,33 @@ Tech Stack: Flask, SQLite (Dev) / PostgreSQL (Prod), SQLAlchemy, Flask-Login, Do
 
 ## **Project Structure**
 
-```
 c:\Users\rookie\Documents\Projects\pronounce-web\
-├───.gitignore
-├───analyze_vowels.ipynb
-├───analyze_vowels.py
-├───auth_routes.py
-├───config.py
-├───dashboard_routes.py
-├───flask_app.py
-├───models.py
-├───readme.md
-├───requirements.txt
-├───road_map.md
-├───sync_project_files.py
-├───__pycache__\
-├───docs\
-│   └───road_map.md
-├───utility\
-│   ├───migrate_all_data.py
-│   ├───deploy_pa_helpers.py (To be deleted)
-│   └───setup_vps.sh (Coming soon)
-├───scripts\
-│   ├───__init__.py
-│   ├───audio_processing.py
-│   └───parser.py
-├───tests\
-│   ├───conftest.py
-│   └───test_routes.py
-├───archive\ (Obsolete scripts)
-├───static\
-├───templates\
-├───analysis_engine.py
-├───auth_routes.py
-├───config.py
-├───dashboard_routes.py
-├───flask_app.py
-├───models.py
-├───requirements.txt
-└───wsgi.py (To be deleted)
-```
+├───analysis_engine.py      (Core audio analysis logic)
+├───auth_routes.py          (Authentication endpoints)
+├───config.py               (Flask configuration)
+├───dashboard_routes.py     (Main UI/Dashboard logic)
+├───flask_app.py            (App factory sources)
+├───gunicorn_config.py      (Production server config)
+├───models.py               (Database Schema)
+├───wsgi.py                 (Production entry point)
+├───requirements.txt        (Local dev dependencies)
+├───requirements.prod.txt   (Production dependencies)
+├───docs\                   (Documentation)
+│   ├───deployment_guide.md
+│   ├───development.md
+│   ├───road_map.md
+│   ├───readme.md
+│   └───analyse_vowel.md
+├───utility\                (Helper scripts)
+│   ├───migrate_to_postgres.py
+│   ├───manage_admin.py     (CLI User Management)
+│   └───setup_vps.sh        (Auto-provisioning)
+├───scripts\                (Data/Audio Processing)
+│   ├───audio_processing.py (Helper functions)
+│   ├───parser.py           (IPA/Scraping tools)
+│   └───...
+├───deploy\                 (Nginx configs)
+├───migrations\             (Alembic/Flask-Migrate versions)
+├───static\                 (CSS/JS/Assets)
+├───templates\              (HTML Jinja2)
+└───tests\                  (Pytest suite)

@@ -84,9 +84,36 @@ def delete_admin(username):
         if click.confirm(
             f"Are you sure you want to delete admin '{username}'? This cannot be undone."
         ):
+            # 1. Clean up potential submissions (mostly for testing)
+            from models import Submission
+
+            submissions = Submission.query.filter_by(user_id=user.id).all()
+            for sub in submissions:
+                if sub.file_path:
+                    # Construct absolute path assuming default upload folder structure
+                    # We need to reach into app config, but we are in app_context so current_app works?
+                    # No, we are in 'with app.app_context()', so 'app' is available.
+                    upload_folder = app.config.get("UPLOAD_FOLDER", "uploads")
+                    full_path = os.path.join(upload_folder, sub.file_path)
+                    if os.path.exists(full_path):
+                        try:
+                            os.remove(full_path)
+                        except OSError:
+                            pass
+                db.session.delete(sub)
+
+            # 2. Clean up user directory if exists
+            user_upload_dir = os.path.join(
+                app.config.get("UPLOAD_FOLDER", "uploads"), str(user.id)
+            )
+            if os.path.exists(user_upload_dir):
+                import shutil
+
+                shutil.rmtree(user_upload_dir)
+
             db.session.delete(user)
             db.session.commit()
-            click.echo(f"Admin user '{username}' deleted.")
+            click.echo(f"Admin user '{username}' and associated data deleted.")
 
 
 @cli.command("list")

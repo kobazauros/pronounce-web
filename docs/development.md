@@ -61,3 +61,19 @@ We implemented a **Cumulative VTLN** approach in `analysis_engine.py`:
     *   Instead of enabling aggressive software filtering (which distorts vowel formants), we chose to enforce **Environmental Requirements**.
     *   **UI Update:** Added "Best Practices" modal to the recorder.
     *   **Documentation:** Updated manuals to explicitly state "Quiet Room Required" for High Fidelity Mode.
+
+## 3. Infrastructure & Observability (Jan 2026)
+
+### Database Migration (SQLite to PostgreSQL)
+*   **Problem:** SQLite caused "Database Locked" errors during concurrent audio submissions because it locks the entire file for writes.
+*   **Solution:** Migrated to PostgreSQL, which supports row-level locking and true concurrency.
+*   **Implementation:** 
+    *   Created `utility/migrate_to_postgres.py` to transfer data while preserving foreign key relationships.
+    *   Updated `models.py` to be compatible with both (using SQLAlchemy abstraction).
+
+### Observability (Sentry)
+*   **Goal:** Catch unhandled exceptions in production without ssh-ing into logs.
+*   **Implementation:**
+    *   Integrated `sentry-sdk[flask]`.
+    *   Captures full stack traces, user context (ID), and request data.
+    *   Wrapped in `try/except` to ensure local development works without credentials.

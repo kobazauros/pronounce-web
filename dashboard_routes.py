@@ -89,15 +89,31 @@ def admin_dashboard():
     db_size_str = "N/A"
     try:
         db_uri = current_app.config.get("SQLALCHEMY_DATABASE_URI", "")
+        db_size_bytes = 0
+
         if db_uri.startswith("sqlite:///"):
             # Correctly construct the absolute path from the basedir in config
             db_path = db_uri.split("sqlite:///")[1]
             if os.path.exists(db_path):
                 db_size_bytes = os.path.getsize(db_path)
-                if db_size_bytes < 1024**2:  # Less than 1 MB
-                    db_size_str = f"{db_size_bytes / 1024:.1f} KB"
-                else:  # Show as MB
-                    db_size_str = f"{db_size_bytes / (1024**2):.1f} MB"
+        elif "postgresql" in db_uri:
+            # Run query for Postgres
+            try:
+                from sqlalchemy import text
+
+                result = db.session.execute(
+                    text("SELECT pg_database_size(current_database());")
+                ).scalar()
+                if result:
+                    db_size_bytes = int(result)
+            except Exception as e:
+                current_app.logger.warning(f"Could not get PG DB size: {e}")
+
+        if db_size_bytes > 0:
+            if db_size_bytes < 1024**2:  # Less than 1 MB
+                db_size_str = f"{db_size_bytes / 1024:.1f} KB"
+            else:  # Show as MB
+                db_size_str = f"{db_size_bytes / (1024**2):.1f} MB"
     except Exception:
         pass  # Keep it as N/A if anything goes wrong
 
@@ -764,14 +780,39 @@ def delete_user(user_id):
                 f"Cascade deleted invite code '{invite_used.code}' used by '{user_to_delete.username}'"
             )
 
+        # 1b. Cascade Delete: Remove InviteCodes CREATED by this user (e.g. Teacher)
+        # Assuming we just want to delete them. Alternatively, we could nullify 'created_by'.
+        created_invites = InviteCode.query.filter_by(created_by=user_to_delete.id).all()
+        for inv in created_invites:
+            db.session.delete(inv)
+
+        if created_invites:
+            current_app.logger.info(
+                f"Cascade deleted {len(created_invites)} invites created by '{user_to_delete.username}'"
+            )
+
         # 2. Delete submission records from DB
-        Submission.query.filter_by(user_id=user_to_delete.id).delete()
+        # CRITICAL: iterate to trigger ORM cascades (deletes AnalysisResult)
+        # Bulk delete ( .delete() ) would fail due to Postgres FK constraints
+        submissions = Submission.query.filter_by(user_id=user_to_delete.id).all()
+        for sub in submissions:
+            # Also delete physical file if needed
+            if sub.file_path:
+                full_path = os.path.join(
+                    current_app.config["UPLOAD_FOLDER"], sub.file_path
+                )
+                if os.path.exists(full_path):
+                    try:
+                        os.remove(full_path)
+                    except OSError:
+                        pass  # Warn but continue
+            db.session.delete(sub)
 
         # 3. Delete the user record from DB
         db.session.delete(user_to_delete)
         db.session.commit()
 
-        # 3. If DB deletion is successful, delete the physical files/directory
+        # 4. If DB deletion is successful, delete the physical files/directory
         if os.path.exists(user_upload_dir):
             shutil.rmtree(user_upload_dir)
 
