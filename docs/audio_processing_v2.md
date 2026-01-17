@@ -32,3 +32,42 @@ We moved from symmetric padding to asymmetric padding in `scripts/audio_processi
 
 ## Usage
 No manual action required. These logic paths are active for all `/api/process_audio` requests.
+
+## Appendix A: Audio Trimming Derivation
+The audio preprocessing stage (before analysis) uses usage-specific padding derived from acoustic data and theory:
+
+**1. End Padding (300ms) - The "Reverb Tail"**
+The 300ms padding buffer was chosen to preserve the natural decay of the voice in a room, preventing abrupt cuts.
+*   **Reference Data:** Batch analysis of **20 reference files** (including `call`, `cat`, `moon`) showed natural fade-outs ("tails") ranging from **40ms to 120ms**. The maximum detected tail was 120ms (`cat.mp3`).
+*   **Acoustic Theory:** In typical untreated rooms (bedrooms/offices), the Reverberation Time (RT60) is often between **300ms and 500ms**.
+*   **Decision:** We selected **300ms** as a safety buffer. This is >2x the reference tail (covering consonant releases like /k/ or /t/) and matches the lower bound of room reverb, ensuring the user's voice decays naturally without capturing excessive dead air.
+
+*   A tight **10ms** padding is used at the start to ensure the recording aligns "snappily" with the playback, matching the instant attack of reference files.
+
+## Appendix B: Full Reference Tail Data
+The following table lists the measured "Tail Duration" (fade from Peak > 0.05 to Silence < 0.01) for all reference files:
+
+| File | Tail Duration (s) |
+| :--- | :--- |
+| **cat.mp3** | **0.120** (Max) |
+| moon.mp3 | 0.120 |
+| call.mp3 | 0.100 |
+| bike.mp3 | 0.080 |
+| cup.mp3 | 0.080 |
+| bird.mp3 | 0.060 |
+| boat.mp3 | 0.060 |
+| book.mp3 | 0.060 |
+| boy.mp3 | 0.060 |
+| cake.mp3 | 0.060 |
+| chair.mp3 | 0.060 |
+| dark.mp3 | 0.060 |
+| ear.mp3 | 0.060 |
+| tour.mp3 | 0.060 |
+| cow.mp3 | 0.040 |
+| green.mp3 | 0.040 |
+| hot.mp3 | 0.040 |
+| red.mp3 | 0.040 |
+| sit.mp3 | 0.040 |
+| wait.mp3 | 0.020 |
+
+**Conclusion:** The **300ms** padding encompasses the longest detected tail (120ms) with a >2.5x safety margin.

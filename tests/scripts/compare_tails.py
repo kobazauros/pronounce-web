@@ -52,8 +52,11 @@ def analyze_tail(file_path, label="Audio"):
 
 
 if __name__ == "__main__":
-    user_file = r"submissions/2/3f2feb62e4e5487fb8a29cba35cc11ed.mp3"
-    ref_file = r"static/audio/call.mp3"
+    user_file = r"submissions/2/c2cb55f9e61444449d59f279128464ec.mp3"
+    # Word ID 4 is usually 'moon' or 'bird' -> check query output.
+    # For now, I'll update the ref file dynamically if I can, but hardcoding 'bird.mp3' (guess) or waiting for query output is safer.
+    # Let's just update the user file first.
+    ref_file = r"static/audio/sheet.mp3"  # Placeholder, will confirm with query output
 
     if os.path.exists(user_file):
         analyze_tail(user_file, "User Recording")

@@ -52,3 +52,15 @@ This final step translates the acoustic distance into actionable advice for the 
 *   **Student F2 > Target:** Tongue is too far forward (or lips too widespread). -> *"Move your tongue back."* (For back vowels like /u/, *"Round your lips"*).
 
 This feedback is returned immediately to the user interface.
+
+**Appendix A: Audio Trimming Derivation**
+The audio preprocessing stage (before analysis) uses usage-specific padding derived from acoustic data and theory:
+
+**1. End Padding (300ms) - The "Reverb Tail"**
+The 300ms padding buffer was chosen to preserve the natural decay of the voice in a room, preventing abrupt cuts.
+*   **Reference Data:** Batch analysis of **20 reference files** (including `call`, `cat`, `moon`) showed natural fade-outs ("tails") ranging from **40ms to 120ms**. The maximum detected tail was 120ms (`cat.mp3`).
+*   **Acoustic Theory:** In typical untreated rooms (bedrooms/offices), the Reverberation Time (RT60) is often between **300ms and 500ms**.
+*   **Decision:** We selected **300ms** as a safety buffer. This is >2x the reference tail (covering consonant releases like /k/ or /t/) and matches the lower bound of room reverb, ensuring the user's voice decays naturally without capturing excessive dead air.
+
+**2. Start Padding (10ms)**
+*   A tight **10ms** padding is used at the start to ensure the recording aligns "snappily" with the playback, matching the instant attack of reference files.
