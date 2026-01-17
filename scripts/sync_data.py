@@ -148,9 +148,51 @@ def main():
             else:
                 sync_dir_push(sftp, local_p, remote_p)
         else:
-            print(
-                f"📥 PULLING {item.upper()} (Not implemented in this repair script)..."
-            )
+            print(f"📥 PULLING {item.upper()}...")
+            sync_dir_pull(sftp, remote_p, local_p)
+
+
+def sync_dir_pull(sftp, remote_dir, local_dir):
+    """Downloads remote directory to local, recursively."""
+    local_path = Path(local_dir)
+    print(f"📂 Syncing {remote_dir} -> {local_path}")
+
+    if not local_path.exists():
+        os.makedirs(local_path)
+
+    # Walk remote directory. SFTP doesn't have os.walk, so we do recursive listdir
+    def walk_remote(rem_path, loc_path):
+        try:
+            items = sftp.listdir_attr(rem_path)
+        except IOError:
+            print(f"⚠️ Remote dir not found: {rem_path}")
+            return
+
+        for item in items:
+            r_item = f"{rem_path}/{item.filename}"
+            l_item = os.path.join(loc_path, item.filename)
+
+            if S_ISDIR(item.st_mode):
+                if not os.path.exists(l_item):
+                    os.makedirs(l_item)
+                walk_remote(r_item, l_item)
+            else:
+                # File
+                download = False
+                if not os.path.exists(l_item):
+                    download = True
+                else:
+                    l_stat = os.stat(l_item)
+                    if item.st_size != l_stat.st_size:
+                        download = True
+
+                if download:
+                    print(f"   ⬇️ Downloading: {item.filename}")
+                    sftp.get(r_item, l_item)
+
+    from stat import S_ISDIR
+
+    walk_remote(remote_dir, str(local_path))
 
     sftp.close()
     ssh.close()

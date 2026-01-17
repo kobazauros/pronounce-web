@@ -64,5 +64,8 @@ def debug_trim(file_path):
 
 
 if __name__ == "__main__":
-    target_file = r"c:\Users\rookie\Documents\Projects\pronounce-web\7982be4e74214290a6293da90b121e26.mp3"
+    if len(sys.argv) > 1:
+        target_file = sys.argv[1]
+    else:
+        target_file = r"c:\Users\rookie\Documents\Projects\pronounce-web\7982be4e74214290a6293da90b121e26.mp3"
     debug_trim(target_file)
