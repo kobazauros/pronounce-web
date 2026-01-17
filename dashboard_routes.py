@@ -392,12 +392,22 @@ def research_dashboard():
                 "student_id": user.student_id,
                 "word": word.text,
                 "vowel": word.stressed_vowel,
-                "f1_s": res.f1_norm,  # Normalized Student
-                "f2_s": res.f2_norm,
-                "f1_r": res.f1_ref,  # Reference
-                "f2_r": res.f2_ref,
-                "dist_bark": res.distance_bark,
-                "alpha": res.scaling_factor,
+                "f1_s": (
+                    res.f1_norm if res.f1_norm == res.f1_norm else None
+                ),  # Check for NaN
+                "f2_s": res.f2_norm if res.f2_norm == res.f2_norm else None,
+                "f1_r": res.f1_ref if res.f1_ref == res.f1_ref else None,
+                "f2_r": res.f2_ref if res.f2_ref == res.f2_ref else None,
+                "dist_bark": (
+                    res.distance_bark
+                    if res.distance_bark == res.distance_bark
+                    else None
+                ),
+                "alpha": (
+                    res.scaling_factor
+                    if res.scaling_factor == res.scaling_factor
+                    else 1.0
+                ),
                 "is_outlier": res.is_outlier,
             }
         )

@@ -165,14 +165,20 @@
             const term = e.target.value.toLowerCase();
             const rows = tableBody.querySelectorAll('tr');
             rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
+                const cols = row.querySelectorAll('td');
+                // Search in Username (0), Student ID (1), and Word (2)
+                const text = `${cols[0].textContent} ${cols[1].textContent} ${cols[2].textContent}`.toLowerCase();
                 row.style.display = text.includes(term) ? '' : 'none';
             });
         });
     }
 
     // --- 2. Vowel Space Chart Logic ---
-    const validData = rawData.filter(d => d.f1_s && d.f2_s && d.f1_r && d.f2_r);
+    // Ensure we only use data points where all F1/F2 values are present (not null)
+    const validData = rawData.filter(d =>
+        d.f1_s !== null && d.f2_s !== null &&
+        d.f1_r !== null && d.f2_r !== null
+    );
 
     // Extract unique vowels and sort them
     const uniqueVowels = [...new Set(validData.map(d => d.vowel))].sort();

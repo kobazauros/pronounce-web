@@ -8,11 +8,13 @@ from typing import Any, Optional, cast, List
 import click
 from flask import (
     Flask,
-    Response,
+    Response,  # type: ignore
     jsonify,
     render_template,
     request,
     send_from_directory,
+    redirect,
+    url_for,
 )
 from flask_login import LoginManager, current_user, login_required  # type: ignore
 from flask_migrate import Migrate
@@ -146,6 +148,8 @@ def index() -> str | Response:
     Redirects to login if not authenticated.
     """
     if current_user.is_authenticated:
+        if current_user.role == "teacher":
+            return redirect(url_for("dashboards.teacher_dashboard"))
         return render_template(
             "index.html",
             user=current_user,
