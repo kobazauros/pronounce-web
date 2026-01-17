@@ -36,8 +36,6 @@
                 </div>
                 {% if current_user.role == 'teacher' %}
                 <div class="hidden md:flex items-center space-x-1 ml-6 border-l border-slate-700 pl-6">
-                    <a href="{{ url_for('index') }}"
-                        class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Studio</a>
                     <a href="{{ url_for('dashboards.teacher_dashboard') }}"
                         class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Dashboard</a>
                     <a href="{{ url_for('dashboards.research_dashboard') }}"

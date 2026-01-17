@@ -144,14 +144,14 @@
         rawData.forEach(row => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td class="px-4 py-2 font-medium text-gray-900">${row.username}</td>
+                <td class="px-4 py-2 font-medium text-gray-900">${row.username || 'N/A'}</td>
                 <td class="px-4 py-2 whitespace-nowrap">${row.student_id || '<span class="text-gray-400 italic">None</span>'}</td>
-                <td class="px-4 py-2 font-medium">${row.word}</td>
-                <td class="px-4 py-2">${row.vowel}</td>
-                <td class="px-4 py-2">${Math.round(row.f1_s)}</td>
-                <td class="px-4 py-2">${Math.round(row.f2_s)}</td>
-                <td class="px-4 py-2 ${row.dist_bark > 3 ? 'text-red-600 font-bold' : ''}">${row.dist_bark.toFixed(2)}</td>
-                <td class="px-4 py-2">${row.alpha.toFixed(2)}</td>
+                <td class="px-4 py-2 font-medium">${row.word || 'N/A'}</td>
+                <td class="px-4 py-2">${row.vowel || 'N/A'}</td>
+                <td class="px-4 py-2">${row.f1_s !== null ? Math.round(row.f1_s) : '-'}</td>
+                <td class="px-4 py-2">${row.f2_s !== null ? Math.round(row.f2_s) : '-'}</td>
+                <td class="px-4 py-2 ${row.dist_bark !== null && row.dist_bark > 3 ? 'text-red-600 font-bold' : ''}">${row.dist_bark !== null ? row.dist_bark.toFixed(2) : '-'}</td>
+                <td class="px-4 py-2">${row.alpha !== null ? row.alpha.toFixed(2) : '-'}</td>
                 <td class="px-4 py-2">${row.is_outlier ? '<span class="text-red-500 font-bold">YES</span>' : '-'}</td>
             `;
             tableBody.appendChild(tr);
@@ -166,9 +166,15 @@
             const rows = tableBody.querySelectorAll('tr');
             rows.forEach(row => {
                 const cols = row.querySelectorAll('td');
-                // Search in Username (0), Student ID (1), and Word (2)
-                const text = `${cols[0].textContent} ${cols[1].textContent} ${cols[2].textContent}`.toLowerCase();
-                row.style.display = text.includes(term) ? '' : 'none';
+                if (cols.length >= 3) {
+                    // Search in Username (0), Student ID (1), and Word (2)
+                    const text = `${cols[0].textContent} ${cols[1].textContent} ${cols[2].textContent}`.toLowerCase();
+                    row.style.display = text.includes(term) ? '' : 'none';
+                } else {
+                    // Fallback to searching entire row if structure is unexpected
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(term) ? '' : 'none';
+                }
             });
         });
     }
