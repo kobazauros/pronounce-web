@@ -264,7 +264,7 @@ def api_process_audio() -> Response | tuple[Response, int]:
 
     file = request.files["audio"]
     # Get client noise floor if provided
-    noise_floor: Optional[float] = request.form.get("noise_floor", type=float)
+    noise_floor: Optional[float] = request.form.get("noiseFloor", type=float)
 
     if file.filename == "":
         return jsonify({"error": "No selected file"}), 400

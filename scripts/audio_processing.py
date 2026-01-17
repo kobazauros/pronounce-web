@@ -95,7 +95,7 @@ def process_audio_data(
                 end_sample = (end_frame + 1) * hop_length
 
                 # Padding: 50ms (0.05s) - Reduced from 100ms to fix leading silence on quick starts
-                padding = int(target_sr * 0.1)
+                padding = int(target_sr * 0.05)
 
                 start = max(0, start_sample - padding)
                 end = min(len(y), end_sample + padding)
