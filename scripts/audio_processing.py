@@ -72,8 +72,8 @@ def process_audio_data(
             local_floor = max(0.001, local_floor)
 
             # 2. Thresholds (RELAXED for trailing consonants)
-            # Originally 4.0x/2.5x - reduced to 2.0x/1.5x to catch quiet releases
-            vol_thresh = max(0.015, local_floor * 2.0)
+            # Originally 4.0x/2.5x - reduced even further to 0.010 to catch breathy starts
+            vol_thresh = max(0.010, local_floor * 2.0)
             sens_thresh = max(0.005, local_floor * 1.5)
             zcr_thresh = 0.1
 
@@ -94,8 +94,8 @@ def process_audio_data(
                 start_sample = start_frame * hop_length
                 end_sample = (end_frame + 1) * hop_length
 
-                # Padding: 50ms (0.05s) - Reduced from 100ms to fix leading silence on quick starts
-                padding = int(target_sr * 0.05)
+                # Padding: 10ms (0.01s) - Very tight for "snappy" start
+                padding = int(target_sr * 0.01)
 
                 start = max(0, start_sample - padding)
                 end = min(len(y), end_sample + padding)
