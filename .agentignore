@@ -1,0 +1,20 @@
+# Exclude system and environment
+.git
+.venv
+__pycache__
+node_modules
+.mypy_cache
+.pytest_cache
+
+# Exclude application data and logs
+archive/
+logs/
+instance/
+submissions/
+dataset/
+static/audio/
+
+# Exclude sensitive or local configs (if any)
+*.log
+*.sqlite3
+

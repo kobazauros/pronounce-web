@@ -75,7 +75,7 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <audio controls class="h-8 w-32">
-                            <source src="{{ url_for('get_submission_audio', filepath=sub.file_path) }}"
+                            <source src="{{ url_for('serve_upload', filename=sub.file_path) }}"
                                 type="audio/mpeg">
                         </audio>
                     </td>

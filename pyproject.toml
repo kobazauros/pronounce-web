@@ -1,0 +1,23 @@
+[project]
+name = "pronounce-web"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+[tool.basedpyright]
+# Use "." to tell basedpyright the venv is in this project folder
+venvPath = "."
+venv = ".venv"
+
+# Type checking settings (2026 recommended defaults)
+typeCheckingMode = "basic"  # Options: "off", "basic", "standard", "strict", "all"
+include = ["."]          # Change this to the directory containing your code
+exclude = [
+    "**/node_modules",
+    "**/__pycache__",
+    "archive",
+    "logs",
+    "migrations",
+    ".venv"
+]
+useLibraryCodeForTypes = true
+reportMissingTypeStubs = false
