@@ -1200,7 +1200,18 @@ if (UI.recStartBtn) UI.recStartBtn.onclick = async () => {
     }
 };
 
-if (UI.recStopBtn) UI.recStopBtn.onclick = () => { if (recorderNode) stopRecording(); };
+if (UI.recStopBtn) UI.recStopBtn.onclick = async () => {
+    if (!recorderNode) return;
+
+    // Immediate Feedback
+    if (UI.recStartBtn) UI.recStartBtn.disabled = true;
+    UI.recStopBtn.style.opacity = '0.5';
+    UI.recStopBtn.style.pointerEvents = 'none';
+    say('CAPTURING TAIL...');
+
+    // 500ms Safety Buffer to catch the "Tail"
+    setTimeout(stopRecording, 500);
+};
 if (UI.playUserBtn) UI.playUserBtn.onclick = async () => {
     if (!userBuf) return;
     logEvent('play_user', { word: selectedWord });
