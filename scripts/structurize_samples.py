@@ -1,14 +1,14 @@
 import shutil
-from operator import index
 import pathlib
-import pandas as pd
+import pandas as pd  # type: ignore
 import re
-import shutil
+from typing import Any, Dict, List, cast
+
 
 # Step 1: Efficient Data Loading
 # We build a list of dictionaries first, then create the DataFrame once.
 # This prevents the expensive operation of resizing the DataFrame for every row.
-data = []
+data: List[Dict[str, str]] = []
 root_dir = pathlib.Path(__file__).parent.parent.resolve()
 # audio_dir = root_dir / "samples"
 # INPUT: Archived raw samples
@@ -73,9 +73,9 @@ df_words = df_words.sort_values(by=["word_count"], ascending=False)  # type: ign
 df_words = df_words.drop("word_count", axis=1)  # Clean up helper col
 
 # Initialize counters for each word column
-word_cols = [c for c in df_words.columns if c != "user"]
-counts = {col: 0 for col in word_cols}
-keep_indices = []
+word_cols: List[str] = [c for c in df_words.columns if c != "user"]
+counts: Dict[str, int] = {col: 0 for col in word_cols}
+keep_indices: List[Any] = []
 
 # Iterate row-by-row
 for index, row in df_words.iterrows():
@@ -112,7 +112,7 @@ for word_dir in audio_dir.iterdir():
 for index, row in df_path_pruned.iterrows():
     shutil.copy(
         str(row["path"]),
-        str(audio_dir_new / row["word"] / str(row["nickname"]))
+        str(audio_dir_new / str(row["word"]) / str(row["nickname"]))
         + "_"
         + str(row["sex"])
         + "_"

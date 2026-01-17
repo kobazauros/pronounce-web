@@ -1,4 +1,6 @@
+# pyright: strict
 from datetime import datetime, timezone
+from typing import cast
 
 from flask import (
     Blueprint,
@@ -10,7 +12,12 @@ from flask import (
     request,
     url_for,
 )
-from flask_login import current_user, login_required, login_user, logout_user
+from flask_login import (  # type: ignore
+    current_user,  # type: ignore
+    login_required,  # type: ignore
+    login_user,  # type: ignore
+    logout_user,  # type: ignore
+)
 
 from models import SystemConfig, User, InviteCode, db
 
@@ -30,10 +37,10 @@ def login():
 
     if request.method == "POST":
         username = request.form.get("username")
-        password = request.form.get("password")
+        password = request.form.get("password", "")
         remember = True if request.form.get("remember") else False
 
-        user = User.query.filter_by(username=username).first()
+        user = cast(User | None, User.query.filter_by(username=username).first())
 
         if not user or not user.check_password(password):
             flash("Please check your login details and try again.", "danger")
@@ -85,14 +92,14 @@ def register():
             )
             return redirect(url_for("auth.register"))
 
-        user_exists = User.query.filter_by(username=username).first()
+        user_exists = cast(User | None, User.query.filter_by(username=username).first())
         if user_exists:
             flash("Username already exists.", "danger")
             return redirect(url_for("auth.register"))
 
         # Helper to validate student ID format
-        def is_valid_student_id(sid):
-            return sid and len(sid) == 10 and sid.isdigit()
+        def is_valid_student_id(sid: str) -> bool:
+            return bool(sid and len(sid) == 10 and sid.isdigit())
 
         # Check Role & Validate Logic
         role = "student"
@@ -101,9 +108,10 @@ def register():
         if invite_code and invite_code.strip():
             # Attempting to register as teacher
             code_str = invite_code.strip().upper()
-            invite_record = InviteCode.query.filter_by(
-                code=code_str, is_used=False
-            ).first()
+            invite_record = cast(
+                InviteCode | None,
+                InviteCode.query.filter_by(code=code_str, is_used=False).first(),
+            )
 
             if not invite_record:
                 flash("Invalid or already used invite code.", "danger")
@@ -190,7 +198,9 @@ def check_invite():
     if not code:
         return jsonify({"valid": False})
 
-    invite = InviteCode.query.filter_by(code=code, is_used=False).first()
+    invite = cast(
+        InviteCode | None, InviteCode.query.filter_by(code=code, is_used=False).first()
+    )
     return jsonify({"valid": True if invite else False})
 
 

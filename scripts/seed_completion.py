@@ -1,3 +1,4 @@
+# pyright: strict
 import sys
 import os
 
@@ -5,7 +6,8 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from flask_app import app, db, User, Word, Submission
-import uuid
+
+from typing import List, cast
 
 
 def seed_graduated_user():
@@ -15,7 +17,7 @@ def seed_graduated_user():
     print(f"Seeding user: {username}")
 
     # 1. Create/Get User
-    user = User.query.filter_by(username=username).first()
+    user = cast(User | None, User.query.filter_by(username=username).first())
     if not user:
         user = User(
             username=username,
@@ -31,7 +33,7 @@ def seed_graduated_user():
         print("User already exists.")
 
     # 2. Get all 20 words
-    words = Word.query.order_by(Word.sequence_order).limit(20).all()  # type: ignore
+    words = cast(List[Word], Word.query.order_by(Word.sequence_order).limit(20).all())  # type: ignore
     if len(words) < 20:
         print("WARNING: Less than 20 words in DB. Completing all available.")
 

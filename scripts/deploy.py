@@ -1,3 +1,4 @@
+# pyright: strict
 import argparse
 import sys
 import time
@@ -5,13 +6,14 @@ import json
 import os
 import paramiko
 from pathlib import Path
+from typing import Any, Dict, Tuple, cast
 
 # Constants for Config Loading
 PROJECT_ROOT = Path(__file__).parent.parent
 SFTP_CONFIG_PATH = PROJECT_ROOT / ".vscode" / "sftp.json"
 
 
-def load_config():
+def load_config() -> Dict[str, Any]:
     """Load SFTP configuration from .vscode/sftp.json"""
     if not SFTP_CONFIG_PATH.exists():
         print(f"❌ Error: Config file not found at {SFTP_CONFIG_PATH}")
@@ -25,14 +27,14 @@ def load_config():
             sys.exit(1)
 
 
-def get_sftp_client(config):
+def get_sftp_client(config: Dict[str, Any]) -> Tuple[Any, Any]:
     """Establish SFTP connection using config"""
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
         # Handle key path expansion
-        key_path = os.path.expanduser(config.get("privateKeyPath"))
+        key_path = os.path.expanduser(cast(str, config.get("privateKeyPath")))
 
         print(f"🔌 Connecting to {config['host']} as {config['username']}...")
         ssh.connect(
@@ -47,10 +49,10 @@ def get_sftp_client(config):
         sys.exit(1)
 
 
-def run_remote_command(ssh, command, description):
+def run_remote_command(ssh: Any, command: str, description: str) -> bool:
     """Execute a command on the remote server and print output."""
     print(f"🚀 {description}...")
-    stdin, stdout, stderr = ssh.exec_command(command)
+    _, stdout, stderr = ssh.exec_command(command)
 
     # Stream output
     exit_status = stdout.channel.recv_exit_status()

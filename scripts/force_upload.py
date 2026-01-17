@@ -1,7 +1,8 @@
+# pyright: strict
 from scripts.deploy import load_config, get_sftp_client
 
 
-def main():
+def main() -> None:
     config = load_config()
     sftp, ssh = get_sftp_client(config)
 

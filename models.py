@@ -1,6 +1,8 @@
+# pyright: strict
 from datetime import datetime, timezone
+from typing import cast
 
-from flask_login import UserMixin
+from flask_login import UserMixin  # type: ignore
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -221,7 +223,9 @@ class SystemConfig(db.Model):
     @staticmethod
     def get(key: str, default: str | None = None) -> str | None:
         """Helper to get a config value by key."""
-        config = SystemConfig.query.filter_by(key=key).first()
+        config = cast(
+            SystemConfig | None, SystemConfig.query.filter_by(key=key).first()
+        )
         return config.value if config else default
 
     @staticmethod
@@ -235,7 +239,9 @@ class SystemConfig(db.Model):
     @staticmethod
     def set(key: str, value: str | int | bool) -> None:
         """Helper to set a config value. The value is converted to a string."""
-        config = SystemConfig.query.filter_by(key=key).first()
+        config = cast(
+            SystemConfig | None, SystemConfig.query.filter_by(key=key).first()
+        )
         # No commit here, let the caller handle the transaction
         if not config:
             config = SystemConfig(key=key, value=str(value))

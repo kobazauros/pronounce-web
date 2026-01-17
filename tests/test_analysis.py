@@ -1,6 +1,5 @@
-import pytest
+# pyright: strict
 import numpy as np
-import math
 from analysis_engine import (
     hz_to_bark,
     get_vowel_type,

@@ -1,6 +1,8 @@
-from celery import shared_task
-from flask import current_app
-from models import Submission, db
+# pyright: strict
+from typing import Any, Dict, List, cast
+from celery import shared_task  # type: ignore
+from flask import current_app  # type: ignore
+from models import Submission, db, AnalysisResult
 from analysis_engine import process_submission
 import logging
 
@@ -8,8 +10,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-@shared_task(bind=True, max_retries=3, name="tasks.async_process_submission")
-def async_process_submission(self, submission_id):
+@shared_task(bind=True, max_retries=3, name="tasks.async_process_submission")  # type: ignore
+def async_process_submission(self: Any, submission_id: int) -> Dict[str, Any]:
     """
     Background task to process audio submission.
     """
@@ -28,11 +30,11 @@ def async_process_submission(self, submission_id):
         if success:
             # Refresh to get the analysis results that were saved to DB
             db.session.refresh(sub)
-            result = sub.analysis
+            result = cast(AnalysisResult | None, sub.analysis)
 
             # Re-implement the scoring logic here or fetch from DB if stored
             # (Logic copied/adapted from flask_app.py to ensure consistent return data)
-            dist = result.distance_bark if result and result.distance_bark else 0
+            dist = result.distance_bark if result and result.distance_bark else 0.0
             score_val = max(0, min(100, int(100 - (dist * 20))))
 
             # Simple Category Logic
@@ -43,19 +45,19 @@ def async_process_submission(self, submission_id):
                 score_cat = "warning"
 
             # Recommendation Logic
-            recommendation = None
+            recommendation: str | None = None
             if dist >= 1.5 and result:
                 f1_diff = (
                     (result.f1_norm - result.f1_ref)
                     if (result.f1_norm and result.f1_ref)
-                    else 0
+                    else 0.0
                 )
                 f2_diff = (
                     (result.f2_norm - result.f2_ref)
                     if (result.f2_norm and result.f2_ref)
-                    else 0
+                    else 0.0
                 )
-                tips = []
+                tips: List[str] = []
                 if abs(f2_diff) > 100:
                     tips.append(
                         "move your tongue slightly back"

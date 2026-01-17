@@ -1,9 +1,12 @@
+# pyright: strict
 import argparse
 import sys
 import os
 import json
 import paramiko
 from pathlib import Path
+from typing import Any, Dict, Tuple, cast
+from paramiko import SFTPClient, SSHClient  # type: ignore
 
 # COPY FROM deploy.py to ensure standalone execution
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -22,11 +25,11 @@ def load_config():
             sys.exit(1)
 
 
-def get_sftp_client(config):
+def get_sftp_client(config: Dict[str, Any]) -> Tuple[SFTPClient, SSHClient]:
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        key_path = os.path.expanduser(config.get("privateKeyPath"))
+        key_path = os.path.expanduser(str(config.get("privateKeyPath")))
         print(f"🔌 Connecting to {config['host']} as {config['username']}...")
         ssh.connect(
             hostname=config["host"],
@@ -40,7 +43,7 @@ def get_sftp_client(config):
         sys.exit(1)
 
 
-def sync_dir_push(sftp, local_dir, remote_dir):
+def sync_dir_push(sftp: SFTPClient, local_dir: str | Path, remote_dir: str):
     """Uploads local directory to remote, recursively."""
     local_path = Path(local_dir)
     print(f"📂 Syncing {local_path} -> {remote_dir}")
@@ -50,7 +53,7 @@ def sync_dir_push(sftp, local_dir, remote_dir):
         return
 
     # Walk local directory
-    for root, dirs, files in os.walk(local_path):
+    for root, _, files in os.walk(local_path):
         # Calculate relative path
         rel_path = os.path.relpath(root, local_path)
         # Determine remote directory path
@@ -110,7 +113,7 @@ def main():
 
     # Define Paths
     # (Local Path, Remote Path)
-    targets = {}
+    targets: Dict[str, Tuple[str, str]] = {}
 
     # Submissions
     targets["submissions"] = (
@@ -151,8 +154,12 @@ def main():
             print(f"📥 PULLING {item.upper()}...")
             sync_dir_pull(sftp, remote_p, local_p)
 
+    sftp.close()
+    ssh.close()
+    print("✨ Sync Complete.")
 
-def sync_dir_pull(sftp, remote_dir, local_dir):
+
+def sync_dir_pull(sftp: SFTPClient, remote_dir: str, local_dir: str | Path):
     """Downloads remote directory to local, recursively."""
     local_path = Path(local_dir)
     print(f"📂 Syncing {remote_dir} -> {local_path}")
@@ -161,7 +168,7 @@ def sync_dir_pull(sftp, remote_dir, local_dir):
         os.makedirs(local_path)
 
     # Walk remote directory. SFTP doesn't have os.walk, so we do recursive listdir
-    def walk_remote(rem_path, loc_path):
+    def walk_remote(rem_path: str, loc_path: str):
         try:
             items = sftp.listdir_attr(rem_path)
         except IOError:
@@ -172,7 +179,7 @@ def sync_dir_pull(sftp, remote_dir, local_dir):
             r_item = f"{rem_path}/{item.filename}"
             l_item = os.path.join(loc_path, item.filename)
 
-            if S_ISDIR(item.st_mode):
+            if S_ISDIR(cast(int, item.st_mode)):
                 if not os.path.exists(l_item):
                     os.makedirs(l_item)
                 walk_remote(r_item, l_item)
@@ -194,8 +201,10 @@ def sync_dir_pull(sftp, remote_dir, local_dir):
 
     walk_remote(remote_dir, str(local_path))
 
-    sftp.close()
-    ssh.close()
+    # sftp closure handled in main
+    # sftp.close()
+    # ssh closure handled in main
+    # ssh.close()
     print("✨ Sync Complete.")
 
 

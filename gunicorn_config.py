@@ -1,5 +1,5 @@
-import multiprocessing
-import os
+# pyright: strict
+
 
 # Binding to a unix socket is more performant than TCP
 bind = "unix:pronounce-web.sock"

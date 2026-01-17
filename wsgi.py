@@ -1,3 +1,4 @@
+# pyright: strict
 from flask_app import app
 
 if __name__ == "__main__":

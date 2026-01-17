@@ -1,6 +1,7 @@
+# pyright: strict
 import os
 import time
-from typing import Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import bs4
 import requests
@@ -13,7 +14,7 @@ LINK_PREFIX = "https://dictionary.cambridge.org"
 
 def get_word_data(
     word: str,
-    request_headers: Optional[dict] = None,
+    request_headers: Optional[Dict[str, Any]] = None,
     timeout: float = 10.0,
 ) -> Tuple[Optional[str], Optional[bytes]]:
     """
@@ -52,7 +53,7 @@ def get_word_data(
         # 1. Get the IPA transcription.
         ipa_span = uk_pron_block.find("span", class_="ipa")
         if ipa_span:
-            final_ipa_parts = []
+            final_ipa_parts: List[str] = []
             for content in ipa_span.contents:
                 if isinstance(content, str):
                     final_ipa_parts.append(content.strip())

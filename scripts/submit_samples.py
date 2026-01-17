@@ -1,8 +1,9 @@
-import os
+# pyright: strict
+
 import re
 import requests
 import pathlib
-import sys
+from typing import Any, Dict, List, Optional
 
 # Configuration
 BASE_URL = "http://127.0.0.1:5000"
@@ -10,10 +11,12 @@ SAMPLES_DIR = pathlib.Path(__file__).parent.parent / "samples_new"
 PASSWORD = "password123"
 
 # Session cache: username -> requests.Session
-user_sessions = {}
+user_sessions: Dict[str, requests.Session] = {}
 
 
-def get_session(username, sex="male", country="US"):
+def get_session(
+    username: str, sex: str = "male", country: str = "US"
+) -> Optional[requests.Session]:
     """
     Returns a logged-in session for the given username.
     Registers the user if not already tracked in this run (or if registration fails appropriately).
@@ -69,7 +72,9 @@ def get_session(username, sex="male", country="US"):
     return session
 
 
-def submit_file(word, file_path, username, sex, country):
+def submit_file(
+    word: str, file_path: pathlib.Path, username: str, sex: str, country: str
+) -> None:
     session = get_session(username, sex, country)
     if not session:
         return
@@ -108,7 +113,7 @@ def main():
 
     # Structure: samples_new/word/username_sex_country.mp3
 
-    files_to_process = []
+    files_to_process: List[Dict[str, Any]] = []
 
     for word_dir in SAMPLES_DIR.iterdir():
         if not word_dir.is_dir():

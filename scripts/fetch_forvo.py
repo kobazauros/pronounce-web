@@ -1,11 +1,13 @@
+# pyright: strict
 import os
 import requests
 import base64
 import re
 import time
 import random
-import json
+
 import collections
+from typing import Dict, List, Optional, Tuple, cast
 from bs4 import BeautifulSoup
 
 # Configuration
@@ -43,10 +45,10 @@ WORDS = [
 
 # Database to store scan results
 # Format: { word: [ {user: "username", url: "decoded_path", id: "123", country: "en"} ] }
-scan_db = collections.defaultdict(list)
+scan_db: Dict[str, List[Dict[str, str]]] = collections.defaultdict(list)
 
 
-def decode_forvo_path(b64_str):
+def decode_forvo_path(b64_str: str) -> Optional[str]:
     try:
         if not b64_str:
             return None
@@ -55,7 +57,7 @@ def decode_forvo_path(b64_str):
         return None
 
 
-def get_cookies():
+def get_cookies() -> Tuple[Dict[str, str], str]:
     print("\n[!] Forvo Login Required")
     print("1. Open https://forvo.com in your browser.")
     print("2. Log in.")
@@ -72,7 +74,7 @@ def get_cookies():
     return parse_cookies(cookie_str), ua_str
 
 
-def load_auth():
+def load_auth() -> Tuple[Dict[str, str], str]:
     if os.path.exists(COOKIE_FILE):
         with open(COOKIE_FILE, "r") as f:
             lines = f.readlines()
@@ -83,16 +85,16 @@ def load_auth():
     return get_cookies()
 
 
-def parse_cookies(cookie_str):
+def parse_cookies(cookie_str: str) -> Dict[str, str]:
     cookies = {}
     for item in cookie_str.split(";"):
         if "=" in item:
             k, v = item.split("=", 1)
             cookies[k.strip()] = v.strip()
-    return cookies
+    return cast(Dict[str, str], cookies)
 
 
-def scan_page(session, word):
+def scan_page(session: requests.Session, word: str) -> None:
     url = f"{BASE_URL}/word/{word}/"
     print(f"[*] Scanning metadata: {word}...")
 
@@ -130,23 +132,31 @@ def scan_page(session, word):
         match = re.search(r"Play\((\d+),'([^']+)','([^']+)'", onclick_val)
         if match:
             _id, b64_mp3, _ = match.groups()
-            path_mp3 = decode_forvo_path(b64_mp3)
+            path_mp3 = decode_forvo_path(cast(str, b64_mp3))
+            country = (
+                "Unknown"  # Default since scraping country is complex from this view
+            )
 
             if path_mp3:
                 # Store candidate
-                scan_db[word].append(
-                    {"user": username, "id": _id, "path": path_mp3, "word": word}
-                )
+                entry = {
+                    "user": username,
+                    "id": _id,
+                    "path": path_mp3,
+                    "word": word,
+                    "country": country,
+                }
+                scan_db[word].append(cast(Dict[str, str], entry))
                 found_count += 1
 
     print(f"    -> Found {found_count} recordings.")
 
 
-def analyze_and_select():
+def analyze_and_select() -> List[Dict[str, str]]:
     print("\n=== ANALYZING TOP SPEAKERS ===")
 
     # 1. Count user frequency across ALL words
-    user_counts = collections.Counter()
+    user_counts: collections.Counter[str] = collections.Counter()
     for word, recordings in scan_db.items():
         unique_users_for_word = set(r["user"] for r in recordings)
         for u in unique_users_for_word:
@@ -154,7 +164,7 @@ def analyze_and_select():
 
     # 2. Print Top Power Users
     print("Top Speakers in this set:")
-    top_speakers = user_counts.most_common(10)
+    top_speakers: List[Tuple[str, int]] = user_counts.most_common(10)
     for u, count in top_speakers:
         print(f"  - {u}: {count} words")
 
@@ -162,10 +172,10 @@ def analyze_and_select():
     # We want at least 3 recordings per word.
     # We prefer users with HIGHER total word counts (minimize distinct IDs).
 
-    selected_download_list = []
+    selected_download_list: List[Dict[str, str]] = []
 
     for word in WORDS:
-        candidates = scan_db.get(word, [])
+        candidates: List[Dict[str, str]] = scan_db.get(word, [])
         if not candidates:
             print(f"Warning: No recordings for '{word}'")
             continue
@@ -186,7 +196,9 @@ def analyze_and_select():
     return selected_download_list
 
 
-def download_files(session, selection_list):
+def download_files(
+    session: requests.Session, selection_list: List[Dict[str, str]]
+) -> None:
     print(f"\n=== DOWNLOADING {len(selection_list)} FILES ===")
 
     success_count = 0
@@ -249,7 +261,7 @@ def main():
     }
 
     s = requests.Session()
-    s.cookies.update(cookies)
+    s.cookies.update(cookies)  # type: ignore
     s.headers.update(headers)
 
     # Phase 1: Scan

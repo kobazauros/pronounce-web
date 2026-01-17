@@ -1,7 +1,8 @@
+# pyright: strict
 import os
 import shutil
+from typing import Any, Dict, List, cast, Tuple
 from datetime import datetime, timezone
-import math
 
 import psutil
 from flask import (
@@ -16,7 +17,7 @@ from flask import (
     url_for,
     session,
 )
-from flask_login import current_user, login_required
+from flask_login import current_user, login_required  # type: ignore
 from werkzeug.utils import secure_filename
 
 from models import Submission, SystemConfig, User, Word, InviteCode, db
@@ -53,14 +54,17 @@ def admin_dashboard():
             )
         )
 
-    # Fetch Paginated Data
+    # Verify admin logic...
+    if current_user.role != "admin":
+        flash("Access denied.", "danger")
+        return redirect(url_for("index"))
     users_pagination = users_query.order_by(User.created_at.desc()).paginate(  # type: ignore
         page=page, per_page=per_page, error_out=False
     )
-    words = Word.query.all()
+    words = cast(List[Word], Word.query.all())
 
     # Process user data for the view to include initials and formatted dates
-    user_data = []
+    user_data: List[Dict[str, Any]] = []
     for u in users_pagination.items:
         user_data.append(
             {
@@ -88,7 +92,7 @@ def admin_dashboard():
     # --- Calculate DB Size ---
     db_size_str = "N/A"
     try:
-        db_uri = current_app.config.get("SQLALCHEMY_DATABASE_URI", "")
+        db_uri = cast(str, current_app.config.get("SQLALCHEMY_DATABASE_URI", ""))  # type: ignore
         db_size_bytes = 0
 
         if db_uri.startswith("sqlite:///"):
@@ -159,7 +163,9 @@ def admin_dashboard():
     db.session.commit()
 
     # --- Invite Codes ---
-    invite_codes = InviteCode.query.order_by(InviteCode.created_at.desc()).all()
+    invite_codes = cast(
+        List[InviteCode], InviteCode.query.order_by(InviteCode.created_at.desc()).all()
+    )
 
     return render_template(
         "dashboards/admin_view.html",
@@ -181,7 +187,7 @@ def teacher_dashboard():
         return redirect(url_for("index"))
 
     # --- 1. Class Stats Calculation (All Students) ---
-    all_students = User.query.filter_by(role="student").all()
+    all_students = cast(List[User], User.query.filter_by(role="student").all())
 
     total_pre_progress = 0
     total_post_progress = 0
@@ -192,10 +198,10 @@ def teacher_dashboard():
     today_date = datetime.now(timezone.utc).date()
 
     for s in all_students:
-        subs = s.submissions.all()
+        subs = cast(List[Submission], s.submissions.all())
         # Progress Calculation
-        pre_subs = [sub for sub in subs if sub.test_type == "pre"]
-        post_subs = [sub for sub in subs if sub.test_type == "post"]
+        pre_subs = [cast(Any, sub) for sub in subs if sub.test_type == "pre"]
+        post_subs = [cast(Any, sub) for sub in subs if sub.test_type == "post"]
 
         pre_count = len({sub.word_id for sub in pre_subs})
         post_count = len({sub.word_id for sub in post_subs})
@@ -208,18 +214,25 @@ def teacher_dashboard():
 
         if subs:
             # Sort by timestamp descending to get latest
-            subs.sort(key=lambda x: x.timestamp, reverse=True)
-            last_sub = subs[0]
+            subs.sort(key=lambda x: cast(Any, x).timestamp, reverse=True)
+            last_sub = cast(Any, subs[0])
             if last_sub.timestamp.date() == today_date:
                 active_today += 1
 
             # Count distinct students with flags
             has_deep_voice = any(
-                sub.analysis and sub.analysis.is_deep_voice_corrected for sub in subs
+                cast(Any, sub).analysis
+                and cast(Any, sub).analysis.is_deep_voice_corrected
+                for sub in subs
             )
-            has_outlier = any(sub.analysis and sub.analysis.is_outlier for sub in subs)
+            has_outlier = any(
+                cast(Any, sub).analysis and cast(Any, sub).analysis.is_outlier
+                for sub in subs
+            )
             has_missing = any(
-                sub.analysis and sub.analysis.distance_bark is None for sub in subs
+                cast(Any, sub).analysis
+                and cast(Any, sub).analysis.distance_bark is None
+                for sub in subs
             )
 
             if has_deep_voice:
@@ -261,10 +274,11 @@ def teacher_dashboard():
         page=page, per_page=per_page, error_out=False
     )
 
-    student_data = []
+    student_data: List[Dict[str, Any]] = []
 
     for s in pagination.items:
-        subs = s.submissions.all()
+        user_s = cast(User, s)
+        subs = cast(List[Submission], user_s.submissions.all())
         # Quick re-calc for table view only
         pre_count = len({sub.word_id for sub in subs if sub.test_type == "pre"})
         post_count = len({sub.word_id for sub in subs if sub.test_type == "post"})
@@ -318,7 +332,7 @@ def teacher_dashboard():
 
 @dashboards.route("/teacher/student/<int:user_id>")
 @login_required
-def student_detail(user_id):
+def student_detail(user_id: int):
     if current_user.role not in ["teacher", "admin"]:
         flash("Access denied.", "danger")
         return redirect(url_for("index"))
@@ -369,8 +383,8 @@ def research_dashboard():
         .all()
     )
 
-    data = []
-    for res, sub, user, word in results:
+    data: List[Any] = []
+    for res, sub, user, word in results:  # type: ignore
         # Flatten data for easier JS consumption
         data.append(
             {
@@ -393,7 +407,7 @@ def research_dashboard():
 
 @dashboards.route("/admin/user/<int:user_id>/edit", methods=["GET", "POST"])
 @login_required
-def edit_user(user_id):
+def edit_user(user_id: int):
     """Displays a form to edit a user's details and handles the update."""
     if current_user.role != "admin":
         flash("Access denied.", "danger")
@@ -421,9 +435,12 @@ def edit_user(user_id):
             new_student_id = request.form.get("student_id", "").strip()
             # Validate Student ID uniqueness if it has changed
             if new_student_id and new_student_id != user_to_edit.student_id:
-                existing_user = User.query.filter(
-                    db.and_(User.student_id == new_student_id, User.id != user_id)
-                ).first()
+                existing_user = cast(
+                    User | None,
+                    User.query.filter(
+                        db.and_(User.student_id == new_student_id, User.id != user_id)
+                    ).first(),
+                )
                 if existing_user:
                     flash(
                         f"Student ID '{new_student_id}' is already assigned to another user.",
@@ -523,7 +540,11 @@ def generate_pronunciation():
         return jsonify({"error": "Word parameter is required"}), 400
 
     try:
-        ipa, audio_bytes = word_parser.get_word_data(word_text)
+        # Implicitly typed library return
+        # We expect tuple(ipa, bytes) or similar.
+        # Since word_parser is untyped or partial, we cast or check.
+        raw_data: Tuple[str | None, bytes | None] = word_parser.get_word_data(word_text)
+        ipa, audio_bytes = raw_data
 
         if not ipa and not audio_bytes:
             return (
@@ -611,7 +632,7 @@ def add_word():
 
 @dashboards.route("/admin/word/edit/<int:word_id>", methods=["GET", "POST"])
 @login_required
-def edit_word(word_id):
+def edit_word(word_id: int):
     if current_user.role != "admin":
         flash("Access denied.", "danger")
         return redirect(url_for("index"))
@@ -662,7 +683,7 @@ def edit_word(word_id):
 
 @dashboards.route("/admin/word/<int:word_id>/delete", methods=["POST"])
 @login_required
-def delete_word(word_id):
+def delete_word(word_id: int):
     if current_user.role != "admin":
         flash("Access denied.", "danger")
         return redirect(url_for("index"))
@@ -682,13 +703,15 @@ def delete_word(word_id):
     try:
         # 1. Delete associated submissions if requested
         if delete_submissions_flag:
-            submissions = Submission.query.filter_by(word_id=word_id).all()
+            submissions = cast(
+                List[Submission], Submission.query.filter_by(word_id=word_id).all()
+            )
             for sub in submissions:
                 # Delete associated analysis results (cascade should handle this)
                 # Delete physical submission file
                 if sub.file_path:
                     full_path = os.path.join(
-                        current_app.config["UPLOAD_FOLDER"], sub.file_path
+                        cast(str, current_app.config["UPLOAD_FOLDER"]), sub.file_path
                     )
                     if os.path.exists(full_path):
                         os.remove(full_path)
@@ -722,11 +745,13 @@ def manage_all_words():
         flash("Access denied.", "danger")
         return redirect(url_for("index"))
 
-    words = Word.query.order_by(Word.text).all()
-    word_stats = []
+    words = cast(List[Word], Word.query.order_by(Word.text).all())
+    word_stats: List[Dict[str, Any]] = []
     for word in words:
-        submission_count = word.submissions.count()
-        last_submission = word.submissions.order_by(Submission.timestamp.desc()).first()
+        submission_count = word.submissions.count()  # type: ignore
+        last_submission = (
+            cast(Any, word.submissions).order_by(Submission.timestamp.desc()).first()
+        )
         word_stats.append(
             {
                 "word": word,
@@ -744,7 +769,7 @@ def manage_all_words():
 
 @dashboards.route("/admin/user/<int:user_id>/delete", methods=["POST"])
 @login_required
-def delete_user(user_id):
+def delete_user(user_id: int):
     """Deletes a user and their associated submissions."""
     if current_user.role != "admin":
         flash("Access denied.", "danger")
@@ -767,23 +792,26 @@ def delete_user(user_id):
 
     # Path to the user's upload directory
     user_upload_dir = os.path.join(
-        current_app.config["UPLOAD_FOLDER"], str(user_to_delete.id)
+        cast(str, current_app.config["UPLOAD_FOLDER"]), str(user_to_delete.id)
     )
 
     try:
-        # 1. Cascade Delete: Remove associated InviteCode if this user used one
-        invite_used = InviteCode.query.filter_by(
-            used_by_user_id=user_to_delete.id
-        ).first()
+        invite_used = cast(
+            InviteCode | None,
+            InviteCode.query.filter_by(used_by_user_id=user_to_delete.id).first(),
+        )
         if invite_used:
             db.session.delete(invite_used)
             current_app.logger.info(
-                f"Cascade deleted invite code '{invite_used.code}' used by '{user_to_delete.username}'"
+                f"Cascade deleted invite code '{cast(str, invite_used.code)}' used by '{user_to_delete.username}'"
             )
 
         # 1b. Cascade Delete: Remove InviteCodes CREATED by this user (e.g. Teacher)
         # Assuming we just want to delete them. Alternatively, we could nullify 'created_by'.
-        created_invites = InviteCode.query.filter_by(created_by=user_to_delete.id).all()
+        created_invites = cast(
+            List[InviteCode],
+            InviteCode.query.filter_by(created_by=user_to_delete.id).all(),
+        )
         for inv in created_invites:
             db.session.delete(inv)
 
@@ -795,12 +823,15 @@ def delete_user(user_id):
         # 2. Delete submission records from DB
         # CRITICAL: iterate to trigger ORM cascades (deletes AnalysisResult)
         # Bulk delete ( .delete() ) would fail due to Postgres FK constraints
-        submissions = Submission.query.filter_by(user_id=user_to_delete.id).all()
+        submissions = cast(
+            List[Submission],
+            Submission.query.filter_by(user_id=user_to_delete.id).all(),
+        )
         for sub in submissions:
             # Also delete physical file if needed
             if sub.file_path:
                 full_path = os.path.join(
-                    current_app.config["UPLOAD_FOLDER"], sub.file_path
+                    cast(str, current_app.config["UPLOAD_FOLDER"]), sub.file_path
                 )
                 if os.path.exists(full_path):
                     try:
@@ -836,7 +867,7 @@ def delete_user(user_id):
 
 @dashboards.route("/api/submission/<int:submission_id>/analysis")
 @login_required
-def get_analysis_data(submission_id):
+def get_analysis_data(submission_id: int):
     """Returns analysis data for a specific submission."""
     # Ensure user has access (Teacher can view all, Student only their own)
     submission = Submission.query.get_or_404(submission_id)
@@ -902,7 +933,7 @@ def generate_invite():
 
 @dashboards.route("/admin/invite/<int:invite_id>/delete", methods=["POST"])
 @login_required
-def delete_invite(invite_id):
+def delete_invite(invite_id: int):
     """Deletes an invite code."""
     if current_user.role != "admin":
         return jsonify({"error": "Access denied"}), 403

@@ -1,3 +1,4 @@
+# pyright: strict
 """
 Server-side Audio Analysis Engine
 Ported from analyze_vowels.py for the Pronounce Web Application.
@@ -5,12 +6,12 @@ Ported from analyze_vowels.py for the Pronounce Web Application.
 
 import math
 from pathlib import Path
-from typing import List, Optional, Tuple, cast
+from typing import Any, List, Optional, Tuple, cast
 
-import librosa
+import librosa  # type: ignore
 import numpy as np
-import parselmouth
-from parselmouth.praat import call  # pyright: ignore[reportMissingModuleSource]
+import parselmouth  # type: ignore
+from parselmouth.praat import call  # type: ignore
 
 # --- CONFIGURATION ---
 DIPHTHONGS = {"aɪ", "əʊ", "ɔɪ", "eɪ", "eə", "aʊ", "ɪə", "ʊə"}
@@ -20,7 +21,7 @@ BACK_VOWELS = {"uː", "ʊ", "ɔː", "ɒ", "ɑː", "əʊ", "ɔɪ", "aʊ"}
 def hz_to_bark(f: float) -> float:
     """Converts frequency (Hz) to Bark scale."""
     if np.isnan(f) or f <= 0:
-        return np.nan
+        return float(np.nan)
     return 26.81 * f / (1960 + f) - 0.53
 
 
@@ -32,37 +33,38 @@ def get_vowel_type(vowel_symbol: str) -> str:
     return "monophthong"
 
 
-def load_audio_mono(path: Path | str, target_sr: int = 16000) -> Tuple[np.ndarray, int]:
+def load_audio_mono(path: Path | str, target_sr: int = 16000) -> Tuple[np.ndarray[Any, Any], int]:  # type: ignore
     """
     Loads audio, converts to mono, resamples to target_sr, and normalizes volume.
     """
     path_str = str(path)
     try:
-        y: np.ndarray
-        y, sr = librosa.load(path_str, sr=None, mono=True)
+        y: Any
+        sr: Any
+        y, sr = librosa.load(path_str, sr=None, mono=True)  # type: ignore
     except Exception as e:
         print(f"Error loading {path_str}: {e}")
         return np.array([]), target_sr
 
     if sr != target_sr:
-        y = librosa.resample(y, orig_sr=sr, target_sr=target_sr)
+        y = librosa.resample(y, orig_sr=sr, target_sr=target_sr)  # type: ignore
         sr = target_sr
 
     if y.size > 0:
-        max_val: float = float(cast(float, np.max(np.abs(y))))
+        max_val = float(np.max(np.abs(y)))
         if max_val > 0:
             y = 0.95 * y / max_val
-    return y.astype(np.float32), int(sr)
+    return cast(np.ndarray[Any, Any], y).astype(np.float32), int(sr)
 
 
 def find_syllable_nucleus(
-    sound: parselmouth.Sound, pitch_floor: float = 75, pitch_ceiling: float = 1200
+    sound: Any, pitch_floor: float = 75, pitch_ceiling: float = 1200
 ) -> Optional[Tuple[float, float]]:
     """Finds the loudest voiced segment in the audio."""
     pitch = sound.to_pitch(pitch_floor=pitch_floor, pitch_ceiling=pitch_ceiling)
     intensity = sound.to_intensity()
 
-    n_frames = pitch.get_number_of_frames()
+    n_frames = cast(int, pitch.get_number_of_frames())
     voiced_intervals: List[Tuple[float, float]] = []
 
     current_start: Optional[float] = None
@@ -70,16 +72,16 @@ def find_syllable_nucleus(
     for i in range(1, n_frames + 1):
         if pitch.get_value_in_frame(i) > 0:
             if current_start is None:
-                current_start = pitch.get_time_from_frame_number(i)
+                current_start = cast(float, pitch.get_time_from_frame_number(i))
         else:
             if current_start is not None:
                 voiced_intervals.append(
-                    (current_start, pitch.get_time_from_frame_number(i))
+                    (current_start, cast(float, pitch.get_time_from_frame_number(i)))
                 )
                 current_start = None
     if current_start:
         voiced_intervals.append(
-            (current_start, pitch.get_time_from_frame_number(n_frames))
+            (current_start, cast(float, pitch.get_time_from_frame_number(n_frames)))
         )
 
     if not voiced_intervals:
@@ -115,7 +117,7 @@ def find_syllable_nucleus(
 
 
 def measure_formants(
-    sound: parselmouth.Sound,
+    sound: Any,
     segment: Optional[Tuple[float, float]],
     points: Tuple[float, ...] = (0.5,),
     ceiling: float = 5500.0,
@@ -124,7 +126,7 @@ def measure_formants(
     Measures F1 and F2 at specified time points within the segment.
     """
     if segment is None:
-        return [(np.nan, np.nan)] * len(points)
+        return [(float(np.nan), float(np.nan))] * len(points)
 
     t0, t1 = segment
     dur = t1 - t0
@@ -137,14 +139,14 @@ def measure_formants(
 
     for p in points:
         t = t0 + (dur * p)
-        f1 = formant.get_value_at_time(1, t)
-        f2 = formant.get_value_at_time(2, t)
+        f1 = cast(float, formant.get_value_at_time(1, t))
+        f2 = cast(float, formant.get_value_at_time(2, t))
 
         # Robust filtering
         if np.isnan(f1) or f1 < 50 or f1 > 1200:
-            f1 = np.nan
+            f1 = float(np.nan)
         if np.isnan(f2) or f2 < 200 or f2 > 4000:
-            f2 = np.nan
+            f2 = float(np.nan)
 
         results.append((f1, f2))
     return results
@@ -162,9 +164,9 @@ def analyze_formants_from_path(
 
     y, sr = load_audio_mono(filepath)
     if len(y) == 0:
-        return [(np.nan, np.nan)] * len(points), False
+        return [(float(np.nan), float(np.nan))] * len(points), False
 
-    snd = parselmouth.Sound(y, sampling_frequency=sr)
+    snd: Any = parselmouth.Sound(y, sampling_frequency=sr)  # type: ignore
     seg = find_syllable_nucleus(snd)
 
     # 1. Try Standard Ceiling (5500 Hz)
@@ -194,7 +196,7 @@ def get_articulatory_feedback(
     if np.isnan(f1_norm) or np.isnan(f2_norm):
         return ""
 
-    feedback_parts = []
+    feedback_parts: List[str] = []
 
     # Thresholds (Hz)
     F1_THRESH = 50.0
@@ -275,20 +277,24 @@ def process_submission(submission_id: int) -> bool:
             print(f"Submission {submission_id} not found.")
             return False
 
-        user_id = sub.user_id
-        word_text = sub.target_word.text.lower()
-        target_vowel = sub.target_word.stressed_vowel
+        user_id: int = sub.user_id
+        word_text: str = sub.target_word.text.lower()
+        target_vowel: str = sub.target_word.stressed_vowel
 
         # Resolve Paths
         # sub.file_path is relative (e.g., "1/uuid.mp3")
         # word.audio_path is relative (e.g., "word.mp3") - Check Model!
         # Actually Word model stores "static/audio/word.mp3" usually?
         # Let's assume standard location based on config if Word.audio_path is missing/unreliable
-        student_path = Path(current_app.config["UPLOAD_FOLDER"]) / sub.file_path
+        student_path = Path(str(cast(str, current_app.config["UPLOAD_FOLDER"]))) / str(
+            sub.file_path
+        )
 
         # Robust Reference Path Logic
         ref_filename = f"{word_text}.mp3"
-        ref_path = Path(current_app.config["AUDIO_FOLDER"]) / ref_filename
+        ref_path = (
+            Path(str(cast(str, current_app.config["AUDIO_FOLDER"]))) / ref_filename
+        )
 
         if not student_path.exists():
             print(f"Student file missing: {student_path}")
@@ -310,17 +316,18 @@ def process_submission(submission_id: int) -> bool:
         f1r, f2r = meas_r[0]
 
         # 3. Calculate Cumulative Alpha
-        all_ratios = []
+        all_ratios: List[float] = []
 
         # A) Get historical ratios from DB
         # Join Submission to filter by user_id
         history = (
-            AnalysisResult.query.join(Submission)
+            cast(Any, AnalysisResult.query.join(Submission))
             .filter(Submission.user_id == user_id)
             .all()
         )
 
         for h in history:
+            h = cast(AnalysisResult, h)
             if h.f1_raw and h.f1_ref and h.f1_ref > 0:
                 all_ratios.append(h.f1_raw / h.f1_ref)
             if h.f2_raw and h.f2_ref and h.f2_ref > 0:
@@ -343,14 +350,15 @@ def process_submission(submission_id: int) -> bool:
         dist_hz, dist_bark = calculate_distance(meas_s, meas_r, alpha)
 
         # Calculate specific normalized formants for storage
-        f1_norm = f1s_raw / alpha if not np.isnan(f1s_raw) else np.nan
-        f2_norm = f2s_raw / alpha if not np.isnan(f2s_raw) else np.nan
+        f1_norm = f1s_raw / alpha if not np.isnan(f1s_raw) else float(np.nan)
+        f2_norm = f2s_raw / alpha if not np.isnan(f2s_raw) else float(np.nan)
 
         # 5. Save Logic
         # Check if exists (idempotency)
-        existing_result = AnalysisResult.query.filter_by(
-            submission_id=submission_id
-        ).first()
+        existing_result = cast(
+            AnalysisResult | None,
+            AnalysisResult.query.filter_by(submission_id=submission_id).first(),
+        )
         if existing_result:
             result = existing_result
         else:

@@ -1,15 +1,17 @@
+# pyright: strict
 import io
 import logging
+from typing import Any, cast, Tuple
 import numpy as np
 import librosa
-import soundfile as sf
+import soundfile as sf  # type: ignore
 
 # Configure logger
 logger = logging.getLogger(__name__)
 
 
 def process_audio_data(
-    audio_data: bytes, target_sr: int = 16000, noise_floor: float = None
+    audio_data: bytes, target_sr: int = 16000, noise_floor: float | None = None
 ) -> bytes:
     """
     Standardizes audio data to a specific format.
@@ -23,7 +25,18 @@ def process_audio_data(
         # Load audio from bytes
         # librosa.load supports various formats via wrapping soundfile/audioread
         # mono=True mixes down to mono immediately
-        y, sr = librosa.load(io.BytesIO(audio_data), sr=target_sr, mono=True)
+        y_stereo, _ = cast(
+            Tuple[Any, float],
+            librosa.load(io.BytesIO(audio_data), sr=target_sr, mono=False),  # type: ignore
+        )
+
+        # Convert to mono if stereo
+        if hasattr(y_stereo, "ndim") and y_stereo.ndim > 1:
+            y = librosa.to_mono(y_stereo)  # type: ignore
+        else:
+            y = y_stereo
+
+        y = cast(Any, y)  # Force Any to avoid ndarray[Unknown] issues
 
         # Handle silence or empty audio
         if y.size == 0:
@@ -33,7 +46,7 @@ def process_audio_data(
         # --- CLIPPING DETECTION ---
         # Clipping distorts formants significantly (15-20% error on F1).
         # We reject audio if > 0.5% samples are fully saturated (>0.99)
-        max_possible = 1.0  # Float32 normalized
+
         clipped_samples = np.sum(np.abs(y) > 0.99)
         clip_ratio = clipped_samples / len(y)
 
@@ -47,13 +60,19 @@ def process_audio_data(
         hop_length = frame_length  # Non-overlapping for speed/parity with JS
 
         # Calculate RMS energy per frame
-        rmse = librosa.feature.rms(
-            y=y, frame_length=frame_length, hop_length=hop_length, center=False
+        rmse = cast(
+            np.ndarray[Any, Any],
+            librosa.feature.rms(  # type: ignore
+                y=y, frame_length=frame_length, hop_length=hop_length, center=False
+            ),
         )[0]
 
         # Calculate ZCR per frame
-        zcr = librosa.feature.zero_crossing_rate(
-            y=y, frame_length=frame_length, hop_length=hop_length, center=False
+        zcr = cast(
+            np.ndarray[Any, Any],
+            librosa.feature.zero_crossing_rate(  # type: ignore
+                y=y, frame_length=frame_length, hop_length=hop_length, center=False
+            ),
         )[0]
 
         if len(rmse) > 0:
@@ -113,7 +132,12 @@ def process_audio_data(
         if y.size == 0:
             logger.warning("Audio checks out empty after trimming.")
             # Fallback to original loaded if trim kills it (unlikely)
-            y, _ = librosa.load(io.BytesIO(audio_data), sr=target_sr, mono=True)
+            y_stereo, _ = librosa.load(io.BytesIO(audio_data), sr=target_sr, mono=False)  # type: ignore[no-untyped-call]
+            if y_stereo.ndim > 1:
+                y = librosa.to_mono(y_stereo)  # type: ignore
+            else:
+                y = y_stereo  # type: ignore
+            y = cast(Any, y)
 
         # Peak Normalization
         # Target peak is 0.95 (~-0.5dB) to prevent clipping while maximizing dynamic range
@@ -132,8 +156,10 @@ def process_audio_data(
         # Note: soundfile requires 'libsndfile' to be installed.
         # Writing to BytesIO to return bytes
         output_io = io.BytesIO()
-        sf.write(output_io, y, sr, format="MP3")
+        sf.write(output_io, y, target_sr, format="mp3")  # type: ignore[no-untyped-call]
         output_io.seek(0)
+
+        return output_io.getvalue()
 
         return output_io.getvalue()
 
