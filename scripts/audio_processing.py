@@ -94,11 +94,14 @@ def process_audio_data(
                 start_sample = start_frame * hop_length
                 end_sample = (end_frame + 1) * hop_length
 
-                # Padding: 10ms (0.01s) - Very tight for "snappy" start
-                padding = int(target_sr * 0.01)
+                # Asymmetric Padding:
+                # Start: 10ms (0.01s) - Tight/Snappy
+                # End: 300ms (0.30s) - Allow reverb/tails to fade naturally
+                padding_start = int(target_sr * 0.01)
+                padding_end = int(target_sr * 0.30)
 
-                start = max(0, start_sample - padding)
-                end = min(len(y), end_sample + padding)
+                start = max(0, start_sample - padding_start)
+                end = min(len(y), end_sample + padding_end)
 
                 y_trimmed = y[start:end]
 
