@@ -547,20 +547,22 @@ def edit_user(user_id: int):
                 user_to_edit.failed_login_attempts = 0
                 user_to_edit.locked_until = None
 
-                # Send Notification
-                # We need to import the function first... ensuring imports are there.
-                # Assuming 'from utility.mailer import ...' is at top.
-                # If not, I should check or add it.
-                # But 'send_password_reset_email' is imported?
-                # Let's check imports in next step or use local import if needed.
-                from scripts.mailer import send_admin_change_password_notification
+                # Send Notification only if email exists
+                if user_to_edit.email:
+                    # We need to import the function first...
+                    from scripts.mailer import send_admin_change_password_notification
 
-                send_admin_change_password_notification(user_to_edit, new_password)
+                    send_admin_change_password_notification(user_to_edit, new_password)
 
-                flash(
-                    f"Password for '{user_to_edit.username}' updated. Notification sent.",
-                    "info",
-                )
+                    flash(
+                        f"Password for '{user_to_edit.username}' updated. Notification sent.",
+                        "info",
+                    )
+                else:
+                    flash(
+                        f"Password for '{user_to_edit.username}' updated manually. (User is a Test Account, no notification sent).",
+                        "warning",
+                    )
             except ValueError as e:
                 flash(str(e), "danger")
                 return render_template(
