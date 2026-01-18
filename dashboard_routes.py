@@ -553,7 +553,7 @@ def edit_user(user_id: int):
                 # If not, I should check or add it.
                 # But 'send_password_reset_email' is imported?
                 # Let's check imports in next step or use local import if needed.
-                from utility.mailer import send_admin_change_password_notification
+                from scripts.mailer import send_admin_change_password_notification
 
                 send_admin_change_password_notification(user_to_edit, new_password)
 

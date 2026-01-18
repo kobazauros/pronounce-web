@@ -240,7 +240,7 @@ def bulk_reset(role: str, password: str):
         # But manage_admin imports 'app', 'db', 'User' from flask_app.
         # 'utility.mailer' imports 'current_app' and 'mail' and 'User' from models.
         # Should be safe.
-        from utility.mailer import send_admin_change_password_notification
+        from scripts.mailer import send_admin_change_password_notification
 
         # Use request context for url_for in templates
         base_url = os.environ.get("BASE_URL", "http://localhost:5000")
