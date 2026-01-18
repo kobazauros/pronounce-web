@@ -286,5 +286,20 @@ def list_admins():
             )
 
 
+@cli.command("fix-legacy-accounts")
+def fix_legacy_accounts():
+    """
+    Mark all existing non-admin users as 'Test Accounts'.
+    run this after deploying to production to fix legacy data.
+    """
+    with app.app_context():
+        click.echo("Migrating users to Test Account status...")
+        updated_count = User.query.filter(User.role != "admin").update(  # type: ignore
+            {User.is_test_account: True}, synchronize_session=False  # type: ignore
+        )
+        db.session.commit()
+        click.echo(f"✅ Successfully marked {updated_count} users as Test Accounts.")
+
+
 if __name__ == "__main__":
     cli()

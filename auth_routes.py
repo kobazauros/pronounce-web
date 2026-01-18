@@ -20,7 +20,7 @@ from flask_login import (  # type: ignore
 )
 
 from models import SystemConfig, User, InviteCode, db
-from utility.mailer import send_password_reset_email
+from scripts.mailer import send_password_reset_email
 
 auth = Blueprint("auth", __name__)
 
