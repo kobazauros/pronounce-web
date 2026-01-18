@@ -20,7 +20,12 @@ def cli():
 @cli.command("create")
 @click.argument("username")
 def create_admin(username: str):
-    """Create a new admin user [USERNAME]."""
+    """
+    Create a new admin user [ADMIN_USERNAME].
+
+    Example:
+      python utility/manage_admin.py create [ADMIN_USERNAME]
+    """
     with app.app_context():
         # Check if user exists
         existing_user = cast(
@@ -65,7 +70,12 @@ def create_admin(username: str):
 @cli.command("delete")
 @click.argument("username")
 def delete_admin(username: str):
-    """Delete an admin user [USERNAME]."""
+    """
+    Delete an admin user [ADMIN_USERNAME].
+
+    Example:
+      python utility/manage_admin.py delete [ADMIN_USERNAME]
+    """
     with app.app_context():
         user = cast(User | None, User.query.filter_by(username=username).first())
 
@@ -124,9 +134,145 @@ def delete_admin(username: str):
             click.echo(f"Admin user '{username}' and associated data deleted.")
 
 
+@cli.command("reset-password")
+@click.argument("username")
+def reset_password(username: str):
+    """
+    Reset password for an admin user [ADMIN_USERNAME].
+
+    Example:
+      python utility/manage_admin.py reset-password [ADMIN_USERNAME]
+    """
+    with app.app_context():
+        user = cast(User | None, User.query.filter_by(username=username).first())
+
+        if not user:
+            click.echo(f"User '{username}' not found.")
+            return
+
+        if user.role != "admin":
+            click.echo(f"User '{username}' is not an admin. Use web dashboard.")
+            # Actually, maybe we allow resetting any user password via CLI?
+            # But the prompt specifically said "admins can change their own...".
+            # For robustness, I'll allow resetting any user if the CLI admin wants.
+            # But the prompt context is specifically about admin restrictions.
+            # I'll warn but proceed? Or strict?
+            # Let's be strict for "admin" based on function name.
+            if not click.confirm(f"User '{username}' is not an admin. Reset anyway?"):
+                return
+
+        password = getpass.getpass(f"Enter new password for {username}: ")
+        confirm = getpass.getpass("Confirm password: ")
+
+        if password != confirm:
+            click.echo("Passwords do not match.")
+            return
+
+        # Check Complexity
+        is_strong, msg = User.validate_password_strength(password)
+        if not is_strong:
+            click.echo(f"Error: Password is too weak. {msg}")
+            return
+
+        try:
+            user.set_password(password)
+            # Reset lockout
+            user.failed_login_attempts = 0
+            user.locked_until = None
+            db.session.commit()
+            click.echo(f"Password for '{username}' has been updated.")
+        except ValueError as e:
+            click.echo(f"Error: {e}")
+
+
+@cli.command("bulk-reset")
+@click.option(
+    "--role",
+    default="student",
+    help="Target user role [student|teacher] (default: student)",
+)
+@click.option(
+    "--password",
+    prompt=True,
+    hide_input=True,
+    confirmation_prompt=True,
+    help="New password for all users. If omitted, you will be prompted securely.",
+)
+def bulk_reset(role: str, password: str):
+    """
+    Reset passwords for ALL users with a specific role.
+    USE WITH CAUTION.
+
+    Example:
+      python utility/manage_admin.py bulk-reset --role student
+    """
+    with app.app_context():
+        if role == "admin":
+            click.echo(
+                "Error: Bulk reset is NOT allowed for admins. Use 'reset-password' per user."
+            )
+            return
+
+        # Check Complexity Early
+        is_strong, msg = User.validate_password_strength(password)
+        if not is_strong:
+            click.echo(f"Error: Password is too weak. {msg}")
+            return
+
+        users = cast(
+            List[User],
+            User.query.filter_by(role=role)
+            .filter(User.is_test_account == False)  # type: ignore
+            .all(),
+        )
+        if not users:
+            click.echo(f"No users found with role '{role}'.")
+            return
+
+        if not click.confirm(
+            f"WARNING: This will reset passwords for {len(users)} users with role '{role}'. Continue?"
+        ):
+            return
+
+        click.echo("Processing...")
+        count = 0
+        # Import here to avoid circular dependencies at top level if any exists (though unlikely for utility)
+        # But manage_admin imports 'app', 'db', 'User' from flask_app.
+        # 'utility.mailer' imports 'current_app' and 'mail' and 'User' from models.
+        # Should be safe.
+        from utility.mailer import send_admin_change_password_notification
+
+        # Use request context for url_for in templates
+        base_url = os.environ.get("BASE_URL", "http://localhost:5000")
+        with app.test_request_context(base_url=base_url):
+            for user in users:
+                try:
+                    user.set_password(password)
+                    # Reset lockout
+                    user.failed_login_attempts = 0
+                    user.locked_until = None
+
+                    # Notify
+                    send_admin_change_password_notification(user, password)
+
+                    count += 1
+                except Exception as e:
+                    click.echo(f"Failed to reset {user.username}: {e}")
+
+            db.session.commit()
+            click.echo(
+                f"Successfully reset passwords for {count}/{len(users)} users. Notifications sent."
+            )
+
+
 @cli.command("list")
 def list_admins():
-    """List all admin users."""
+    """
+    List all admin users.
+
+    Example:
+      python utility/manage_admin.py list
+    """
     with app.app_context():
         admins = cast(List[User], User.query.filter_by(role="admin").all())
         if not admins:

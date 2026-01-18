@@ -1,5 +1,5 @@
 # pyright: strict
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import cast
 
 from flask import (
@@ -20,6 +20,7 @@ from flask_login import (  # type: ignore
 )
 
 from models import SystemConfig, User, InviteCode, db
+from utility.mailer import send_password_reset_email
 
 auth = Blueprint("auth", __name__)
 
@@ -42,9 +43,40 @@ def login():
 
         user = cast(User | None, User.query.filter_by(username=username).first())
 
+        # Check Lockout
+        if user and user.locked_until:
+            if user.locked_until > datetime.now(timezone.utc):
+                flash(
+                    "Account locked due to multiple failed login attempts. Please try again later.",
+                    "danger",
+                )
+                return redirect(url_for("auth.login"))
+            else:
+                # Lock expired
+                user.locked_until = None
+                user.failed_login_attempts = 0
+                db.session.commit()
+
         if not user or not user.check_password(password):
+            if user:
+                user.failed_login_attempts += 1
+                if user.failed_login_attempts >= 5:
+                    user.locked_until = datetime.now(timezone.utc) + timedelta(
+                        minutes=15
+                    )
+                    flash(
+                        "Account locked for 15 minutes due to too many failed attempts.",
+                        "danger",
+                    )
+                db.session.commit()
+
             flash("Please check your login details and try again.", "danger")
             return redirect(url_for("auth.login"))
+
+        # Reset counters on success
+        user.failed_login_attempts = 0
+        user.locked_until = None
+        db.session.commit()
 
         # If maintenance mode is on, show maintenance page to non-admins trying to log in.
         if SystemConfig.get_bool("maintenance_mode") and user.role != "admin":
@@ -78,23 +110,40 @@ def register():
 
     if request.method == "POST":
         username = request.form.get("username")
+        email = request.form.get("email")
         first_name = request.form.get("first_name")
         last_name = request.form.get("last_name")
         student_id = request.form.get("student_id")
         password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
         consent = request.form.get("consent")
         invite_code = request.form.get("invite_code")
 
-        if not first_name or not last_name or not username or not password:
+        if not first_name or not last_name or not username or not password or not email:
             flash(
-                "All fields (First Name, Last Name, Username, Password) are mandatory.",
+                "All fields (First Name, Last Name, Username, Email, Password) are mandatory.",
                 "danger",
             )
             return redirect(url_for("auth.register"))
 
+        if password != confirm_password:
+            flash("Passwords do not match.", "danger")
+            return redirect(url_for("auth.register"))
+
+        is_strong, msg = User.validate_password_strength(password)
+        if not is_strong:
+            flash(msg, "danger")
+            return redirect(url_for("auth.register"))
+
         user_exists = cast(User | None, User.query.filter_by(username=username).first())
+        email_exists = cast(User | None, User.query.filter_by(email=email).first())
+
         if user_exists:
             flash("Username already exists.", "danger")
+            return redirect(url_for("auth.register"))
+
+        if email_exists:
+            flash("Email already registered.", "danger")
             return redirect(url_for("auth.register"))
 
         # Helper to validate student ID format
@@ -142,10 +191,12 @@ def register():
 
         new_user = User(
             username=username,
+            email=email,
             first_name=first_name,
             last_name=last_name,
             student_id=final_student_id,
             role=role,
+            is_test_account=False,  # New users are real by default
             # Consent is recorded as "system-bypassed" or timestamp for students
             consented_at=datetime.now(timezone.utc),
         )
@@ -209,3 +260,77 @@ def check_invite():
 def logout():
     logout_user()
     return redirect(url_for("auth.login"))
+
+
+@auth.route("/reset_password_request", methods=["GET", "POST"])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+
+    if request.method == "POST":
+        email = request.form.get("email")
+        if not email:
+            flash("Email is required", "danger")
+            return redirect(url_for("auth.reset_password_request"))
+
+        user = cast(User | None, User.query.filter_by(email=email).first())
+        if user:
+            # Security Policy: Admins cannot reset via email
+            if user.role == "admin":
+                flash(
+                    "Administrator passwords cannot be reset via email. Please use the server console.",
+                    "danger",
+                )
+                return redirect(url_for("auth.login"))
+
+            # Check if user is test account w/o real email - actually query filtered by email so it must be real.
+            # But wait, if test accounts have email=None, this won't match.
+            # If test account HAS an email, we treat it as valid.
+            send_password_reset_email(user)
+
+        # Security: Always show the same message to prevent email enumeration
+        flash("Check your email for the instructions to reset your password", "info")
+        return redirect(url_for("auth.login"))
+
+    return render_template("auth/reset_password_request.html")
+
+
+@auth.route("/reset_password/<token>", methods=["GET", "POST"])
+def reset_password(token: str):
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+
+    user = User.verify_reset_password_token(token)
+    if not user:
+        flash("Invalid or expired reset token.", "danger")
+        return redirect(url_for("index"))
+
+    if request.method == "POST":
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        if not password or password != confirm_password:
+            flash("Passwords must match and cannot be empty.", "danger")
+            return redirect(url_for("auth.reset_password", token=token))
+
+        is_strong, msg = User.validate_password_strength(password)
+        if not is_strong:
+            flash(msg, "danger")
+            return redirect(url_for("auth.reset_password", token=token))
+
+        try:
+            user.set_password(password)
+            # Unlock account if it was locked?
+            user.failed_login_attempts = 0
+            user.locked_until = None
+
+            user.mark_reset_token_used(token)
+            db.session.commit()
+
+            flash("Your password has been reset.", "success")
+            return redirect(url_for("auth.login"))
+        except ValueError as e:
+            flash(str(e), "danger")
+            return redirect(url_for("auth.reset_password", token=token))
+
+    return render_template("auth/reset_password.html")

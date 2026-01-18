@@ -18,3 +18,10 @@ logs/
 *.log.*
 .env
 recorded_tasks.txt
+archive/
+.agent/
+.vscode/
+tests/
+dataset/
+BRAIN.md
+.agentignore

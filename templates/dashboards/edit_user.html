@@ -35,6 +35,17 @@
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
 
+                    <!-- Email -->
+                    <div class="md:col-span-2">
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                        <input type="email" name="email" id="email" value="{{ user.email or '' }}"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        {% if user.is_test_account %}
+                        <p class="mt-1 text-xs text-yellow-600 font-medium">Legacy Account: Adding an email will upgrade
+                            this to a Secure Account.</p>
+                        {% endif %}
+                    </div>
+
                     <!-- Role -->
                     <div class="md:col-span-2">
                         <label for="role" class="block text-sm font-medium text-gray-700">Role {% if user.role ==
@@ -58,6 +69,51 @@
                             user.role=='admin' %}disabled{% endif %}
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed">
                         <p class="mt-1 text-xs text-gray-500">Only applicable for users with the 'Student' role.</p>
+                    </div>
+
+                    <!-- Password Reset Section -->
+                    <div class="md:col-span-2 pt-4 border-t border-gray-100">
+                        <h3 class="text-sm font-bold text-gray-800 mb-3">Reset Password</h3>
+
+                        {% if user.role == 'admin' %}
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-md">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-blue-700">
+                                        Administrator passwords must be managed via the server console:
+                                        <br>
+                                        <code
+                                            class="font-mono text-xs bg-blue-100 px-1 py-0.5 rounded mt-1 inline-block">python utility/manage_admin.py reset-password {{ user.username }}</code>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="grid grid-cols-1 md:col-span-2 gap-6">
+                            <div>
+                                <label for="new_password" class="block text-sm font-medium text-gray-700">New
+                                    Password</label>
+                                <input type="password" name="new_password" id="new_password"
+                                    placeholder="Leave blank to keep unchanged"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm
+                                    Password</label>
+                                <input type="password" name="confirm_password" id="confirm_password"
+                                    placeholder="Confirm new password"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
 

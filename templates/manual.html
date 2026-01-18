@@ -223,6 +223,28 @@
                         </div>
                     </div>
                 </div>
+                <div class="mt-8 border-t border-slate-100 pt-8">
+                    <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-shield-alt text-slate-400"></i> Account Security & Recovery
+                    </h3>
+                    <div class="prose prose-slate max-w-none text-slate-600 text-sm">
+                        <p><strong>Forgot Password?</strong><br>
+                            If you lose access to your account, click the "Forgot Password?" link on the login page.
+                            Enter your registered email address to receive a secure reset link. This link expires in 10
+                            minutes.
+                        </p>
+                        <p class="mt-4"><strong>Account Lockout Policy:</strong><br>
+                            To protect your account, the system will temporarily lock access after <strong>5 consecutive
+                                failed login attempts</strong>.
+                            You must wait 15 minutes before trying again.
+                        </p>
+                        <p class="mt-4"><strong>Password Requirements:</strong><br>
+                            Passwords must be at least 8 characters long and include uppercase, lowercase, numbers, and
+                            special symbols.
+                            You cannot reuse your last 3 passwords.
+                        </p>
+                    </div>
+                </div>
             </section>
 
             <!-- Student Guide -->
@@ -537,12 +559,19 @@
                         # Create a new Admin user<br>
                         flask create-admin [username] [password]<br><br>
 
+                        # Reset a user's password (respects history)<br>
+                        flask reset-password [username]<br><br>
+
                         # Delete any user (including admins)<br>
                         flask delete-user [username]<br><br>
 
+                        # Bulk Reset Passwords (Teacher/Student only)<br>
+                        flask bulk-reset --role [student|teacher]<br><br>
+
                         # Examples:<br>
                         flask create-admin superuser Pass123!<br>
-                        flask delete-user old_admin<br>
+                        flask reset-password student1<br>
+                        flask bulk-reset --role student<br>
                     </div>
 
                     <h3 class="text-slate-900 font-bold mt-8">2. Web Control Panel Features</h3>

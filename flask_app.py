@@ -22,7 +22,7 @@ from flask_migrate import Migrate
 from auth_routes import auth
 from config import Config
 from dashboard_routes import dashboards
-from models import Submission, SystemConfig, User, Word, db
+from models import Submission, SystemConfig, User, Word, db, mail
 from scripts.audio_processing import process_audio_data
 
 # 1. Initialize Flask Application
@@ -92,6 +92,7 @@ if not app.debug and not app.testing:
 # 2. Initialize Extensions
 db.init_app(app)
 migrate = Migrate(app, db)
+mail.init_app(app)
 
 # 3. Configure Flask-Login
 login_manager = LoginManager()
@@ -149,7 +150,7 @@ def index() -> str | Response:
     """
     if current_user.is_authenticated:
         if current_user.role == "teacher":
-            return redirect(url_for("dashboards.teacher_dashboard"))
+            return redirect(url_for("dashboards.teacher_dashboard"))  # type: ignore
         return render_template(
             "index.html",
             user=current_user,
@@ -434,11 +435,14 @@ def warmup_audio_engine():
     # Only run in production (Gunicorn) or when asked, to avoid slowing down dev reload excessively
     # But since user complained, we enable it generally, just logging it.
     try:
-        if os.environ.get("WERKZEUG_RUN_MAIN") == "true" or os.environ.get(
+        # Check if running in Flask Dev Server (Reloader) or Gunicorn
+        # If not (e.g., CLI script), skip warmup to save time/logs.
+        is_server = os.environ.get("WERKZEUG_RUN_MAIN") == "true" or os.environ.get(
             "GUNICORN_CMD_ARGS"
-        ):
-            # In Flask Dev server (reloader), this runs twice. WERKZEUG_RUN_MAIN checks if it's the reloader process.
-            pass
+        )
+
+        if not is_server:
+            return
 
         app.logger.info("Warming up Audio Engine (JIT Compilation)...")
         import numpy as np
