@@ -502,6 +502,19 @@ def edit_user(user_id: int):
         confirm_password = request.form.get("confirm_password")
 
         if new_password:
+            # Policy Check: Test Accounts cannot change passwords
+            if user_to_edit.is_test_account:
+                flash(
+                    "Security Restriction: Password changes are disabled for Legacy Test Accounts. Please upgrade to a Secure Account by adding an email address first.",
+                    "danger",
+                )
+                return render_template(
+                    "dashboards/edit_user.html",
+                    user=user_to_edit,
+                    search_query=search_query,
+                    page=page,
+                )
+
             # Policy Check: Admins cannot change password via Web UI
             if user_to_edit.role == "admin":
                 flash(
