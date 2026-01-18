@@ -297,12 +297,14 @@ def fix_legacy_accounts():
 
         # 1. Mark No-Email users as Test Accounts
         legacy_count = User.query.filter(
-            User.role != "admin", User.email == None
-        ).update({User.is_test_account: True}, synchronize_session=False)
+            User.role != "admin", User.email == None  # type: ignore
+        ).update(
+            {User.is_test_account: True}, synchronize_session=False  # type: ignore
+        )
 
         # 2. Mark Email users as Real Accounts (Recover from over-aggressive previous run)
-        real_count = User.query.filter(User.email != None).update(
-            {User.is_test_account: False}, synchronize_session=False
+        real_count = User.query.filter(User.email != None).update(  # type: ignore
+            {User.is_test_account: False}, synchronize_session=False  # type: ignore
         )
 
         db.session.commit()

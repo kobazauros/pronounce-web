@@ -76,11 +76,60 @@ def run_local_command(command, env=None, capture=False):
 # ==========================================
 
 
+def setup_service(config):
+    """Updates systemd service file on remote."""
+    print("🛠️  Configuring Systemd Service...")
+    ssh = get_ssh_client(config)
+    remote_path = config["remotePath"]
+
+    # Define service content
+    service_content = f"""[Unit]
+Description=Gunicorn instance to serve Pronounce Web
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory={remote_path}
+Environment="PATH={remote_path}/.venv/bin"
+Environment="CELERY_BROKER_URL=redis://127.0.0.1:6379/0"
+Environment="CELERY_RESULT_BACKEND=redis://127.0.0.1:6379/0"
+ExecStart={remote_path}/.venv/bin/gunicorn -c gunicorn_config.py wsgi:app
+
+[Install]
+WantedBy=multi-user.target
+"""
+    # Write to temp file locally
+    temp_service = "pronounce-web.service"
+    with open(temp_service, "w", newline="\n") as f:
+        f.write(service_content)
+
+    # Upload
+    sftp = ssh.open_sftp()
+    remote_temp = f"/tmp/{temp_service}"
+    sftp.put(temp_service, remote_temp)
+    sftp.close()
+
+    # Move to systemd and reload
+    run_remote_command(
+        ssh,
+        f"mv {remote_temp} /etc/systemd/system/{temp_service}",
+        "Installing Service File",
+    )
+    run_remote_command(ssh, "systemctl daemon-reload", "Reloading Systemd")
+
+    os.remove(temp_service)
+    print("✅ Service Configured")
+
+
 def deploy(config):
     """Deploy latest code to production."""
     print("📢 Starting Deployment...")
     ssh = get_ssh_client(config)
     remote_path = config["remotePath"]
+
+    # 0. Setup Service (Ensure correct paths)
+    setup_service(config)
 
     try:
         # 1. Pull Code
@@ -289,13 +338,214 @@ def pull_db(config, confirm_override=False):
         print(f"❌ Error: {e}")
 
 
+def push_db(config, confirm_override=False):
+    """Sync Local DB to Production (Destructive)."""
+    print("📢 Starting Database Push (Local -> Prod)...")
+
+    # Confirm
+    if not confirm_override:
+        print("⚠️  WARNING: This will OVERWRITE the PRODUCTION database.")
+        confirm = input("Are you sure? (y/N): ")
+        if confirm.lower() != "y":
+            print("❌ Cancelled.")
+            return
+
+    ssh = get_ssh_client(config)
+
+    PROD_DB = "pronounce_db"
+    PROD_USER = "kobazauros"
+    PROD_PW = "#Freedom1979"
+
+    # 1. Remote Backup (Safety)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup_file = f"backup_pre_push_{timestamp}.sql"
+    # Assuming instance/backups exists or we verify it
+    # We'll put it in /var/www/pronounce-web/instance/backups (remote_path + ...)
+    remote_path = config["remotePath"]
+    remote_backup_path = f"{remote_path}/instance/backups/{backup_file}"
+
+    run_remote_command(
+        ssh, f"mkdir -p {remote_path}/instance/backups", "Checking Remote Backup Dir"
+    )
+
+    backup_cmd = f'PGPASSWORD="{PROD_PW}" pg_dump -U {PROD_USER} -h localhost -d {PROD_DB} -F p -f {remote_backup_path}'
+    if not run_remote_command(
+        ssh, backup_cmd, f"Creating Safety Backup ({backup_file})"
+    ):
+        print("❌ Remote backup failed. Aborting push.")
+        return
+
+    # 2. Dump Local
+    local_dump = PROJECT_ROOT / "instance" / f"push_dump_{timestamp}.sql"
+    env = os.environ.copy()
+    env["PGPASSWORD"] = "#Freedom1979"
+
+    # Try to find pg_dump
+    pg_dump_cmd = "pg_dump"
+    possible_paths = [
+        r"C:\Program Files\PostgreSQL\14\bin\pg_dump.exe",
+        r"C:\Program Files\PostgreSQL\15\bin\pg_dump.exe",
+    ]
+    for p in possible_paths:
+        if os.path.exists(p):
+            pg_dump_cmd = f'"{p}"'
+            break
+
+    cmd_dump = (
+        f'{pg_dump_cmd} -U postgres -h localhost -d pronounce_db -F p -f "{local_dump}"'
+    )
+    success, out = run_local_command(cmd_dump, env=env)
+    if not success:
+        print(f"❌ Local dump failed: {out}")
+        return
+
+    # 3. Upload Dump
+    remote_temp_dump = f"/tmp/push_dump_{timestamp}.sql"
+    print(f"⬆️  Uploading dump to {remote_temp_dump}...")
+    sftp = ssh.open_sftp()
+    sftp.put(str(local_dump), remote_temp_dump)
+    sftp.close()
+
+    # 4. Restore on Remote
+    # Connect to 'postgres' db to drop pronounce_db
+    psql_base = f'PGPASSWORD="{PROD_PW}" psql -U {PROD_USER} -h localhost'
+
+    # Terminate
+    kill_cmd = f"{psql_base} -d postgres -c \"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{PROD_DB}' AND pid <> pg_backend_pid();\""
+    run_remote_command(ssh, kill_cmd, "Terminating Connections")
+
+    # Drop
+    drop_cmd = f'{psql_base} -d postgres -c "DROP DATABASE IF EXISTS {PROD_DB}"'
+    run_remote_command(ssh, drop_cmd, "Dropping Production DB")
+
+    # Create
+    create_cmd = (
+        f'{psql_base} -d postgres -c "CREATE DATABASE {PROD_DB} OWNER {PROD_USER}"'
+    )
+    if not run_remote_command(ssh, create_cmd, "Creating Production DB"):
+        return
+
+    # Restore
+    restore_cmd = f"{psql_base} -d {PROD_DB} -f {remote_temp_dump}"
+    if run_remote_command(ssh, restore_cmd, "Restoring Data"):
+        print("✅ Push Complete!")
+    else:
+        print("❌ Restore Failed")
+
+    # Cleanup
+    run_remote_command(ssh, f"rm {remote_temp_dump}", "Cleaning up temp file")
+
+
+def sync_env(config, prefix="MAIL_"):
+    """Sync specific env vars from Local to Remote."""
+    print(f"📢 Syncing Environment Variables (Prefix: {prefix})...")
+
+    # 1. Read Local .env
+    from dotenv import dotenv_values
+
+    local_env_path = PROJECT_ROOT / ".env"
+    if not local_env_path.exists():
+        print("❌ Local .env not found")
+        return
+
+    local_values = dotenv_values(local_env_path)
+    # Filter
+    vars_to_sync = {k: v for k, v in local_values.items() if k.startswith(prefix)}
+
+    if not vars_to_sync:
+        print(f"⚠️  No variables found starting with '{prefix}'")
+        return
+
+    print(
+        f"found {len(vars_to_sync)} variables to sync: {', '.join(vars_to_sync.keys())}"
+    )
+
+    ssh = get_ssh_client(config)
+    remote_path = config["remotePath"]
+    remote_env_path = f"{remote_path}/.env"
+
+    # 2. Read Remote .env
+    sftp = ssh.open_sftp()
+    try:
+        remote_file = sftp.file(remote_env_path, "r")
+        remote_content = remote_file.read().decode()
+        remote_file.close()
+    except IOError:
+        print("⚠️  Remote .env not found. Creating new...")
+        remote_content = ""
+
+    # Parse remote manually or simple string manip
+    remote_lines = remote_content.splitlines()
+    remote_map = {}
+    for line in remote_lines:
+        if "=" in line and not line.strip().startswith("#"):
+            k, v = line.split("=", 1)
+            remote_map[k.strip()] = v.strip()
+
+    # 3. Merge (Local overrides Remote for these keys)
+    updates = 0
+    for k, v in vars_to_sync.items():
+        if remote_map.get(k) != v:
+            remote_map[k] = v
+            updates += 1
+
+    if updates == 0:
+        print("✅ Remote .env is already up to date.")
+        return
+
+    # 4. Write back
+    new_content = ""
+    for k, v in remote_map.items():
+        # Simple quoting if needed, but dotenv_values handles parsing.
+        # Writing back: if it has spaces, quote it?
+        # For simplicity, we just write K=V.
+        # If V contains spaces and isn't quoted, it might be an issue.
+        # But we read raw values.
+        # Let's quote if ' ' in v
+        if " " in v and not v.startswith('"'):
+            new_content += f'{k}="{v}"\n'
+        else:
+            new_content += f"{k}={v}\n"
+
+    # Also preserve comments? Too complex. We just dump the map.
+    # Wait, losing comments is bad.
+    # Better approach: Append missing, Replace existing regex?
+    # Simple Append approach for safety?
+    # No, we want to update.
+    # Let's just append the new keys if missing, or use sed?
+    # "Operate in current environment" -> Python script is safer than complex sed.
+    # Re-writing the file is standard for deployments.
+
+    # Let's write the map.
+    with sftp.file(remote_temp := f"/tmp/.env_{prefix}", "w") as f:
+        f.write(new_content)
+
+    sftp.put(str(local_env_path), remote_temp)  # Wait, no! We created content.
+    # Write directly
+    with sftp.file(remote_temp, "w") as f:
+        f.write(new_content)
+
+    run_remote_command(
+        ssh, f"mv {remote_temp} {remote_env_path}", "Updating remote .env"
+    )
+    run_remote_command(ssh, "systemctl restart pronounce-web", "Restarting Service")
+    print(f"✅ Synced {updates} variables.")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Pronounce Web Project Manager")
     parser.add_argument(
-        "command", choices=["deploy", "pull-db", "backup"], help="Command to run"
+        "command",
+        choices=["deploy", "pull-db", "push-db", "sync-env", "backup", "remote-exec"],
+        help="Command to run",
     )
     parser.add_argument("--yes", action="store_true", help="Skip confirmation prompt")
     parser.add_argument("--reason", default="manual", help="Reason label for backup")
+    parser.add_argument("--exec-cmd", help="Command string for remote-exec")
+    parser.add_argument(
+        "--prefix", default="MAIL_", help="Prefix for env sync (default: MAIL_)"
+    )
+
     args = parser.parse_args()
 
     config = load_config()
@@ -304,8 +554,24 @@ def main():
         deploy(config)
     elif args.command == "pull-db":
         pull_db(config, confirm_override=args.yes)
+    elif args.command == "push-db":
+        push_db(config, confirm_override=args.yes)
+    elif args.command == "sync-env":
+        sync_env(config, prefix=args.prefix)
     elif args.command == "backup":
         backup_local_db(config, reason=args.reason)
+    elif args.command == "remote-exec":
+        if not args.exec_cmd:
+            print("❌ Provide --exec-cmd")
+            return
+
+        ssh = get_ssh_client(config)
+        remote_path = config["remotePath"]
+        full_cmd = f"cd {remote_path} && source .venv/bin/activate && {args.exec_cmd}"
+        print(f"📡 Remote Exec: {full_cmd}")
+        stdin, stdout, stderr = ssh.exec_command(full_cmd)
+        print(stdout.read().decode())
+        print(stderr.read().decode())
 
 
 if __name__ == "__main__":
