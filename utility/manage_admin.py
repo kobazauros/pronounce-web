@@ -293,12 +293,21 @@ def fix_legacy_accounts():
     run this after deploying to production to fix legacy data.
     """
     with app.app_context():
-        click.echo("Migrating users to Test Account status...")
-        updated_count = User.query.filter(User.role != "admin").update(  # type: ignore
-            {User.is_test_account: True}, synchronize_session=False  # type: ignore
+        click.echo("Syncing Test Account status based on Email...")
+
+        # 1. Mark No-Email users as Test Accounts
+        legacy_count = User.query.filter(
+            User.role != "admin", User.email == None
+        ).update({User.is_test_account: True}, synchronize_session=False)
+
+        # 2. Mark Email users as Real Accounts (Recover from over-aggressive previous run)
+        real_count = User.query.filter(User.email != None).update(
+            {User.is_test_account: False}, synchronize_session=False
         )
+
         db.session.commit()
-        click.echo(f"✅ Successfully marked {updated_count} users as Test Accounts.")
+        click.echo(f"✅ Marked {legacy_count} legacy users as Test Accounts.")
+        click.echo(f"✅ Restored {real_count} verified users as Real Accounts.")
 
 
 if __name__ == "__main__":
