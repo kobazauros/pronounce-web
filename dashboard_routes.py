@@ -73,8 +73,6 @@ def admin_dashboard():
                 "username": u.username,
                 "role": u.role,
                 "student_id": u.student_id or "N/A",
-                "email": u.email,
-                "is_test_account": u.is_test_account,
                 "initials": (
                     (u.first_name[0] + u.last_name[0]).upper()
                     if u.first_name and u.last_name
@@ -442,37 +440,6 @@ def edit_user(user_id: int):
         elif new_role in ["student", "teacher", "admin"]:
             user_to_edit.role = new_role
 
-        # --- Email Handling ---
-        new_email = request.form.get("email", "").strip() or None
-        if new_email != user_to_edit.email:
-            if new_email:
-                # Check uniqueness
-                email_exists = cast(
-                    User | None,
-                    User.query.filter(
-                        db.and_(User.email == new_email, User.id != user_id)
-                    ).first(),
-                )
-                if email_exists:
-                    flash(
-                        f"Email '{new_email}' is already in use by another user.",
-                        "danger",
-                    )
-                    return render_template(
-                        "dashboards/edit_user.html",
-                        user=user_to_edit,
-                        search_query=search_query,
-                        page=page,
-                    )
-
-            user_to_edit.email = new_email
-
-            # Logic: If email is set, account is Secure. If removed (and not admin), it becomes Legacy.
-            if new_email:
-                user_to_edit.is_test_account = False
-            elif user_to_edit.role != "admin":
-                user_to_edit.is_test_account = True
-
         # 2. Handle Student ID based on the new role
         if user_to_edit.role == "student":
             new_student_id = request.form.get("student_id", "").strip()
@@ -496,94 +463,6 @@ def edit_user(user_id: int):
         else:
             # For teachers and admins, student_id should be null
             user_to_edit.student_id = None
-
-        # --- Password Reset ---
-        new_password = request.form.get("new_password")
-        confirm_password = request.form.get("confirm_password")
-
-        if new_password:
-            # Policy Check: Test Accounts cannot change passwords
-            if user_to_edit.is_test_account:
-                flash(
-                    "Security Restriction: Password changes are disabled for Legacy Test Accounts. Please upgrade to a Secure Account by adding an email address first.",
-                    "danger",
-                )
-                return render_template(
-                    "dashboards/edit_user.html",
-                    user=user_to_edit,
-                    search_query=search_query,
-                    page=page,
-                )
-
-            # Policy Check: Admins cannot change password via Web UI
-            if user_to_edit.role == "admin":
-                flash(
-                    "Security Restriction: Administrator passwords can only be changed via the server console (utility/manage_admin.py).",
-                    "danger",
-                )
-                return render_template(
-                    "dashboards/edit_user.html",
-                    user=user_to_edit,
-                    search_query=search_query,
-                    page=page,
-                )
-
-            if new_password != confirm_password:
-                flash("Passwords do not match.", "danger")
-                return render_template(
-                    "dashboards/edit_user.html",
-                    user=user_to_edit,
-                    search_query=search_query,
-                    page=page,
-                )
-
-            is_strong, msg = User.validate_password_strength(new_password)
-            if not is_strong:
-                flash(msg, "danger")
-                return render_template(
-                    "dashboards/edit_user.html",
-                    user=user_to_edit,
-                    search_query=search_query,
-                    page=page,
-                )
-
-                return render_template(
-                    "dashboards/edit_user.html",
-                    user=user_to_edit,
-                    search_query=search_query,
-                    page=page,
-                )
-
-            try:
-                user_to_edit.set_password(new_password)
-                # Unlock account if locked
-                user_to_edit.failed_login_attempts = 0
-                user_to_edit.locked_until = None
-
-                # Send Notification only if email exists
-                if user_to_edit.email:
-                    # We need to import the function first...
-                    from scripts.mailer import send_admin_change_password_notification
-
-                    send_admin_change_password_notification(user_to_edit, new_password)
-
-                    flash(
-                        f"Password for '{user_to_edit.username}' updated. Notification sent.",
-                        "info",
-                    )
-                else:
-                    flash(
-                        f"Password for '{user_to_edit.username}' updated manually. (User is a Test Account, no notification sent).",
-                        "warning",
-                    )
-            except ValueError as e:
-                flash(str(e), "danger")
-                return render_template(
-                    "dashboards/edit_user.html",
-                    user=user_to_edit,
-                    search_query=search_query,
-                    page=page,
-                )
 
         try:
             # 3. Commit to DB
