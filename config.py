@@ -11,9 +11,11 @@ class Config:
 
     # Database
     basedir = os.path.abspath(os.path.dirname(__file__))
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URL"
-    ) or "sqlite:///" + os.path.join(basedir, "instance", "pronounce.db")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+    if not SQLALCHEMY_DATABASE_URI:
+        raise RuntimeError(
+            "DATABASE_URL environment variable is not set. SQLite fallback is disabled."
+        )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Development Settings

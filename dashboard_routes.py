@@ -95,12 +95,7 @@ def admin_dashboard():
         db_uri = cast(str, current_app.config.get("SQLALCHEMY_DATABASE_URI", ""))  # type: ignore
         db_size_bytes = 0
 
-        if db_uri.startswith("sqlite:///"):
-            # Correctly construct the absolute path from the basedir in config
-            db_path = db_uri.split("sqlite:///")[1]
-            if os.path.exists(db_path):
-                db_size_bytes = os.path.getsize(db_path)
-        elif "postgresql" in db_uri:
+        if "postgresql" in db_uri:
             # Run query for Postgres
             try:
                 from sqlalchemy import text
@@ -187,7 +182,10 @@ def teacher_dashboard():
         return redirect(url_for("index"))
 
     # --- 1. Class Stats Calculation (All Students) ---
-    all_students = cast(List[User], User.query.filter_by(role="student").all())
+    all_students = cast(
+        List[User],
+        User.query.filter(db.or_(User.role == "student", User.is_guest == True)).all(),
+    )
 
     total_pre_progress = 0
     total_post_progress = 0
@@ -257,7 +255,7 @@ def teacher_dashboard():
     search_query = request.args.get("search", "")
     per_page = 10
 
-    query = User.query.filter_by(role="student")
+    query = User.query.filter(db.or_(User.role == "student", User.is_guest == True))
 
     if search_query:
         search_term = f"%{search_query}%"
@@ -338,7 +336,7 @@ def student_detail(user_id: int):
         return redirect(url_for("index"))
 
     student = User.query.get_or_404(user_id)
-    if student.role != "student":
+    if student.role != "student" and not student.is_guest:
         flash("Invalid student selection.", "warning")
         return redirect(url_for("dashboards.teacher_dashboard"))
 

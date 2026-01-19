@@ -99,7 +99,35 @@ def delete_admin(username: str):
             f"Are you sure you want to delete admin '{username}'? This cannot be undone."
         ):
             # 1. Clean up potential submissions (mostly for testing)
-            from models import Submission
+            from models import Submission, InviteCode
+
+            # Handle Invite Codes (Reassign to another admin to preserve history)
+            # Handle Invite Codes (Reassign to another admin to preserve history)
+            user_invites = cast(
+                List[InviteCode], InviteCode.query.filter_by(created_by=user.id).all()
+            )
+            if user_invites:
+                # Find a successor (another admin)
+                successor = cast(
+                    User | None,
+                    User.query.filter_by(role="admin")
+                    .filter(User.id != user.id)
+                    .first(),
+                )
+
+                if successor:
+                    for invite in user_invites:
+                        invite.created_by = cast(int, successor.id)
+                    db.session.commit()
+                    click.echo(
+                        f"Reassigned {len(user_invites)} invite codes to admin '{successor.username}' (ID: {successor.id})."
+                    )
+                else:
+                    # Should be unreachable if 'admin_count <= 1' check works, but safe fallback
+                    click.echo(
+                        "Error: Cannot delete admin. They own invite codes and no other admin exists to inherit them."
+                    )
+                    return
 
             submissions = cast(
                 List[Submission], Submission.query.filter_by(user_id=user.id).all()
@@ -310,6 +338,77 @@ def fix_legacy_accounts():
         db.session.commit()
         click.echo(f"✅ Marked {legacy_count} legacy users as Test Accounts.")
         click.echo(f"✅ Restored {real_count} verified users as Real Accounts.")
+
+
+@cli.command("toggle-demo")
+def toggle_demo_mode():
+    """
+    Toggle DEMO Mode ON/OFF automatically.
+
+    Detects the current state and switches to the opposite.
+    - If currently OFF → turns ON (enables guest login)
+    - If currently ON → turns OFF (disables guest login and deletes all guest users and their submissions)
+
+    Example:
+      python utility/manage_admin.py toggle-demo
+    """
+    from models import SystemConfig, Submission
+
+    with app.app_context():
+        is_demo = SystemConfig.is_demo_mode()
+        new_state = not is_demo
+
+        click.echo(f"Current Demo Mode: {'ON' if is_demo else 'OFF'}")
+
+        if new_state:
+            # Turning ON
+            SystemConfig.set("demo_mode", "True")
+            db.session.commit()
+            click.echo("✅ DEMO MODE ENABLED. Guest Login is now active.")
+        else:
+            # Turning OFF - CLEANUP
+            click.echo("⚠️  Disabling Demo Mode and cleaning up Guest sessions...")
+
+            SystemConfig.set("demo_mode", "False")
+
+            guests = cast(List[User], User.query.filter_by(is_guest=True).all())
+            guest_count = len(guests)
+            submission_count = 0
+
+            upload_folder = cast(str, app.config.get("UPLOAD_FOLDER", "uploads"))  # type: ignore
+
+            for guest in guests:
+                # 1. Delete Submissions
+                user_subs = cast(
+                    List[Submission], Submission.query.filter_by(user_id=guest.id).all()
+                )
+                for sub in user_subs:
+                    if sub.file_path:
+                        full_path = os.path.join(upload_folder, sub.file_path)
+                        if os.path.exists(full_path):
+                            try:
+                                os.remove(full_path)
+                            except OSError:
+                                pass
+                    db.session.delete(sub)
+                    submission_count += 1
+
+                # 2. Delete User Directory
+                user_dir = os.path.join(upload_folder, str(guest.id))
+                if os.path.exists(user_dir):
+                    import shutil
+
+                    shutil.rmtree(user_dir, ignore_errors=True)
+
+                # 3. Delete Guest User
+                db.session.delete(guest)
+
+            db.session.commit()
+
+            click.echo(f"✅ DEMO MODE DISABLED.")
+            click.echo(
+                f"🧹 Cleanup: Removed {guest_count} guest users and {submission_count} submissions."
+            )
 
 
 if __name__ == "__main__":

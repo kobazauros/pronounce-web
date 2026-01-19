@@ -37,6 +37,39 @@ def login():
         return redirect(url_for("index"))
 
     if request.method == "POST":
+        # Handle "Guest Login" action
+        action = request.form.get("action")
+        if action == "guest_login":
+            if not SystemConfig.is_demo_mode():
+                flash("Demo Mode is not currently active.", "warning")
+                return redirect(url_for("auth.login"))
+
+            # Create ephemeral guest user
+            import uuid
+
+            guest_id = str(uuid.uuid4())[:8]
+            username = f"guest_{guest_id}"
+
+            # Create guest user with admin privileges (read-only enforcement is separate)
+            guest_user = User(
+                username=username,
+                role="admin",
+                is_guest=True,
+                is_test_account=False,
+                first_name="Guest",
+                last_name="User",
+            )
+            # Set a dummy random password (unusable)
+            guest_user.set_password(str(uuid.uuid4()))
+
+            db.session.add(guest_user)
+            db.session.commit()
+
+            login_user(guest_user)
+            current_app.logger.info(f"Guest user '{username}' logged in (Demo Mode).")
+            flash("Welcome to Demo Mode! You are logged in as a Guest User.", "success")
+            return redirect(url_for("index"))
+
         username = request.form.get("username")
         password = request.form.get("password", "")
         remember = True if request.form.get("remember") else False
@@ -45,7 +78,12 @@ def login():
 
         # Check Lockout
         if user and user.locked_until:
-            if user.locked_until > datetime.now(timezone.utc):
+            # Ensure locked_until is timezone-aware for comparison
+            locked_until = user.locked_until
+            if locked_until.tzinfo is None:
+                locked_until = locked_until.replace(tzinfo=timezone.utc)
+
+            if locked_until > datetime.now(timezone.utc):
                 flash(
                     "Account locked due to multiple failed login attempts. Please try again later.",
                     "danger",
@@ -61,9 +99,10 @@ def login():
             if user:
                 user.failed_login_attempts += 1
                 if user.failed_login_attempts >= 5:
-                    user.locked_until = datetime.now(timezone.utc) + timedelta(
-                        minutes=15
-                    )
+                    # Store as Naive UTC to avoid DB timezone conversion issues
+                    user.locked_until = datetime.now(timezone.utc).replace(
+                        tzinfo=None
+                    ) + timedelta(minutes=15)
                     flash(
                         "Account locked for 15 minutes due to too many failed attempts.",
                         "danger",
@@ -71,6 +110,11 @@ def login():
                 db.session.commit()
 
             flash("Please check your login details and try again.", "danger")
+            return redirect(url_for("auth.login"))
+
+        # Prevent regular login if user is a guest (security precaution)
+        if user.is_guest:
+            flash("Guest accounts cannot login via standard form.", "danger")
             return redirect(url_for("auth.login"))
 
         # Reset counters on success
@@ -92,7 +136,9 @@ def login():
 
         return redirect(url_for("index"))
 
-    return render_template("login.html")
+    # Pass demo mode status to template
+    is_demo = SystemConfig.is_demo_mode()
+    return render_template("login.html", is_demo=is_demo)
 
 
 @auth.route("/register", methods=["GET", "POST"])
@@ -103,6 +149,11 @@ def register():
     # Check if registration is open
     if not SystemConfig.get_bool("registration_open", default=True):
         flash("New user registration is currently closed by the administrator.", "info")
+        return redirect(url_for("auth.login"))
+
+    # Check if Demo Mode is active
+    if SystemConfig.is_demo_mode():
+        flash("Registration is disabled in Demo Mode.", "warning")
         return redirect(url_for("auth.login"))
 
     # Fetch the code from config to pass to template and check in POST

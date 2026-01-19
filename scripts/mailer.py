@@ -6,7 +6,16 @@ from models import mail, User
 
 def send_async_email(app, msg):
     with app.app_context():
-        mail.send(msg)
+        try:
+            print(f"DEBUG: Attempting to send email: {msg.subject} to {msg.recipients}")
+            mail.send(msg)
+            print("DEBUG: Email sent successfully.")
+        except Exception as e:
+            print(f"ERROR: Async email failed: {e}")
+            import traceback
+
+            traceback.print_exc()
+            current_app.logger.error(f"Async email failed: {e}")
 
 
 def send_email(

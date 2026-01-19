@@ -25,6 +25,10 @@
                         </div>
                         <span class="font-black text-lg md:text-xl tracking-tighter uppercase">Speak<span
                                 class="text-indigo-400">Better</span></span>
+                        {% if is_demo %}
+                        <span
+                            class="ml-2 px-2 py-0.5 rounded-full bg-red-100 text-red-600 text-xs font-bold border border-red-200 uppercase tracking-wide">Demo</span>
+                        {% endif %}
                     </a>
                     {% if current_user.role == 'student' %}
                     <div class="ml-6 hidden sm:flex items-center space-x-2 border-l border-slate-700 pl-6">
@@ -70,8 +74,13 @@
                     {% else %}
                     <a href="{{ url_for('auth.login') }}"
                         class="text-slate-300 hover:text-white font-bold text-sm">Login</a>
+                    {% if is_demo %}
+                    <a href="{{ url_for('auth.register') }}"
+                        class="pointer-events-none opacity-50 bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm font-bold transition">Register</a>
+                    {% else %}
                     <a href="{{ url_for('auth.register') }}"
                         class="bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm font-bold transition">Register</a>
+                    {% endif %}
                     {% endif %}
                 </div>
             </div>

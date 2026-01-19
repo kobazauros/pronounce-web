@@ -74,10 +74,14 @@
                             <div class="flex justify-end gap-3">
                                 <a href="{{ url_for('dashboards.edit_word', word_id=word_stat.word.id, next=url_for('dashboards.manage_all_words')) }}"
                                     class="px-3 py-1 rounded-md transition bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-900">Edit</a>
-                                {% set delete_url = url_for('dashboards.delete_word', word_id=word_stat.word.id, next=url_for('dashboards.manage_all_words')) %}
-                                <button
+                                {% set delete_url = url_for('dashboards.delete_word', word_id=word_stat.word.id,
+                                next=url_for('dashboards.manage_all_words')) %}
+                                <button {% if is_demo %}
+                                    class="demo-delete-btn px-3 py-1 rounded-md transition bg-red-50 text-red-300 cursor-not-allowed"
+                                    {% else %}
                                     onclick="openWordDeleteModal('{{ word_stat.word.id }}', '{{ word_stat.word.text }}', '{{ delete_url }}')"
-                                    class="px-3 py-1 rounded-md transition bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-900">
+                                    class="px-3 py-1 rounded-md transition bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-900"
+                                    {% endif %}>
                                     Delete
                                 </button>
                             </div>
@@ -194,6 +198,14 @@
         if (event.target === wordDeleteModal) {
             closeWordDeleteModal();
         }
+    });
+
+    // Demo Mode Logic
+    document.querySelectorAll('.demo-delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('This feature is disabled in DEMO mode');
+        });
     });
 </script>
 {% endblock %}

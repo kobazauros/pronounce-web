@@ -1,0 +1,74 @@
+Traceback (most recent call last):
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "analysis_results_pkey"
+DETAIL:  Key (id)=(1) already exists.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\tests\repro_delete_500.py", line 93, in reproduce_500
+    db.session.commit()
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\orm\scoping.py", line 597, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2030, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1311, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1286, in _prepare_impl
+    self.session.flush()
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4331, in flush
+    self._flush(objects)
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4466, in _flush
+    with util.safe_reraise():
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4427, in _flush
+    flush_context.execute()
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\rookie\Documents\Projects\pronounce-web\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "analysis_results_pkey"
+DETAIL:  Key (id)=(1) already exists.
+
+[SQL: INSERT INTO analysis_results (submission_id, f1_raw, f2_raw, f1_ref, f2_ref, scaling_factor, f1_norm, f2_norm, distance_hz, distance_bark, is_deep_voice_corrected, is_outlier, updated_at) VALUES (%(submission_id)s, %(f1_raw)s, %(f2_raw)s, %(f1_ref)s, %(f2_ref)s, %(scaling_factor)s, %(f1_norm)s, %(f2_norm)s, %(distance_hz)s, %(distance_bark)s, %(is_deep_voice_corrected)s, %(is_outlier)s, %(updated_at)s) RETURNING analysis_results.id]
+[parameters: {'submission_id': 631, 'f1_raw': None, 'f2_raw': None, 'f1_ref': None, 'f2_ref': None, 'scaling_factor': 1.0, 'f1_norm': None, 'f2_norm': None, 'distance_hz': None, 'distance_bark': 0.5, 'is_deep_voice_corrected': False, 'is_outlier': False, 'updated_at': datetime.datetime(2026, 1, 19, 16, 3, 42, 579454, tzinfo=datetime.timezone.utc)}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)

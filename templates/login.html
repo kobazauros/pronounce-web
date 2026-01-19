@@ -5,13 +5,74 @@
 <div class="flex items-start justify-center min-h-[calc(100vh-200px)] pt-6 pb-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8 bg-white p-5 rounded-xl shadow-lg border border-gray-100">
         <div>
-            <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+            {% if is_demo %}
+            <div class="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
+                <p class="font-bold">DEMO MODE ACTIVE</p>
+                <p>Standard registration and login are disabled.</p>
+            </div>
+            {% endif %}
+            <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900">
+                {% if is_demo %}Guest Access{% else %}Sign in to your account{% endif %}
+            </h2>
             <p class="mt-2 text-center text-sm text-gray-600 text-balance">
                 Welcome! This service is designed to test pronunciation of <strong>English vowels</strong>.</p>
-            <p class="mt-2 text-center text-sm text-gray-600 text-balance">
-                Log in to continue your pronunciation journey. Access your saved recordings, track your
-                progress, and keep improving.</p>
         </div>
+
+        {% if is_demo %}
+        <!-- GUEST LOGIN FORM -->
+        <form class="mt-6 space-y-6" method="POST" action="{{ url_for('auth.login') }}">
+            <input type="hidden" name="action" value="guest_login">
+            <div>
+                <button type="submit"
+                    class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-bold rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition shadow-lg">
+                    Guest Login
+                </button>
+                <p class="mt-2 text-center text-xs text-gray-500">
+                    Creates a temporary admin session. Data is deleted on logout.
+                </p>
+            </div>
+
+            <div class="relative flex py-5 items-center">
+                <div class="flex-grow border-t border-gray-300"></div>
+                <span class="flex-shrink-0 mx-4 text-gray-400">Standard Login Disabled</span>
+                <div class="flex-grow border-t border-gray-300"></div>
+            </div>
+
+            <!-- Disabled Standard Form Visuals -->
+            <div class="opacity-50 pointer-events-none select-none">
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div>
+                        <label class="sr-only">Username</label>
+                        <input type="text" disabled
+                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md sm:text-sm"
+                            placeholder="Username">
+                    </div>
+                    <div>
+                        <label class="sr-only">Password</label>
+                        <input type="password" disabled
+                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md sm:text-sm"
+                            placeholder="Password">
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mt-4">
+                    <div class="flex items-center">
+                        <input type="checkbox" disabled class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                        <label class="ml-2 block text-sm text-gray-900"> Remember me </label>
+                    </div>
+                    <div class="text-sm">
+                        <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot your password?</a>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button type="button" disabled
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-bold rounded-md text-white bg-indigo-600 shadow-lg">
+                        Sign in
+                    </button>
+                </div>
+            </div>
+        </form>
+        {% else %}
+        <!-- STANDARD LOGIN FORM -->
         <form class="mt-6 space-y-6" method="POST" action="{{ url_for('auth.login') }}">
             <div class="rounded-md shadow-sm -space-y-px">
                 <div>
@@ -54,6 +115,35 @@
                     account? Register here</a>
             </div>
         </form>
+        {% endif %}
     </div>
+
+    {% if is_demo %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const disabledContainer = document.querySelector('.opacity-50.pointer-events-none');
+            if (disabledContainer) {
+                // Remove pointer-events-none via JS to allow click capture if we want alert? 
+                // Creating an overlay might be better for "click to alert".
+                // But simplified: Just having them visually disabled is good.
+                // User asked for "alert on click".
+                // To do that, we need pointer-events-auto on a wrapper, but prevent inputs.
+                disabledContainer.classList.remove('pointer-events-none');
+
+                disabledContainer.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    alert("This feature is disabled in DEMO mode");
+                }, true); // Capture phase
+
+                // Also disable all inputs strictly
+                disabledContainer.querySelectorAll('input, button, a').forEach(el => {
+                    el.disabled = true;
+                    el.style.pointerEvents = 'none'; // Let clicks bubble to container
+                });
+            }
+        });
+    </script>
+    {% endif %}
 </div>
 {% endblock %}

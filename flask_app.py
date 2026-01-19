@@ -139,6 +139,13 @@ def check_for_maintenance() -> Any:
             return redirect(url_for("auth.login"))
 
 
+# 5.5. Global Context Processors
+@app.context_processor
+def inject_global_vars() -> dict[str, Any]:
+    """Injects global variables into all templates."""
+    return dict(is_demo=SystemConfig.is_demo_mode())
+
+
 # 6. Routes
 
 
