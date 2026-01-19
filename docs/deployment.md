@@ -1,75 +1,98 @@
-# Deployment Guide
+# Pronounce-Web Deployment Guide
 
-This guide describes the non-destructive approach to deploying your application to the server.
+This guide details the standard procedure for deploying changes to the production server.
 
-## 1. Prerequisites
-Ensure your server has the following configured:
-- **PostgreSQL**: The application now strictly requires a PostgreSQL database (SQLite is disabled).
-- **Redis**: Required for background tasks (Celery). Ensure Redis is installed and running (`sudo apt install redis-server`).
-- **Environment Variables**: The `.env` file is **git-ignored** for security. You must **manually create/edit** it on the server.
-    - Create it in the app root: `nano .env`
-    - It must contain:
-      ```bash
-      DATABASE_URL=postgresql://user:password@localhost/dbname
-      SECRET_KEY=your-production-secret-key
-      ```
-    - *Do not commit your local .env to Git.*
+## 1. Prerequisites (Server Config)
+Ensure your server has the following services running:
+1.  **PostgreSQL**: Strictly required. (SQLite is disabled).
+2.  **Redis**: Required for Celery background tasks (audio analysis).
+    *   Install: `sudo apt install redis-server`
 
-## 2. Deployment Workflow
+### Environment Variables (`.env`)
+The `.env` file contains secrets and **must be managed manually** on the server. It is ignored by Git.
 
-The recommended safe workflow avoids overwriting the live database with your local database. Instead, you sync the **code** and apply **schema changes**.
+**Create/Edit on Server:**
+```bash
+nano /var/www/pronounce-web/.env
+```
 
-### Step 1: Commit and Push Code
-On your local machine:
+**Required Content:**
+```ini
+# Database (URL-encode special characters like '#')
+DATABASE_URL=postgresql://user:password@localhost/pronounce_db
+
+# Security (REQUIRED for sessions)
+SECRET_KEY=generate-long-random-string
+
+# Email Configuration
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=true
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_DEFAULT_SENDER=noreply@pronounce-web.com
+
+# Celery (Defaults usually work, but good to be explicit)
+CELERY_BROKER_URL=redis://localhost:6379/0
+CELERY_RESULT_BACKEND=redis://localhost:6379/0
+```
+
+---
+
+## 2. Standard Deployment Workflow
+
+Follow this to update code and database schema without losing data.
+
+### Step 1: Push Code (Local)
 ```bash
 git add .
-git commit -m "Your commit message"
+git commit -m "Description of changes"
 git push origin main
 ```
 
-### Step 2: Backup Server Database (Safety First)
-On your server (SSH in):
+### Step 2: Backup Database (Server)
+**Always** backup before applying changes.
 ```bash
-# Create a timestamped backup
-pg_dump -U <username> -h localhost <db_name> > backup_$(date +%F_%H-%M-%S).sql
+pg_dump -U <username> -h localhost pronounce_db > backup_$(date +%F_%H-%M-%S).sql
 ```
 
-### Step 3: Pull Changes
-On your server:
+### Step 3: Pull & Update (Server)
 ```bash
-cd /path/to/app
+cd /var/www/pronounce-web
 git pull origin main
-```
 
-### Step 4: Update Dependencies
-If you changed `requirements.txt`:
-```bash
+# Update Python dependencies if requirements.txt changed
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Step 5: "Push" Database Changes (Migrations)
-Do **NOT** copy your local database file or try to force push your local data if you want to preserve server data. Instead, upgrade the server's database schema to match your code.
-
-On your server:
+### Step 4: Apply Database Migrations (Server)
+This applies schema changes (new columns/tables) non-destructively.
 ```bash
 flask db upgrade
 ```
-*This command applies any new tables or column changes defined in your migration scripts (`migrations/` folder) without deleting existing data.*
 
-### Step 6: Restart Application
+### Step 5: Restart Services (Server)
+Restart to load new code.
 ```bash
-sudo systemctl restart myapp  # or however you run your app (e.g., supervisor, gunicorn)
+sudo systemctl restart pronounce-web
 ```
 
-## Creating Migrations (Local Development)
-When you modify `models.py` locally, you must generate a migration script before deploying:
-1.  Make changes to `models.py`.
-2.  Run: `flask db migrate -m "Description of changes"`
-3.  Commit the new file in `migrations/versions/` to Git.
-4.  Deploy (follow steps above).
+---
 
-## Full Database Overwrite (Use with Caution)
-If you specifically intend to **replace** the server's data with your local data (wiping out server data):
-1.  **Local**: `pg_dump -U <local_user> <local_db> > local_dump.sql`
-2.  **Transfer**: `scp local_dump.sql user@server:/path/to/remote/`
-3.  **Server**: `psql -U <server_user> <server_db> < local_dump.sql`
+## 4. Best Practices (Preventing Errors)
+
+To avoid migration conflicts in the future:
+
+1.  **NEVER delete the `migrations/` folder.**
+    *   This folder contains the history of your database. If you delete it and generate a "fresh" migration, it will try to recreate existing tables (causing the error you just faced).
+
+2.  **Migrate Incrementally.**
+    *   Change `models.py`.
+    *   Run `flask db migrate -m "Added X field"`.
+    *   Commit that single small file.
+    *   *Do not let changes pile up.*
+
+3.  **Avoid Manual Server Changes.**
+    *   Never create tables or columns manually on the server using SQL (unless fixing a broken state like today). Let `flask db upgrade` handle it.
+
