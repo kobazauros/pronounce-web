@@ -81,6 +81,8 @@ def admin_dashboard():
                 "joined_str": (
                     u.created_at.strftime("%Y-%m-%d") if u.created_at else "Unknown"
                 ),
+                "email": u.email,
+                "is_test_account": u.is_test_account,
             }
         )
 
