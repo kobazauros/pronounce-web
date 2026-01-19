@@ -78,6 +78,13 @@ Restart to load new code.
 sudo systemctl restart pronounce-web
 ```
 
+### Step 6: Verify Deployment (Server)
+Check that the database version matches the code.
+```bash
+flask db current
+# Should show the latest migration ID (e.g., 87c5d6b3f863 (head))
+```
+
 ---
 
 ## 4. Best Practices (Preventing Errors)
@@ -95,4 +102,18 @@ To avoid migration conflicts in the future:
 
 3.  **Avoid Manual Server Changes.**
     *   Never create tables or columns manually on the server using SQL (unless fixing a broken state like today). Let `flask db upgrade` handle it.
+
+
+## 5. Troubleshooting: Database Desynchronization
+**Critical Warning:** If you run `flask db stamp head`, you tell the system "Assume the database is perfect." If the database is actually missing columns, **migrations will stop running** and your app will crash with integrity errors.
+
+**Symptoms:**
+*   `flask db current` shows `(head)`.
+*   App crashes with "column does not exist" or "key already exists".
+
+**Fix:**
+You must manually align the database schema using SQL.
+1.  **Check what is broken:** Log in to `psql` and `\d table_name` to see if columns are old.
+2.  **Manually Execute Changes:** Run the specific `ALTER TABLE` commands that the skipped migration *would* have run.
+3.  **Do NOT stamp again** unless you have verified the schema matches `models.py` exactly.
 
