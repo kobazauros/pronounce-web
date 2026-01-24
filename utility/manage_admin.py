@@ -317,8 +317,12 @@ def list_admins():
 @cli.command("fix-legacy-accounts")
 def fix_legacy_accounts():
     """
-    Mark all existing non-admin users as 'Test Accounts'.
-    run this after deploying to production to fix legacy data.
+    Sync user account status based on email presence.
+
+    - Users WITH email → Secure (is_test_account=False)
+    - Users WITHOUT email (non-admin) → Legacy (is_test_account=True)
+
+    Run this after deploying to production to fix legacy data.
     """
     with app.app_context():
         click.echo("Syncing Test Account status based on Email...")

@@ -1,6 +1,7 @@
 # pyright: strict
 import os
 import shutil
+import uuid
 from typing import Any, Dict, List, cast, Tuple
 from datetime import datetime, timezone
 
@@ -23,6 +24,7 @@ from werkzeug.utils import secure_filename
 from models import Submission, SystemConfig, User, Word, InviteCode, db
 from scripts import parser as word_parser
 from scripts.audio_processing import process_audio_data
+from scripts.mailer import send_admin_change_password_notification
 
 
 dashboards = Blueprint("dashboards", __name__)
@@ -433,12 +435,75 @@ def edit_user(user_id: int):
         user_to_edit.last_name = request.form.get("last_name", "").strip()
         new_role = request.form.get("role")
 
+        # 0. Handle Email update with uniqueness check
+        new_email = request.form.get("email", "").strip()
+        if new_email:
+            # Check if email changed and is unique
+            if new_email.lower() != (user_to_edit.email or "").lower():
+                existing_email_user = cast(
+                    User | None,
+                    User.query.filter(
+                        db.and_(
+                            db.func.lower(User.email) == new_email.lower(),
+                            User.id != user_id
+                        )
+                    ).first(),
+                )
+                if existing_email_user:
+                    flash(
+                        f"Email '{new_email}' is already registered to another user.",
+                        "danger",
+                    )
+                    return render_template(
+                        "dashboards/edit_user.html",
+                        user=user_to_edit,
+                        search_query=search_query,
+                        page=page,
+                    )
+            user_to_edit.email = new_email
+            # User with email is Secure
+            user_to_edit.is_test_account = False
+        else:
+            # Allow clearing email (set to None)
+            user_to_edit.email = None
+            # Non-admin without email is Legacy
+            if user_to_edit.role != "admin":
+                user_to_edit.is_test_account = True
+
         # 1. Validate and set Role, with safeguards
+        old_role = user_to_edit.role  # Track for invite code handling
         if user_to_edit.role == "admin":
             # Admins CANNOT change their own role or other admins' roles via this form
             new_role = "admin"
         elif new_role in ["student", "teacher", "admin"]:
             user_to_edit.role = new_role
+
+        # 1b. Handle Invite Code on role change (teacher promotion/demotion)
+        if old_role != "teacher" and new_role == "teacher":
+            # PROMOTION to teacher: Generate and attach invite code
+            if not user_to_edit.used_invite:
+                code = uuid.uuid4().hex[:10].upper()
+                # Ensure uniqueness
+                while InviteCode.query.filter_by(code=code).first():
+                    code = uuid.uuid4().hex[:10].upper()
+
+                invite = InviteCode(code=code, created_by=current_user.id)
+                invite.is_used = True
+                invite.used_by_user_id = user_to_edit.id
+                invite.used_at = datetime.now(timezone.utc)
+                db.session.add(invite)
+                current_app.logger.info(
+                    f"Auto-generated invite code '{code}' for promoted teacher '{user_to_edit.username}'."
+                )
+
+        elif old_role == "teacher" and new_role == "student":
+            # DEMOTION from teacher: Delete attached invite code
+            if user_to_edit.used_invite:
+                code_to_delete = user_to_edit.used_invite.code
+                db.session.delete(user_to_edit.used_invite)
+                current_app.logger.info(
+                    f"Deleted invite code '{code_to_delete}' for demoted user '{user_to_edit.username}'."
+                )
 
         # 2. Handle Student ID based on the new role
         if user_to_edit.role == "student":
@@ -464,9 +529,82 @@ def edit_user(user_id: int):
             # For teachers and admins, student_id should be null
             user_to_edit.student_id = None
 
+        # 3. Handle Password Reset (only for non-admin users with email)
+        new_password = request.form.get("new_password", "").strip()
+        confirm_password = request.form.get("confirm_password", "").strip()
+        password_was_reset = False
+
+        if new_password:
+            # Block admin password changes via web UI
+            if user_to_edit.role == "admin":
+                flash(
+                    "Admin passwords must be reset via server console.",
+                    "danger",
+                )
+                return render_template(
+                    "dashboards/edit_user.html",
+                    user=user_to_edit,
+                    search_query=search_query,
+                    page=page,
+                )
+
+            # Require email for password reset (to send notification)
+            if not user_to_edit.email:
+                flash(
+                    "Cannot reset password: user has no email address. Add an email first.",
+                    "danger",
+                )
+                return render_template(
+                    "dashboards/edit_user.html",
+                    user=user_to_edit,
+                    search_query=search_query,
+                    page=page,
+                )
+
+            if new_password != confirm_password:
+                flash("Passwords do not match.", "danger")
+                return render_template(
+                    "dashboards/edit_user.html",
+                    user=user_to_edit,
+                    search_query=search_query,
+                    page=page,
+                )
+
+            is_strong, msg = User.validate_password_strength(new_password)
+            if not is_strong:
+                flash(msg, "danger")
+                return render_template(
+                    "dashboards/edit_user.html",
+                    user=user_to_edit,
+                    search_query=search_query,
+                    page=page,
+                )
+
+            try:
+                user_to_edit.set_password(new_password)
+                user_to_edit.failed_login_attempts = 0
+                user_to_edit.locked_until = None
+                password_was_reset = True
+            except ValueError as e:
+                flash(str(e), "danger")
+                return render_template(
+                    "dashboards/edit_user.html",
+                    user=user_to_edit,
+                    search_query=search_query,
+                    page=page,
+                )
+
         try:
-            # 3. Commit to DB
+            # 4. Commit to DB
             db.session.commit()
+
+            # Send password notification email after successful commit
+            if password_was_reset:
+                send_admin_change_password_notification(user_to_edit, new_password)
+                current_app.logger.info(
+                    f"Admin '{current_user.username}' reset password for user '{user_to_edit.username}' (ID: {user_to_edit.id})."
+                )
+
             current_app.logger.info(
                 f"Admin '{current_user.username}' updated user '{user_to_edit.username}' (ID: {user_to_edit.id})."
             )

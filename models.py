@@ -402,7 +402,7 @@ class InviteCode(db.Model):
         "User", foreign_keys=[created_by], backref="created_invites"
     )
     used_by = db.relationship(
-        "User", foreign_keys=[used_by_user_id], backref="used_invite"
+        "User", foreign_keys=[used_by_user_id], backref=db.backref("used_invite", uselist=False)
     )
 
     def __init__(self, code: str, created_by: int):
