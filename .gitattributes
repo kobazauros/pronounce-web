@@ -1,0 +1,17 @@
+# Normalize line endings to LF for all text files, regardless of OS.
+* text=auto eol=lf
+
+# Windows batch scripts must keep CRLF to run correctly on Windows.
+*.bat text eol=crlf
+
+# Binary files - no line-ending conversion.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
