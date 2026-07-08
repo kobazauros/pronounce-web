@@ -33,6 +33,7 @@ dashboards = Blueprint("dashboards", __name__)
 @dashboards.route("/admin")
 @login_required
 def admin_dashboard():
+    """Admin dashboard with user management, stats, and system config."""
     if current_user.role != "admin":
         flash("Access denied. Administrator privileges required.", "danger")
         return redirect(url_for("index"))
@@ -56,10 +57,7 @@ def admin_dashboard():
             )
         )
 
-    # Verify admin logic...
-    if current_user.role != "admin":
-        flash("Access denied.", "danger")
-        return redirect(url_for("index"))
+    # Paginate users
     users_pagination = users_query.order_by(User.created_at.desc()).paginate(  # type: ignore
         page=page, per_page=per_page, error_out=False
     )
@@ -146,13 +144,11 @@ def admin_dashboard():
     }
 
     # --- Get System Config ---
-    # This ensures default values are created on first run
     config_settings = {
         "registration_open": SystemConfig.get_bool("registration_open", True),
         "maintenance_mode": SystemConfig.get_bool("maintenance_mode", False),
         "enable_logging": SystemConfig.get_bool("enable_logging", False),
     }
-    # If the keys don't exist, set them to their default values
     if SystemConfig.get("registration_open") is None:
         SystemConfig.set("registration_open", True)
     if SystemConfig.get("maintenance_mode") is None:
