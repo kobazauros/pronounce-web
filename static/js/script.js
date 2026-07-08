@@ -10,6 +10,7 @@ const Config = {
     TARGET_RATE: 16000,
     TRIM_THRESHOLD_FACTOR: 3.5,
     WORDS_LIMIT: 20,
+    NOISE_BLOCK_THRESHOLD: 0.04, // Peak level above which recording is blocked
     COLORS: {
         MODEL: '#0ea5e9', // Sky Blue
         USER: '#f43f5e',  // Rose Red
@@ -705,6 +706,7 @@ async function startNoiseMonitor() {
             }
 
             const isQuiet = peak < 0.02;
+            const isTooNoisy = peak > Config.NOISE_BLOCK_THRESHOLD;
             if (UI.noiseIcon) {
                 UI.noiseIcon.style.backgroundColor = isQuiet ? "#22c55e" : "#f59e0b";
                 UI.noiseIcon.style.transform = isQuiet ? "scale(1)" : `scale(${1 + peak * 5})`;
@@ -716,6 +718,32 @@ async function startNoiseMonitor() {
                 UI.noiseLevel.className = isQuiet
                     ? "text-[9px] font-bold text-slate-400 uppercase tracking-widest transition-colors"
                     : "text-[9px] font-bold text-amber-500 uppercase tracking-widest transition-colors";
+            }
+            
+            // Dynamic Record Button Blocking based on Noise Level
+            // Only apply noise-based blocking when:
+            // 1. A word is selected
+            // 2. Not currently recording or busy
+            // 3. The "Listen Before Record" requirement has been met (button not disabled for that reason)
+            if (UI.recStartBtn && selectedWord && !isAppBusy && !recorderNode) {
+                const wasListenLocked = UI.recStartBtn.style.cursor === 'not-allowed';
+                if (!wasListenLocked) {
+                    // Apply noise-based blocking
+                    UI.recStartBtn.disabled = isTooNoisy;
+                    UI.recStartBtn.style.opacity = isTooNoisy ? '0.5' : '1';
+                    UI.recStartBtn.title = isTooNoisy ? 'Too noisy to record - find a quieter spot' : 'Start recording';
+                    
+                    // Update message box to show noise status when blocking
+                    if (UI.msgBox) {
+                        if (isTooNoisy && UI.msgBox.textContent !== 'TOO NOISY') {
+                            UI.msgBox.textContent = 'TOO NOISY';
+                            UI.msgBox.style.color = '#f59e0b'; // Amber warning color
+                        } else if (!isTooNoisy && UI.msgBox.textContent === 'TOO NOISY') {
+                            UI.msgBox.textContent = 'Ready';
+                            UI.msgBox.style.color = ''; // Reset to default
+                        }
+                    }
+                }
             }
             if (isLoggingEnabled && Date.now() - lastLogTime > 1000) {
                 const db = 20 * Math.log10(peak || 0.0001);

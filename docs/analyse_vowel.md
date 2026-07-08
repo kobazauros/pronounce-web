@@ -36,7 +36,65 @@ The final pass uses the scaling factor from Pass 2 to normalize the data and com
 ***Applying Normalization:*** 
 The script iterates through the raw results again. Each of the student's raw formant measurements (F1, F2) is divided by their personal alpha factor. This adjusts their vowel sounds to the scale of the reference speaker, allowing for a fair comparison.
 ***Calculating Distance:*** 
-After normalization, it calculates the "distance" between the student's normalized vowel and the reference vowel in acoustic space. This is done using the Euclidean distance formula, providing a single number that represents how different the pronunciations are. The distance is calculated in both Hertz (Hz) and the psychoacoustic Bark scale.
+After normalization, it calculates the "distance" between the student's normalized vowel and the reference vowel in acoustic space. This provides a single number that represents how different the pronunciations are.
+
+**The F1-F2 Vowel Space:**
+Vowels can be visualized as points in a 2D coordinate system where:
+- **X-axis (F2):** Represents tongue frontness/backness (higher F2 = front vowel like /i/, lower F2 = back vowel like /u/)
+- **Y-axis (F1):** Represents tongue height/jaw opening (higher F1 = open vowel like /ɑ/, lower F1 = close vowel like /i/)
+
+**Euclidean Distance Formula:**
+The distance between the student's vowel point (F1ₛ, F2ₛ) and the reference point (F1ᵣ, F2ᵣ) is calculated using the Pythagorean theorem:
+
+```
+distance = √[(F1ₛ - F1ᵣ)² + (F2ₛ - F2ᵣ)²]
+```
+
+In Python, this is computed using `math.hypot(f1s_norm - f1r, f2s_norm - f2r)`.
+
+**Dual Scale Calculation:**
+The distance is calculated in two units:
+
+1. **Hertz (Hz) Distance:**
+   - Direct frequency difference in acoustic terms
+   - Raw measurement, but not perceptually uniform (humans don't perceive frequency differences linearly)
+
+2. **Bark Distance (Primary Metric):**
+   - Converts formants to the **Bark scale** before calculating distance
+   - The Bark scale is a psychoacoustic scale that models human auditory perception
+   - Formula: `Bark = 26.81 × f / (1960 + f) - 0.53`
+   - This makes the distance perceptually meaningful: a 1 Bark difference sounds equally significant regardless of absolute frequency
+
+**Handling Diphthongs:**
+For diphthongs (vowels that glide between two positions, like /aʊ/ in "cow"):
+- Two measurements are taken (at 20% and 80% of the vowel)
+- Distance is calculated for each measurement point
+- The final distance is the **average** of both measurements
+
+**Interpretation of Bark Distance:**
+
+| Distance (Bark) | Interpretation | UI Color |
+|-----------------|----------------|----------|
+| < 1.5 | Excellent match | Green |
+| 1.5 - 3.0 | Good, minor differences | Yellow |
+| > 3.0 | Needs improvement | Red |
+| > 5.0 | Outlier (flagged for review) | — |
+
+**Example Calculation:**
+```
+Student (normalized): F1 = 700 Hz, F2 = 1200 Hz
+Reference:           F1 = 650 Hz, F2 = 1100 Hz
+
+Hz Distance = √[(700-650)² + (1200-1100)²] = √[2500 + 10000] = 111.8 Hz
+
+Convert to Bark:
+  Student: B1 = 6.25, B2 = 9.21
+  Reference: B1 = 5.96, B2 = 8.65
+
+Bark Distance = √[(6.25-5.96)² + (9.21-8.65)²] = √[0.084 + 0.314] = 0.63 Bark
+```
+
+This 0.63 Bark distance indicates an excellent pronunciation match.
 ***Exporting to CSV:*** 
 All the data—including student info, raw formants, the scaling factor, normalized formants, and the final distance metrics—is compiled into a pandas DataFrame and saved to a single CSV file: analysis_vowels/final_thesis_data.csv.
 
